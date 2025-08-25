@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
@@ -23,6 +24,7 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final cs = Theme.of(context).colorScheme;
+    final languageCode = Localizations.localeOf(context).languageCode;
 
     final bgGradient = LinearGradient(
       begin: Alignment.topLeft,
@@ -61,6 +63,11 @@ class _MainPageState extends State<MainPage> {
       bottomNavigationBar: SalomonBottomBar(
         currentIndex: _index,
         onTap: (i) {
+          final difference = (i - _index).abs();
+          if (difference > 1) {
+            _pageCtrl.jumpToPage(i);
+            return setState(() => _index = i);
+          }
           setState(() => _index = i);
           _pageCtrl.animateToPage(
             i,
@@ -73,22 +80,42 @@ class _MainPageState extends State<MainPage> {
         items: [
           SalomonBottomBarItem(
             icon: const Icon(Icons.home_rounded),
-            title: Text(t.home),
+            title: Text(
+              t.home,
+              style: TextStyle(
+                fontFamily: AppTheme.getFontFamily(languageCode),
+              ),
+            ),
             selectedColor: cs.primary,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.favorite_rounded),
-            title: Text(t.likes),
+            title: Text(
+              t.likes,
+              style: TextStyle(
+                fontFamily: AppTheme.getFontFamily(languageCode),
+              ),
+            ),
             selectedColor: Colors.pink,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.search_rounded),
-            title: Text(t.search),
+            title: Text(
+              t.search,
+              style: TextStyle(
+                fontFamily: AppTheme.getFontFamily(languageCode),
+              ),
+            ),
             selectedColor: Colors.orange,
           ),
           SalomonBottomBarItem(
             icon: const Icon(Icons.person_rounded),
-            title: Text(t.profile),
+            title: Text(
+              t.profile,
+              style: TextStyle(
+                fontFamily: AppTheme.getFontFamily(languageCode),
+              ),
+            ),
             selectedColor: Colors.teal,
           ),
         ],
