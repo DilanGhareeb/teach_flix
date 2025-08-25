@@ -30,11 +30,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_kurdish_localization:
+    git:
+      url: https://github.com/DilanGhareeb/flutter_kurdish_localization
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
   flutter_riverpod: ^2.6.1
+  flutter_localizations:
+    sdk: flutter
+  intl: any
 
 dev_dependencies:
   flutter_test:
