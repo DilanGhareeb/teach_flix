@@ -41,6 +41,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: any
+  salomon_bottom_bar: ^3.3.2
 
 dev_dependencies:
   flutter_test:
@@ -85,18 +86,22 @@ flutter:
     - family: NRT
       fonts:
         - asset: assets/fonts/NRT-Reg.ttf
-    - family: NRTBOLD
-      fonts:
+          weight: 400
         - asset: assets/fonts/NRT-Bd.ttf
-    - family: Roboto
+          weight: 700
+
+    # Avoid name collision with platform Roboto → use RobotoCustom
+    - family: RobotoCustom
       fonts:
         - asset: assets/fonts/Roboto-Regular.ttf
-    - family: RobotoBold
-      fonts:
+          weight: 400
         - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
+
     - family: Tajawal
       fonts:
         - asset: assets/fonts/Tajawal-Regular.ttf
+          weight: 400
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package

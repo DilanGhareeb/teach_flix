@@ -3,5 +3,21 @@
   "helloWorld": "Hello World!",
   "@helloWorld": {
     "description": "The conventional newborn programmer greeting"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home page title"
+  },
+  "likes": "Likes",
+  "@likes": {
+    "description": "Likes page title"
+  },
+  "search": "Search",
+  "@search": {
+    "description": "Search page title"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile page title"
   }
 }

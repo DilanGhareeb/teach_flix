@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
         KurdishCupertinoLocalizations.delegate,
         KurdishWidgetLocalizations.delegate,
       ],
-      theme: AppTheme.lightTheme('ku'),
+      theme: AppTheme.darkTheme('ckb'),
       home: MainPage(),
     );
   }

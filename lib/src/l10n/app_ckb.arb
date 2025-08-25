@@ -1,4 +1,8 @@
 {
   "@@locale": "ckb",
-  "helloWorld": "سڵاو جیهان!"
+  "helloWorld": "سڵاو جیهان!",
+  "home": "ماڵەوە",
+  "likes": "دوست‌داشتن",
+  "search": "گەڕان",
+  "profile": "پرۆفایل"
 }

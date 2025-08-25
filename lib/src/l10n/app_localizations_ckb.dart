@@ -10,4 +10,16 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get helloWorld => 'سڵاو جیهان!';
+
+  @override
+  String get home => 'ماڵەوە';
+
+  @override
+  String get likes => 'دوست‌داشتن';
+
+  @override
+  String get search => 'گەڕان';
+
+  @override
+  String get profile => 'پرۆفایل';
 }

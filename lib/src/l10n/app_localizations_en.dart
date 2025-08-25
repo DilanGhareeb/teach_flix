@@ -10,4 +10,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get helloWorld => 'Hello World!';
+
+  @override
+  String get home => 'Home';
+
+  @override
+  String get likes => 'Likes';
+
+  @override
+  String get search => 'Search';
+
+  @override
+  String get profile => 'Profile';
 }
