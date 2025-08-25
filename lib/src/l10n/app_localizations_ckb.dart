@@ -15,7 +15,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get home => 'ماڵەوە';
 
   @override
-  String get likes => 'دوست‌داشتن';
+  String get likes => 'بەدڵبووەکان';
 
   @override
   String get search => 'گەڕان';

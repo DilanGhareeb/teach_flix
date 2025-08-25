@@ -52,8 +52,6 @@ class AppTheme {
 
   // Main Theme Getter
   static ThemeData getTheme({required bool isDark, required String locale}) {
-    final isRTL = locale == 'ckb' || locale == 'ar';
-
     return ThemeData(
       brightness: isDark ? Brightness.dark : Brightness.light,
       useMaterial3: true,
