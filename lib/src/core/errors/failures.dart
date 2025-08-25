@@ -20,26 +20,14 @@ abstract class Failure extends Equatable {
 class NetworkFailure extends Failure {
   NetworkFailure({required super.message, super.code, super.stackTrace});
 
-  factory NetworkFailure.offline() => NetworkFailure(
-    message: Translation.translate(
-      'noInternetConnection',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory NetworkFailure.offline() =>
+      NetworkFailure(message: 'No internet connection.');
 
-  factory NetworkFailure.timeout() => NetworkFailure(
-    message: Translation.translate(
-      'requestTimeout',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory NetworkFailure.timeout() =>
+      NetworkFailure(message: 'The request timed out.');
 
-  factory NetworkFailure.unstable() => NetworkFailure(
-    message: Translation.translate(
-      'unstableConnection',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory NetworkFailure.unstable() =>
+      NetworkFailure(message: 'The connection seems unstable.');
 
   factory NetworkFailure.fromDioType(DioExceptionType type) {
     switch (type) {
@@ -50,12 +38,7 @@ class NetworkFailure extends Failure {
       case DioExceptionType.receiveTimeout:
         return NetworkFailure.timeout();
       default:
-        return NetworkFailure(
-          message: Translation.translate(
-            'networkError',
-            languageCode: Translation.activeLanguage,
-          ),
-        );
+        return NetworkFailure(message: 'A network error occurred.');
     }
   }
 }
@@ -64,12 +47,8 @@ class ServerFailure extends Failure {
   ServerFailure({required super.message, super.code, super.stackTrace});
 
   factory ServerFailure.fromCode(int statusCode) {
-    final key = 'serverError_$statusCode';
     return ServerFailure(
-      message: Translation.translate(
-        key,
-        languageCode: Translation.activeLanguage,
-      ),
+      message: 'Server error ($statusCode).',
       code: statusCode,
     );
   }
@@ -78,31 +57,18 @@ class ServerFailure extends Failure {
 class AuthFailure extends Failure {
   AuthFailure({required super.message, super.code, super.stackTrace});
 
-  factory AuthFailure.invalidCredentials() => AuthFailure(
-    message: Translation.translate(
-      'invalidCredentials',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory AuthFailure.invalidCredentials() =>
+      AuthFailure(message: 'Invalid credentials.');
 
-  factory AuthFailure.sessionExpired() => AuthFailure(
-    message: Translation.translate(
-      'sessionExpired',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory AuthFailure.sessionExpired() =>
+      AuthFailure(message: 'Your session has expired. Please sign in again.');
 
   factory AuthFailure.fromCode(int code) {
     switch (code) {
       case 401:
         return AuthFailure.sessionExpired();
       default:
-        return AuthFailure(
-          message: Translation.translate(
-            'authenticationFailed',
-            languageCode: Translation.activeLanguage,
-          ),
-        );
+        return AuthFailure(message: 'Authentication failed.');
     }
   }
 }
@@ -110,23 +76,15 @@ class AuthFailure extends Failure {
 class CacheFailure extends Failure {
   CacheFailure({required super.message, super.stackTrace});
 
-  factory CacheFailure.readError() => CacheFailure(
-    message: Translation.translate(
-      'localStorageError',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory CacheFailure.readError() =>
+      CacheFailure(message: 'A local storage error occurred.');
 }
 
 class ParsingFailure extends Failure {
   ParsingFailure({required super.message, super.code, super.stackTrace});
 
-  factory ParsingFailure.invalid() => ParsingFailure(
-    message: Translation.translate(
-      'invalidData',
-      languageCode: Translation.activeLanguage,
-    ),
-  );
+  factory ParsingFailure.invalid() =>
+      ParsingFailure(message: 'Received invalid data.');
 }
 
 class ValidationFailure extends Failure {
@@ -145,25 +103,14 @@ class ValidationFailure extends Failure {
 
 class PermissionFailure extends Failure {
   PermissionFailure({required String permission, super.code, super.stackTrace})
-    : super(
-        message: Translation.translate(
-          'permissionDenied_$permission',
-          languageCode: Translation.activeLanguage,
-        ),
-      );
+    : super(message: 'Permission denied: $permission');
 }
 
 class RateLimitFailure extends Failure {
   final Duration retryAfter;
 
   RateLimitFailure(this.retryAfter, {super.stackTrace})
-    : super(
-        message: Translation.translate(
-          'tooManyRequests',
-          languageCode: Translation.activeLanguage,
-        ),
-        code: 429,
-      );
+    : super(message: 'Too many requests. Please try again later.', code: 429);
 
   @override
   List<Object?> get props => [...super.props, retryAfter];
@@ -171,20 +118,10 @@ class RateLimitFailure extends Failure {
 
 class UnimplementedFailure extends Failure {
   UnimplementedFailure()
-    : super(
-        message: Translation.translate(
-          'notImplemented',
-          languageCode: Translation.activeLanguage,
-        ),
-      );
+    : super(message: 'This feature is not implemented yet.');
 }
 
 class UnknownFailure extends Failure {
   UnknownFailure({super.stackTrace})
-    : super(
-        message: Translation.translate(
-          'unknownError',
-          languageCode: Translation.activeLanguage,
-        ),
-      );
+    : super(message: 'An unknown error occurred.');
 }
