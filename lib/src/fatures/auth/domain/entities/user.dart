@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 enum Role { student, instructor, admin }
 
-class User extends Equatable {
+class UserEntity extends Equatable {
   final String id;
   final String email;
   final String name;
@@ -11,7 +11,7 @@ class User extends Equatable {
   final bool isEmailVerified;
   final Role role;
 
-  const User({
+  const UserEntity({
     required this.id,
     required this.email,
     required this.name,
