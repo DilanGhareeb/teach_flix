@@ -9,35 +9,29 @@ class AuthRepositoryImpl extends AuthRepository {
   final AuthApiDatasource authApiDatasource;
 
   AuthRepositoryImpl({required this.authApiDatasource});
+
   @override
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
-    final either = await authApiDatasource.signInWithEmailAndPassword(
+    final res = await authApiDatasource.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return either.map((model) => model.toEntity());
+    return res.map((m) => m);
   }
 
   @override
   Future<Either<Failure, UserEntity>> registerAccount({
     required RegisterParams params,
   }) async {
-    final either = await authApiDatasource.registerAccount(params: params);
-    return either.map((model) => model.toEntity());
+    final res = await authApiDatasource.registerAccount(params: params);
+    return res.map((m) => m);
   }
 
   @override
-  Future<Either<Failure, UserEntity>> signInWithGoogle() {
-    // TODO: implement signInWithGoogle
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, void>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<Either<Failure, void>> signOut() async {
+    return authApiDatasource.signOut();
   }
 }

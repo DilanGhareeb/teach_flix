@@ -13,6 +13,5 @@ abstract class AuthRepository {
     required RegisterParams params,
   });
 
-  Future<Either<Failure, UserEntity>> signInWithGoogle();
   Future<Either<Failure, void>> signOut();
 }

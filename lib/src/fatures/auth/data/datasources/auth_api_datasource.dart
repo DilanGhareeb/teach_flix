@@ -39,28 +39,14 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       );
 
       final uid = cred.user?.uid;
-      if (uid == null) {
-        return Left(UnknownFailure());
-      }
+      if (uid == null) return Left(UnknownFailure());
 
       final snap = await _fireStore.collection(_users).doc(uid).get();
       final data = snap.data();
       if (data == null) {
-        final seed = {
-          'id': uid,
-          'email': cred.user?.email,
-          'name': cred.user?.displayName,
-          'profilePictureUrl': cred.user?.photoURL,
-          'isEmailVerified': cred.user?.emailVerified ?? false,
-          'role': 'student',
-          'createdAt': FieldValue.serverTimestamp(),
-          'updatedAt': FieldValue.serverTimestamp(),
-        };
-        await _fireStore
-            .collection(_users)
-            .doc(uid)
-            .set(seed, SetOptions(merge: true));
-        return Right(UserModel.fromMap({...seed}));
+        return Left(
+          ServerFailure(message: 'User profile not found.', code: 404),
+        );
       }
 
       return Right(UserModel.fromMap(data));
