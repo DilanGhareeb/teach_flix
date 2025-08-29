@@ -4,10 +4,10 @@ import 'package:teach_flix/src/core/usecases/usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 
-class RegisterUsecase extends Usecase<RegisterParams, UserEntity> {
+class Register extends Usecase<RegisterParams, UserEntity> {
   final AuthRepository repository;
 
-  RegisterUsecase({required this.repository});
+  Register({required this.repository});
   @override
   Future<Either<Failure, UserEntity>> call({
     required RegisterParams params,

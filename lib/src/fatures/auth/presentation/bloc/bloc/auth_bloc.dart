@@ -10,7 +10,7 @@ part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Login loginUsecase;
-  final RegisterUsecase registerUsecase;
+  final Register registerUsecase;
 
   AuthBloc({required this.loginUsecase, required this.registerUsecase})
     : super(const AuthState()) {
@@ -26,8 +26,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
     result.fold(
       (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
-      (user) =>
-          emit(state.copyWith(status: AuthStatus.authenticated, user: user)),
+      (user) => emit(
+        state.copyWith(
+          status: AuthStatus.authenticated,
+          user: user,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -38,17 +43,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, failure: null));
     final result = await registerUsecase(
       params: RegisterParams(
-        email: e.email,
         name: e.name,
+        email: e.email,
+        password: e.password,
         gender: e.gender,
         profilePictureUrl: null,
-        password: e.password,
       ),
     );
     result.fold(
       (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
-      (user) =>
-          emit(state.copyWith(status: AuthStatus.authenticated, user: user)),
+      (user) => emit(
+        state.copyWith(
+          status: AuthStatus.authenticated,
+          user: user,
+          failure: null,
+        ),
+      ),
     );
   }
 

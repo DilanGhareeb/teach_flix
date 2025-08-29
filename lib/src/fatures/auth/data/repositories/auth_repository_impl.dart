@@ -1,13 +1,13 @@
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
+import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 
-class AuthRepositoryImpl extends AuthRepository {
+class AuthRepositoryImpl implements AuthRepository {
   final AuthApiDatasource authApiDatasource;
-
   AuthRepositoryImpl({required this.authApiDatasource});
 
   @override
@@ -15,23 +15,29 @@ class AuthRepositoryImpl extends AuthRepository {
     required String email,
     required String password,
   }) async {
-    final res = await authApiDatasource.signInWithEmailAndPassword(
+    final either = await authApiDatasource.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
-    return res.map((m) => m);
+    return either.fold(Left.new, (UserModel m) => Right(m));
   }
 
   @override
   Future<Either<Failure, UserEntity>> registerAccount({
     required RegisterParams params,
   }) async {
-    final res = await authApiDatasource.registerAccount(params: params);
-    return res.map((m) => m);
+    final either = await authApiDatasource.registerAccount(
+      params: RegisterParams(
+        name: params.name,
+        email: params.email,
+        password: params.password,
+        gender: params.gender,
+        profilePictureUrl: params.profilePictureUrl,
+      ),
+    );
+    return either.fold(Left.new, (UserModel m) => Right(m));
   }
 
   @override
-  Future<Either<Failure, void>> signOut() async {
-    return authApiDatasource.signOut();
-  }
+  Future<Either<Failure, void>> signOut() => authApiDatasource.signOut();
 }

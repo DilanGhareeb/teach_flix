@@ -1,149 +1,91 @@
-import 'package:dio/dio.dart';
-import 'package:equatable/equatable.dart';
-
-abstract class Failure extends Equatable {
+abstract class Failure {
   final String message;
-  final int? code;
-  final StackTrace? stackTrace;
-  final DateTime timestamp;
-
-  Failure({required this.message, this.code, this.stackTrace})
-    : timestamp = DateTime.now();
-
+  final String? code;
+  const Failure({required this.message, this.code});
   @override
-  List<Object?> get props => [message, code, stackTrace, timestamp];
-
-  @override
-  String toString() => '$runtimeType: $message';
+  String toString() => code == null ? message : '$message ($code)';
 }
 
-class NetworkFailure extends Failure {
-  NetworkFailure({required super.message, super.code, super.stackTrace});
+class AuthFailure extends Failure {
+  const AuthFailure({required super.message, super.code});
 
-  factory NetworkFailure.offline() =>
-      NetworkFailure(message: 'No internet connection.');
+  factory AuthFailure.fromFirebaseAuthCode(String code, [String? msg]) {
+    switch (code) {
+      case 'invalid-email':
+        return AuthFailure(message: 'Invalid email address', code: code);
 
-  factory NetworkFailure.timeout() =>
-      NetworkFailure(message: 'The request timed out.');
+      case 'user-disabled':
+        return AuthFailure(message: 'User has been disabled', code: code);
 
-  factory NetworkFailure.unstable() =>
-      NetworkFailure(message: 'The connection seems unstable.');
+      case 'user-not-found':
+      case 'wrong-password':
+      case 'INVALID_LOGIN_CREDENTIALS':
+      case 'invalid-credential':
+        return AuthFailure(
+          message: 'Email or password is incorrect',
+          code: code,
+        );
 
-  factory NetworkFailure.fromDioType(DioExceptionType type) {
-    switch (type) {
-      case DioExceptionType.connectionError:
-        return NetworkFailure.offline();
-      case DioExceptionType.connectionTimeout:
-      case DioExceptionType.sendTimeout:
-      case DioExceptionType.receiveTimeout:
-        return NetworkFailure.timeout();
+      case 'too-many-requests':
+        return AuthFailure(
+          message: 'Too many attempts. Please try again later.',
+          code: code,
+        );
+
+      case 'user-token-expired':
+        return AuthFailure(
+          message: 'Session expired. Please sign in again.',
+          code: code,
+        );
+
+      case 'network-request-failed':
+        return AuthFailure(
+          message: 'No internet connection. Please check your network.',
+          code: code,
+        );
+
+      case 'operation-not-allowed':
+        return AuthFailure(
+          message: 'Email/password sign-in is not enabled.',
+          code: code,
+        );
+
       default:
-        return NetworkFailure(message: 'A network error occurred.');
+        return AuthFailure(
+          message: msg ?? 'Authentication failed. Please try again.',
+          code: code,
+        );
+    }
+  }
+}
+
+class FirestoreFailure extends Failure {
+  const FirestoreFailure({required super.message, super.code});
+  factory FirestoreFailure.fromFirebaseCode(String code, [String? msg]) {
+    switch (code) {
+      case 'permission-denied':
+        return FirestoreFailure(
+          message: 'No permission to access profile',
+          code: code,
+        );
+      case 'unavailable':
+        return FirestoreFailure(
+          message: 'Service unavailable, check connection',
+          code: code,
+        );
+      case 'not-found':
+        return FirestoreFailure(message: 'User profile not found', code: code);
+      default:
+        return FirestoreFailure(message: msg ?? 'Database error', code: code);
     }
   }
 }
 
 class ServerFailure extends Failure {
-  ServerFailure({required super.message, super.code, super.stackTrace});
-
-  factory ServerFailure.fromCode(int statusCode) {
-    return ServerFailure(
-      message: 'Server error ($statusCode).',
-      code: statusCode,
-    );
-  }
-}
-
-class AuthFailure extends Failure {
-  AuthFailure({required super.message, super.code, super.stackTrace});
-
-  factory AuthFailure.invalidCredentials() =>
-      AuthFailure(message: 'Invalid credentials.');
-
-  factory AuthFailure.sessionExpired() =>
-      AuthFailure(message: 'Your session has expired. Please sign in again.');
-
-  factory AuthFailure.fromFirebaseCode(String code) {
-    switch (code) {
-      case 'invalid-email':
-        return AuthFailure(message: 'The email address is not valid.');
-      case 'user-disabled':
-        return AuthFailure(message: 'This user account has been disabled.');
-      case 'user-not-found':
-        return AuthFailure(message: 'No user found with this email.');
-      case 'wrong-password':
-      case 'invalid-credential':
-      case 'INVALID_LOGIN_CREDENTIALS':
-        return AuthFailure(
-          message: 'The password is invalid or the credentials are incorrect.',
-        );
-      case 'too-many-requests':
-        return AuthFailure(
-          message: 'Too many requests. Please try again later.',
-        );
-      case 'user-token-expired':
-        return AuthFailure.sessionExpired();
-      case 'network-request-failed':
-        return AuthFailure(message: 'Network error. Please try again.');
-      case 'operation-not-allowed':
-        return AuthFailure(
-          message: 'Email/password login is not enabled in Firebase settings.',
-        );
-      default:
-        return AuthFailure(message: 'Authentication failed. [$code]');
-    }
-  }
-}
-
-class CacheFailure extends Failure {
-  CacheFailure({required super.message, super.stackTrace});
-
-  factory CacheFailure.readError() =>
-      CacheFailure(message: 'A local storage error occurred.');
-}
-
-class ParsingFailure extends Failure {
-  ParsingFailure({required super.message, super.code, super.stackTrace});
-
-  factory ParsingFailure.invalid() =>
-      ParsingFailure(message: 'Received invalid data.');
-}
-
-class ValidationFailure extends Failure {
-  final Map<String, List<String>> errors;
-
-  ValidationFailure({
-    required super.message,
-    required this.errors,
-    super.code,
-    super.stackTrace,
-  });
-
-  @override
-  List<Object?> get props => [...super.props, errors];
-}
-
-class PermissionFailure extends Failure {
-  PermissionFailure({required String permission, super.code, super.stackTrace})
-    : super(message: 'Permission denied: $permission');
-}
-
-class RateLimitFailure extends Failure {
-  final Duration retryAfter;
-
-  RateLimitFailure(this.retryAfter, {super.stackTrace})
-    : super(message: 'Too many requests. Please try again later.', code: 429);
-
-  @override
-  List<Object?> get props => [...super.props, retryAfter];
-}
-
-class UnimplementedFailure extends Failure {
-  UnimplementedFailure()
-    : super(message: 'This feature is not implemented yet.');
+  const ServerFailure({required super.message, super.code});
 }
 
 class UnknownFailure extends Failure {
-  UnknownFailure({super.stackTrace})
-    : super(message: 'An unknown error occurred.');
+  const UnknownFailure({String? message})
+    : super(message: message ?? 'Unknown error');
 }

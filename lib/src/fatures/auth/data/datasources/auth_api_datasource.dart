@@ -1,6 +1,8 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
@@ -39,21 +41,34 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       );
 
       final uid = cred.user?.uid;
-      if (uid == null) return Left(UnknownFailure());
+      if (uid == null) {
+        return const Left(
+          UnknownFailure(message: 'Missing user id after sign-in'),
+        );
+      }
 
-      final snap = await _fireStore.collection(_users).doc(uid).get();
+      final docRef = _fireStore.collection(_users).doc(uid);
+
+      final snap = await docRef.get();
       final data = snap.data();
       if (data == null) {
-        return Left(
-          ServerFailure(message: 'User profile not found.', code: 404),
+        return const Left(
+          UnknownFailure(
+            message: 'Failed to read user profile after creating it',
+          ),
         );
       }
 
       return Right(UserModel.fromMap(data));
     } on FirebaseAuthException catch (e) {
-      return Left(AuthFailure.fromFirebaseCode(e.code));
-    } catch (e, st) {
-      return Left(UnknownFailure(stackTrace: st));
+      inspect(e);
+      return Left(AuthFailure.fromFirebaseAuthCode(e.code, e.message));
+    } on FirebaseException catch (e) {
+      inspect(e);
+      return Left(FirestoreFailure.fromFirebaseCode(e.code, e.message));
+    } catch (e) {
+      inspect(e);
+      return const Left(UnknownFailure());
     }
   }
 
@@ -68,10 +83,13 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       );
 
       final uid = cred.user?.uid;
-      if (uid == null) return Left(UnknownFailure());
+      if (uid == null) {
+        return const Left(
+          UnknownFailure(message: 'Missing user id after registration'),
+        );
+      }
 
       final doc = _fireStore.collection(_users).doc(uid);
-
       await doc.set({
         'id': uid,
         'email': params.email,
@@ -86,13 +104,19 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
 
       final snap = await doc.get();
       final data = snap.data();
-      if (data == null) return Left(UnknownFailure());
+      if (data == null) {
+        return const Left(
+          UnknownFailure(message: 'Failed to read created profile'),
+        );
+      }
 
       return Right(UserModel.fromMap(data));
     } on FirebaseAuthException catch (e) {
-      return Left(AuthFailure.fromFirebaseCode(e.code));
-    } catch (e, st) {
-      return Left(UnknownFailure(stackTrace: st));
+      return Left(AuthFailure.fromFirebaseAuthCode(e.code, e.message));
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code, e.message));
+    } catch (_) {
+      return const Left(UnknownFailure());
     }
   }
 
@@ -102,9 +126,9 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       await _fireAuth.signOut();
       return const Right(null);
     } on FirebaseAuthException catch (e) {
-      return Left(AuthFailure.fromFirebaseCode(e.code));
-    } catch (e, st) {
-      return Left(UnknownFailure(stackTrace: st));
+      return Left(AuthFailure.fromFirebaseAuthCode(e.code, e.message));
+    } catch (_) {
+      return const Left(UnknownFailure());
     }
   }
 }

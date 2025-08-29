@@ -9,17 +9,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
-import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
-import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
-import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
-import 'package:teach_flix/src/fatures/auth/data/repositories/auth_repository_impl.dart';
-import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
+import 'package:teach_flix/src/service_locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await setupServiceLocator();
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -28,17 +26,12 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ds = AuthApiDatasourceImpl();
-    final repo = AuthRepositoryImpl(authApiDatasource: ds);
-    final login = Login(repository: repo);
-    final register = RegisterUsecase(repository: repo);
-
-    return BlocProvider(
-      create: (_) => AuthBloc(loginUsecase: login, registerUsecase: register),
+    return BlocProvider<AuthBloc>(
+      create: (_) => sl<AuthBloc>(),
       child: MaterialApp(
-        title: 'Flutter Demo',
+        title: 'Teach Flix',
         debugShowCheckedModeBanner: false,
-        locale: const Locale('ckb'),
+        locale: const Locale('en'),
         supportedLocales: const [Locale('en'), Locale('ckb')],
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -61,13 +54,25 @@ class _AuthGate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<AuthBloc, AuthState>(
+    return BlocConsumer<AuthBloc, AuthState>(
+      listenWhen: (p, c) => p.status != c.status,
+      listener: (context, state) {
+        if (state.status == AuthStatus.failure && state.failure != null) {
+          final f = state.failure!;
+          final text = f.code == null ? f.message : '${f.message} (${f.code})';
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(text)));
+        }
+      },
       builder: (context, state) {
-        if (state.status == AuthStatus.authenticated) return const MainPage();
         if (state.status == AuthStatus.loading) {
           return const Scaffold(
             body: Center(child: CircularProgressIndicator()),
           );
+        }
+        if (state.status == AuthStatus.authenticated) {
+          return const MainPage();
         }
         return const LoginPage();
       },

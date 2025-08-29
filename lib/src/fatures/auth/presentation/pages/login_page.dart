@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
@@ -30,9 +31,11 @@ class _LoginPageState extends State<LoginPage> {
         listenWhen: (p, c) => p.status != c.status,
         listener: (context, state) {
           if (state.status == AuthStatus.failure && state.failure != null) {
+            final f = state.failure!;
+            final text = f.message;
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.failure!.message)));
+            ).showSnackBar(SnackBar(content: Text(text)));
           }
         },
         child: Padding(
@@ -92,8 +95,10 @@ class _LoginPageState extends State<LoginPage> {
                   const Text('No account?'),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const RegisterPage()),
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (_) => const RegisterPage(),
+                        ),
                       );
                     },
                     child: const Text('Create one'),

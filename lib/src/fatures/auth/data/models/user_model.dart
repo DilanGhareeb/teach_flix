@@ -26,7 +26,11 @@ class UserModel extends UserEntity {
       createdAt: map['createdAt'].toDate(),
       updatedAt: map['updatedAt'].toDate(),
       isEmailVerified: map['isEmailVerified'],
-      role: map['role'],
+      role: map['role'] == 'admin'
+          ? Role.admin
+          : map['role'] == 'instructor'
+          ? Role.instructor
+          : Role.student,
     );
   }
 
