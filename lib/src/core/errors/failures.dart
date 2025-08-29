@@ -63,12 +63,34 @@ class AuthFailure extends Failure {
   factory AuthFailure.sessionExpired() =>
       AuthFailure(message: 'Your session has expired. Please sign in again.');
 
-  factory AuthFailure.fromCode(int code) {
+  factory AuthFailure.fromFirebaseCode(String code) {
     switch (code) {
-      case 401:
+      case 'invalid-email':
+        return AuthFailure(message: 'The email address is not valid.');
+      case 'user-disabled':
+        return AuthFailure(message: 'This user account has been disabled.');
+      case 'user-not-found':
+        return AuthFailure(message: 'No user found with this email.');
+      case 'wrong-password':
+      case 'invalid-credential':
+      case 'INVALID_LOGIN_CREDENTIALS':
+        return AuthFailure(
+          message: 'The password is invalid or the credentials are incorrect.',
+        );
+      case 'too-many-requests':
+        return AuthFailure(
+          message: 'Too many requests. Please try again later.',
+        );
+      case 'user-token-expired':
         return AuthFailure.sessionExpired();
+      case 'network-request-failed':
+        return AuthFailure(message: 'Network error. Please try again.');
+      case 'operation-not-allowed':
+        return AuthFailure(
+          message: 'Email/password login is not enabled in Firebase settings.',
+        );
       default:
-        return AuthFailure(message: 'Authentication failed.');
+        return AuthFailure(message: 'Authentication failed. [$code]');
     }
   }
 }

@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
@@ -19,8 +19,13 @@ abstract class AuthApiDatasource {
 }
 
 class AuthApiDatasourceImpl implements AuthApiDatasource {
-  final _fireStore = FirebaseFirestore.instance;
-  final _fireAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _fireStore;
+  final FirebaseAuth _fireAuth;
+  static const _users = 'users';
+
+  AuthApiDatasourceImpl({FirebaseFirestore? fireStore, FirebaseAuth? fireAuth})
+    : _fireStore = fireStore ?? FirebaseFirestore.instance,
+      _fireAuth = fireAuth ?? FirebaseAuth.instance;
 
   @override
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
@@ -28,25 +33,41 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
     required String password,
   }) async {
     try {
-      final userCredential = await _fireAuth.signInWithEmailAndPassword(
+      final cred = await _fireAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
-      final userDoc = await _fireStore
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .get();
-
-      final map = userDoc.data();
-
-      if (map == null) {
+      final uid = cred.user?.uid;
+      if (uid == null) {
         return Left(UnknownFailure());
       }
 
-      return Right(UserModel.fromMap(map));
-    } catch (e) {
-      return Left(NetworkFailure(message: e.toString()));
+      final snap = await _fireStore.collection(_users).doc(uid).get();
+      final data = snap.data();
+      if (data == null) {
+        final seed = {
+          'id': uid,
+          'email': cred.user?.email,
+          'name': cred.user?.displayName,
+          'profilePictureUrl': cred.user?.photoURL,
+          'isEmailVerified': cred.user?.emailVerified ?? false,
+          'role': 'student',
+          'createdAt': FieldValue.serverTimestamp(),
+          'updatedAt': FieldValue.serverTimestamp(),
+        };
+        await _fireStore
+            .collection(_users)
+            .doc(uid)
+            .set(seed, SetOptions(merge: true));
+        return Right(UserModel.fromMap({...seed}));
+      }
+
+      return Right(UserModel.fromMap(data));
+    } on FirebaseAuthException catch (e) {
+      return Left(AuthFailure.fromFirebaseCode(e.code));
+    } catch (e, st) {
+      return Left(UnknownFailure(stackTrace: st));
     }
   }
 
@@ -55,44 +76,49 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
     required RegisterParams params,
   }) async {
     try {
-      final registerResult = await _fireAuth.createUserWithEmailAndPassword(
+      final cred = await _fireAuth.createUserWithEmailAndPassword(
         email: params.email,
         password: params.password,
       );
 
-      final user = registerResult.user;
+      final uid = cred.user?.uid;
+      if (uid == null) return Left(UnknownFailure());
 
-      _fireStore.collection('users').doc(user?.uid).set({
-        'id': user?.uid,
+      final doc = _fireStore.collection(_users).doc(uid);
+
+      await doc.set({
+        'id': uid,
         'email': params.email,
         'name': params.name,
         'gender': params.gender,
         'profilePictureUrl': params.profilePictureUrl,
-        'isEmailVerified': false,
+        'isEmailVerified': cred.user?.emailVerified ?? false,
         'role': 'student',
-      });
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
 
-      final userDoc = await _fireStore.collection('users').doc(user?.uid).get();
+      final snap = await doc.get();
+      final data = snap.data();
+      if (data == null) return Left(UnknownFailure());
 
-      if (userDoc.data() != null) {
-        return Right(UserModel.fromMap(userDoc.data()!));
-      } else {
-        return Left(UnknownFailure());
-      }
-    } catch (e) {
-      return Left(NetworkFailure(message: e.toString()));
+      return Right(UserModel.fromMap(data));
+    } on FirebaseAuthException catch (e) {
+      return Left(AuthFailure.fromFirebaseCode(e.code));
+    } catch (e, st) {
+      return Left(UnknownFailure(stackTrace: st));
     }
   }
 
   @override
-  Future<Either<Failure, UserModel>> signInWithGoogle() {
-    // TODO: implement signInWithGoogle
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Either<Failure, void>> signOut() {
-    // TODO: implement signOut
-    throw UnimplementedError();
+  Future<Either<Failure, void>> signOut() async {
+    try {
+      await _fireAuth.signOut();
+      return const Right(null);
+    } on FirebaseAuthException catch (e) {
+      return Left(AuthFailure.fromFirebaseCode(e.code));
+    } catch (e, st) {
+      return Left(UnknownFailure(stackTrace: st));
+    }
   }
 }

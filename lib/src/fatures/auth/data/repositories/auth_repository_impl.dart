@@ -25,10 +25,7 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<Either<Failure, UserEntity>> registerAccount({
     required RegisterParams params,
   }) async {
-    final either = await authApiDatasource.registerAccount(
-      email: params.email,
-      password: params.password,
-    );
+    final either = await authApiDatasource.registerAccount(params: params);
     return either.map((model) => model.toEntity());
   }
 
