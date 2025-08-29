@@ -16,18 +16,6 @@ class UserModel extends UserEntity {
     super.profilePictureUrl,
   });
 
-  // UserEntity toEntity() {
-  //   return UserEntity(
-  //     id: id,
-  //     email: email,
-  //     name: name,
-  //     gender: gender,
-  //     profilePictureUrl: profilePictureUrl,
-  //     isEmailVerified: isEmailVerified,
-  //     role: role,
-  //   );
-  // }
-
   factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? '',
