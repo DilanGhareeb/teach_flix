@@ -1,16 +1,45 @@
-# teach_flix
+# 📚 TeachFlix
 
-A new Flutter project.
+**TeachFlix** is a Flutter-based educational app featuring clean architecture, Firebase authentication, user profile management, multi-language support (English & Kurdish), and a responsive UI powered by Bloc and Riverpod.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 🔐 **Firebase Authentication**
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+  - Register / Login with email and password
+  - Profile avatar selection
+  - Gender and name capture during registration
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 🧑‍💻 **Firestore User Profiles**
+
+  - Stores user profile data in Firestore after registration
+  - Reuses data on login and app startup
+
+- 🧭 **Clean Architecture**
+
+  - Separated `presentation`, `domain`, `data`, and `core` layers
+  - Bloc for state management
+  - UseCases, Entities, DTOs
+
+- 🌍 **Multilingual Support**
+
+  - Supports English (`en`) and Kurdish (`ckb`) using ARB files
+  - Localized error handling and UI elements
+
+- 🎨 **Modern UI**
+  - `AppTheme` for consistent theming
+  - Bottom navigation bar using `salomon_bottom_bar`
+  - RTL/LTR support with dynamic locale switching
+
+---
+
+## 🚀 Getting Started
+
+### 🔧 Prerequisites
+
+- Flutter 3.13+
+- Dart 3+
+- Firebase project (iOS + Android setup)
+- `flutterfire_cli` configured
