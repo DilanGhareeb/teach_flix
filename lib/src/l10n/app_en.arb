@@ -19,5 +19,120 @@
   "profile": "Profile",
   "@profile": {
     "description": "Profile page title"
+  },
+  "register": "Register",
+  "@register": {
+    "description": "Register page title"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Label for the email input field"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Label for the password input field"
+  },
+  "name": "Name",
+  "@name": {
+    "description": "Label for the name input field"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login page title"
+  },
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "Button text for creating a new account"
+  },
+  "gender": "Gender",
+  "@gender": {
+    "description": "Label for the gender input field"
+  },
+  "unspecified": "Unspecified",
+  "@unspecified": {
+    "description": "Unspecified gender"
+  },
+  "male": "Male",
+  "@male": {
+    "description": "Male gender"
+  },
+  "female": "Female",
+  "@female": {
+    "description": "Female gender"
+  },
+  "noAccount": "No account?",
+  "@noAccount": {
+    "description": "Prompt for users who do not have an account"
+  },
+  "errInvalidEmail": "Invalid email address",
+  "@errInvalidEmail": {
+    "description": "Error message for invalid email format"
+  },
+  "errUserDisabled": "This account has been disabled",
+  "@errUserDisabled": {
+    "description": "Error message for disabled user account"
+  },
+  "errInvalidCredentials": "Email or password is incorrect",
+  "@errInvalidCredentials": {
+    "description": "Error message for incorrect email or password"
+  },
+  "errTooManyRequests": "Too many attempts. Please try again later.",
+  "@errTooManyRequests": {
+    "description": "Error message for too many login attempts"
+  },
+  "errSessionExpired": "Session expired. Please sign in again.",
+  "@errSessionExpired": {
+    "description": "Error message for expired authentication session"
+  },
+  "errNetwork": "No internet connection. Please check your network.",
+  "@errNetwork": {
+    "description": "Error message for network connectivity issues"
+  },
+  "errOpNotAllowed": "Email/password sign-in is not enabled.",
+  "@errOpNotAllowed": {
+    "description": "Error message when email/password sign-in is disabled"
+  },
+  "errAuthUnknown": "Authentication failed. Please try again.",
+  "@errAuthUnknown": {
+    "description": "Generic authentication error message"
+  },
+  "errFsPermissionDenied": "You don’t have permission to access this data.",
+  "@errFsPermissionDenied": {
+    "description": "Error message for permission denied when accessing data"
+  },
+  "errFsUnavailable": "Service unavailable. Check your connection.",
+  "@errFsUnavailable": {
+    "description": "Error message for service unavailability"
+  },
+  "errFsNotFound": "Requested data was not found.",
+  "@errFsNotFound": {
+    "description": "Error message for data not found"
+  },
+  "errFsUnknown": "A database error occurred.",
+  "@errFsUnknown": {
+    "description": "Generic database error message"
+  },
+  "errServerGeneric": "A server error occurred. Please try again.",
+  "@errServerGeneric": {
+    "description": "Generic server error message"
+  },
+  "errUnknown": "Something went wrong. Please try again.",
+  "@errUnknown": {
+    "description": "Generic unknown error message"
+  },
+  "errFieldRequired": "This field is required",
+  "@errFieldRequired": {
+    "description": "Error message for required form fields"
+  },
+  "errNameTooShort": "Name is too short",
+  "@errNameTooShort": {
+    "description": "Error message for name being too short"
+  },
+  "errPasswordTooShort": "Password must be at least {min} characters",
+  "@errPasswordTooShort": {
+    "description": "Error message for password being too short",
+    "placeholders": {
+      "min": {}
+    }
   }
 }

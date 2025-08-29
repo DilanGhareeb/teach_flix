@@ -127,6 +127,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Profile'**
   String get profile;
+
+  /// Register page title
+  ///
+  /// In en, this message translates to:
+  /// **'Register'**
+  String get register;
+
+  /// Label for the email input field
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// Label for the password input field
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// Label for the name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name;
+
+  /// Login page title
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// Button text for creating a new account
+  ///
+  /// In en, this message translates to:
+  /// **'Create account'**
+  String get createAccount;
+
+  /// Label for the gender input field
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get gender;
+
+  /// Unspecified gender
+  ///
+  /// In en, this message translates to:
+  /// **'Unspecified'**
+  String get unspecified;
+
+  /// Male gender
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get male;
+
+  /// Female gender
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get female;
+
+  /// Prompt for users who do not have an account
+  ///
+  /// In en, this message translates to:
+  /// **'No account?'**
+  String get noAccount;
+
+  /// Error message for invalid email format
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address'**
+  String get errInvalidEmail;
+
+  /// Error message for disabled user account
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled'**
+  String get errUserDisabled;
+
+  /// Error message for incorrect email or password
+  ///
+  /// In en, this message translates to:
+  /// **'Email or password is incorrect'**
+  String get errInvalidCredentials;
+
+  /// Error message for too many login attempts
+  ///
+  /// In en, this message translates to:
+  /// **'Too many attempts. Please try again later.'**
+  String get errTooManyRequests;
+
+  /// Error message for expired authentication session
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get errSessionExpired;
+
+  /// Error message for network connectivity issues
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network.'**
+  String get errNetwork;
+
+  /// Error message when email/password sign-in is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'Email/password sign-in is not enabled.'**
+  String get errOpNotAllowed;
+
+  /// Generic authentication error message
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please try again.'**
+  String get errAuthUnknown;
+
+  /// Error message for permission denied when accessing data
+  ///
+  /// In en, this message translates to:
+  /// **'You don’t have permission to access this data.'**
+  String get errFsPermissionDenied;
+
+  /// Error message for service unavailability
+  ///
+  /// In en, this message translates to:
+  /// **'Service unavailable. Check your connection.'**
+  String get errFsUnavailable;
+
+  /// Error message for data not found
+  ///
+  /// In en, this message translates to:
+  /// **'Requested data was not found.'**
+  String get errFsNotFound;
+
+  /// Generic database error message
+  ///
+  /// In en, this message translates to:
+  /// **'A database error occurred.'**
+  String get errFsUnknown;
+
+  /// Generic server error message
+  ///
+  /// In en, this message translates to:
+  /// **'A server error occurred. Please try again.'**
+  String get errServerGeneric;
+
+  /// Generic unknown error message
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get errUnknown;
+
+  /// Error message for required form fields
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get errFieldRequired;
+
+  /// Error message for name being too short
+  ///
+  /// In en, this message translates to:
+  /// **'Name is too short'**
+  String get errNameTooShort;
+
+  /// Error message for password being too short
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least {min} characters'**
+  String errPasswordTooShort(Object min);
 }
 
 class _AppLocalizationsDelegate

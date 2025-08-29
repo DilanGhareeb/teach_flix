@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/core/usecases/usecase.dart';
@@ -8,30 +7,51 @@ import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.
 
 class Register extends Usecase<RegisterParams, UserEntity> {
   final AuthRepository repository;
-
   Register({required this.repository});
-  @override
-  Future<Either<Failure, UserEntity>> call({
-    required RegisterParams params,
-  }) async {
-    final result = await repository.registerAccount(params: params);
 
-    return result;
+  @override
+  Future<Either<Failure, UserEntity>> call({required RegisterParams params}) {
+    return repository.registerAccount(params: params);
   }
 }
 
 class RegisterParams {
-  final String email;
   final String name;
-  final String gender;
-  final File? profilePictureUrl;
+  final String email;
   final String password;
+  final String gender;
+  final Uint8List? profilePictureBytes;
+  final String? profilePictureFileName;
+  final String? profilePictureUrl;
 
-  RegisterParams({
-    required this.email,
+  const RegisterParams({
     required this.name,
-    required this.gender,
-    this.profilePictureUrl,
+    required this.email,
     required this.password,
+    required this.gender,
+    this.profilePictureBytes,
+    this.profilePictureFileName,
+    this.profilePictureUrl,
   });
+
+  RegisterParams copyWith({
+    String? name,
+    String? email,
+    String? password,
+    String? gender,
+    Uint8List? profilePictureBytes,
+    String? profilePictureFileName,
+    String? profilePictureUrl,
+  }) {
+    return RegisterParams(
+      name: name ?? this.name,
+      email: email ?? this.email,
+      password: password ?? this.password,
+      gender: gender ?? this.gender,
+      profilePictureBytes: profilePictureBytes ?? this.profilePictureBytes,
+      profilePictureFileName:
+          profilePictureFileName ?? this.profilePictureFileName,
+      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
+    );
+  }
 }

@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/register_page.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
+import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,14 +27,15 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign In')),
+      appBar: AppBar(title: Text(localization.login)),
       body: BlocListener<AuthBloc, AuthState>(
         listenWhen: (p, c) => p.status != c.status,
         listener: (context, state) {
           if (state.status == AuthStatus.failure && state.failure != null) {
-            final f = state.failure!;
-            final text = f.message;
+            final localization = AppLocalizations.of(context)!;
+            final text = ErrorLocalizer.of(state.failure!, localization);
             ScaffoldMessenger.of(
               context,
             ).showSnackBar(SnackBar(content: Text(text)));
@@ -45,14 +48,14 @@ class _LoginPageState extends State<LoginPage> {
               TextField(
                 controller: emailCtrl,
                 keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(labelText: 'Email'),
+                decoration: InputDecoration(labelText: localization.email),
               ),
               const SizedBox(height: 12),
               TextField(
                 controller: passCtrl,
                 obscureText: obscure,
                 decoration: InputDecoration(
-                  labelText: 'Password',
+                  labelText: localization.password,
                   suffixIcon: IconButton(
                     icon: Icon(
                       obscure ? Icons.visibility : Icons.visibility_off,
@@ -83,7 +86,7 @@ class _LoginPageState extends State<LoginPage> {
                               width: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('Sign In'),
+                          : Text(localization.login),
                     ),
                   );
                 },
@@ -92,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text('No account?'),
+                  Text(localization.noAccount),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).pushReplacement(
@@ -101,7 +104,7 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       );
                     },
-                    child: const Text('Create one'),
+                    child: Text(localization.createAccount),
                   ),
                 ],
               ),

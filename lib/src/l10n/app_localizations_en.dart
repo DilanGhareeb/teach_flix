@@ -22,4 +22,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profile => 'Profile';
+
+  @override
+  String get register => 'Register';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get name => 'Name';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get createAccount => 'Create account';
+
+  @override
+  String get gender => 'Gender';
+
+  @override
+  String get unspecified => 'Unspecified';
+
+  @override
+  String get male => 'Male';
+
+  @override
+  String get female => 'Female';
+
+  @override
+  String get noAccount => 'No account?';
+
+  @override
+  String get errInvalidEmail => 'Invalid email address';
+
+  @override
+  String get errUserDisabled => 'This account has been disabled';
+
+  @override
+  String get errInvalidCredentials => 'Email or password is incorrect';
+
+  @override
+  String get errTooManyRequests => 'Too many attempts. Please try again later.';
+
+  @override
+  String get errSessionExpired => 'Session expired. Please sign in again.';
+
+  @override
+  String get errNetwork => 'No internet connection. Please check your network.';
+
+  @override
+  String get errOpNotAllowed => 'Email/password sign-in is not enabled.';
+
+  @override
+  String get errAuthUnknown => 'Authentication failed. Please try again.';
+
+  @override
+  String get errFsPermissionDenied =>
+      'You don’t have permission to access this data.';
+
+  @override
+  String get errFsUnavailable => 'Service unavailable. Check your connection.';
+
+  @override
+  String get errFsNotFound => 'Requested data was not found.';
+
+  @override
+  String get errFsUnknown => 'A database error occurred.';
+
+  @override
+  String get errServerGeneric => 'A server error occurred. Please try again.';
+
+  @override
+  String get errUnknown => 'Something went wrong. Please try again.';
+
+  @override
+  String get errFieldRequired => 'This field is required';
+
+  @override
+  String get errNameTooShort => 'Name is too short';
+
+  @override
+  String errPasswordTooShort(Object min) {
+    return 'Password must be at least $min characters';
+  }
 }

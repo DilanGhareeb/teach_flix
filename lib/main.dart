@@ -10,6 +10,7 @@ import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 import 'package:teach_flix/src/service_locator.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Teach Flix',
         debugShowCheckedModeBanner: false,
-        locale: const Locale('en'),
+        locale: const Locale('ckb'),
         supportedLocales: const [Locale('en'), Locale('ckb')],
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -58,8 +59,8 @@ class _AuthGate extends StatelessWidget {
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
         if (state.status == AuthStatus.failure && state.failure != null) {
-          final f = state.failure!;
-          final text = f.code == null ? f.message : '${f.message} (${f.code})';
+          final localization = AppLocalizations.of(context)!;
+          final text = ErrorLocalizer.of(state.failure!, localization);
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(text)));
