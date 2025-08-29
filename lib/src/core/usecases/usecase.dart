@@ -4,3 +4,7 @@ import 'package:teach_flix/src/core/errors/failures.dart';
 abstract class Usecase<Input, Output> {
   Future<Either<Failure, Output>> call({required Input params});
 }
+
+abstract class NoParamsStreamUsecase<Output> {
+  Stream<Output> call();
+}

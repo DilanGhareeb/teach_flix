@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AuthBloc>(
-      create: (_) => sl<AuthBloc>(),
+      create: (_) => sl<AuthBloc>()..add(const AuthBootstrapRequested()),
       child: MaterialApp(
         title: 'Teach Flix',
         debugShowCheckedModeBanner: false,

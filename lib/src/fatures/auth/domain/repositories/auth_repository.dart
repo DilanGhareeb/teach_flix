@@ -1,9 +1,14 @@
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
+import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 
 abstract class AuthRepository {
+  Stream<AuthSession> watchSession();
+
+  Future<Either<Failure, UserEntity>> fetchUserById(String uid);
+
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
     required String email,
     required String password,

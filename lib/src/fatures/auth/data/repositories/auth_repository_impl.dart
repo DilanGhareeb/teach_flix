@@ -2,6 +2,7 @@ import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
 import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
+import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
@@ -9,6 +10,17 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiDatasource authApiDatasource;
   AuthRepositoryImpl({required this.authApiDatasource});
+
+  @override
+  Stream<AuthSession> watchSession() {
+    return authApiDatasource.watchSession();
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> fetchUserById(String uid) async {
+    final either = await authApiDatasource.fetchUserById(uid: uid);
+    return either.fold(Left.new, (UserModel m) => Right(m));
+  }
 
   @override
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({

@@ -6,6 +6,17 @@ sealed class AuthEvent extends Equatable {
   List<Object?> get props => [];
 }
 
+final class AuthBootstrapRequested extends AuthEvent {
+  const AuthBootstrapRequested();
+}
+
+final class _AuthSessionChanged extends AuthEvent {
+  final AuthSession session;
+  const _AuthSessionChanged(this.session);
+  @override
+  List<Object?> get props => [session.uid];
+}
+
 final class AuthLoginRequested extends AuthEvent {
   final String email;
   final String password;

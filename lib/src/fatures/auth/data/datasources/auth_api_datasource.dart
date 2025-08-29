@@ -5,9 +5,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
+import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 
 abstract class AuthApiDatasource {
+  Stream<AuthSession> watchSession();
+
+  Future<Either<Failure, UserModel>> fetchUserById({required String uid});
+
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -28,6 +33,31 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
   AuthApiDatasourceImpl({FirebaseFirestore? fireStore, FirebaseAuth? fireAuth})
     : _fireStore = fireStore ?? FirebaseFirestore.instance,
       _fireAuth = fireAuth ?? FirebaseAuth.instance;
+
+  @override
+  Stream<AuthSession> watchSession() =>
+      _fireAuth.authStateChanges().map((user) => AuthSession(uid: user?.uid));
+
+  @override
+  Future<Either<Failure, UserModel>> fetchUserById({
+    required String uid,
+  }) async {
+    try {
+      final snap = await _fireStore.collection(_users).doc(uid).get();
+      final data = snap.data();
+      if (data == null) {
+        return const Left(
+          UnknownFailure(message: 'Profile document not found'),
+        );
+      }
+      return Right(UserModel.fromMap(data));
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code, e.message));
+    } catch (e) {
+      inspect(e);
+      return const Left(UnknownFailure());
+    }
+  }
 
   @override
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
