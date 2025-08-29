@@ -2,6 +2,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
@@ -48,9 +49,6 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _submit(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    // Local validation
     if (!formKey.currentState!.validate()) return;
 
     final name = nameCtrl.text.trim();
@@ -71,18 +69,26 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final localization = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.register)),
+      appBar: AppBar(title: Text(localization.register)),
       body: BlocListener<AuthBloc, AuthState>(
         listenWhen: (p, c) => p.status != c.status,
         listener: (context, state) async {
           if (state.status == AuthStatus.failure && state.failure != null) {
-            final msg = ErrorLocalizer.of(state.failure!, l10n);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(msg)));
+            final msg = ErrorLocalizer.of(state.failure!, localization);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  msg,
+                  style: TextStyle(
+                    fontFamily: AppTheme.getFontFamily(languageCode),
+                  ),
+                ),
+              ),
+            );
           }
           if (state.status == AuthStatus.authenticated && mounted) {
             Navigator.of(context).pop();
@@ -113,11 +119,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     textCapitalization: TextCapitalization.words,
                     textInputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.name],
-                    decoration: InputDecoration(labelText: l10n.name),
+                    decoration: InputDecoration(labelText: localization.name),
                     validator: (v) {
-                      if (v == null || v.trim().isEmpty)
-                        return l10n.errFieldRequired;
-                      if (v.trim().length < 2) return l10n.errNameTooShort;
+                      if (v == null || v.trim().isEmpty) {
+                        return localization.errFieldRequired;
+                      }
+                      if (v.trim().length < 2) {
+                        return localization.errNameTooShort;
+                      }
                       return null;
                     },
                   ),
@@ -127,12 +136,14 @@ class _RegisterPageState extends State<RegisterPage> {
                     keyboardType: TextInputType.emailAddress,
                     textInputAction: TextInputAction.next,
                     autofillHints: const [AutofillHints.email],
-                    decoration: InputDecoration(labelText: l10n.email),
+                    decoration: InputDecoration(labelText: localization.email),
                     validator: (v) {
                       final value = v?.trim() ?? '';
-                      if (value.isEmpty) return l10n.errFieldRequired;
+                      if (value.isEmpty) return localization.errFieldRequired;
                       final emailRe = RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$');
-                      if (!emailRe.hasMatch(value)) return l10n.errInvalidEmail;
+                      if (!emailRe.hasMatch(value)) {
+                        return localization.errInvalidEmail;
+                      }
                       return null;
                     },
                   ),
@@ -144,7 +155,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     autofillHints: const [AutofillHints.newPassword],
                     onFieldSubmitted: (_) => _submit(context),
                     decoration: InputDecoration(
-                      labelText: l10n.password,
+                      labelText: localization.password,
                       suffixIcon: IconButton(
                         icon: Icon(
                           obscure ? Icons.visibility : Icons.visibility_off,
@@ -154,8 +165,10 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                     validator: (v) {
                       final value = v ?? '';
-                      if (value.isEmpty) return l10n.errFieldRequired;
-                      if (value.length < 6) return l10n.errPasswordTooShort(6);
+                      if (value.isEmpty) return localization.errFieldRequired;
+                      if (value.length < 6) {
+                        return localization.errPasswordTooShort(6);
+                      }
                       return null;
                     },
                   ),
@@ -165,16 +178,19 @@ class _RegisterPageState extends State<RegisterPage> {
                     items: [
                       DropdownMenuItem(
                         value: 'unspecified',
-                        child: Text(l10n.unspecified),
+                        child: Text(localization.unspecified),
                       ),
-                      DropdownMenuItem(value: 'male', child: Text(l10n.male)),
+                      DropdownMenuItem(
+                        value: 'male',
+                        child: Text(localization.male),
+                      ),
                       DropdownMenuItem(
                         value: 'female',
-                        child: Text(l10n.female),
+                        child: Text(localization.female),
                       ),
                     ],
                     onChanged: (v) => setState(() => gender = v ?? gender),
-                    decoration: InputDecoration(labelText: l10n.gender),
+                    decoration: InputDecoration(labelText: localization.gender),
                   ),
                   const SizedBox(height: 24),
                   BlocBuilder<AuthBloc, AuthState>(
@@ -193,7 +209,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                     strokeWidth: 2,
                                   ),
                                 )
-                              : Text(l10n.createAccount),
+                              : Text(localization.createAccount),
                         ),
                       );
                     },

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/register_page.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
@@ -28,6 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
+    final languageCode = Localizations.localeOf(context).languageCode;
     return Scaffold(
       appBar: AppBar(title: Text(localization.login)),
       body: BlocListener<AuthBloc, AuthState>(
@@ -36,9 +38,16 @@ class _LoginPageState extends State<LoginPage> {
           if (state.status == AuthStatus.failure && state.failure != null) {
             final localization = AppLocalizations.of(context)!;
             final text = ErrorLocalizer.of(state.failure!, localization);
-            ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(text)));
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  text,
+                  style: TextStyle(
+                    fontFamily: AppTheme.getFontFamily(languageCode),
+                  ),
+                ),
+              ),
+            );
           }
         },
         child: Padding(
