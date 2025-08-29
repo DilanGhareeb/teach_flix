@@ -50,3 +50,4 @@ ios/Runner/GoogleService-Info.plist
 macos/Runner/GoogleService-Info.plist
 web/firebase-config.js
 lib/firebase_options.dart
+firebase.json
