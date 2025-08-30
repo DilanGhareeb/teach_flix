@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/fatures/auth/presentation/pages/edit_profile_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/widgets/action_header_card.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/widgets/section_card.dart';
@@ -87,8 +88,11 @@ class _SettingsPageState extends State<SettingsPage> {
                       email: email,
                       photoUrl: photo,
                       onEditProfile: () {
-                        // TODO: navigate to your Edit Profile page
-                        // context.push('/profile/edit');
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => const EditProfilePage(),
+                          ),
+                        );
                       },
                     ),
 

@@ -217,5 +217,45 @@
   "fillYourDetails": "Please fill in your details",
   "@fillYourDetails": {
     "description": "Prompt for filling in user details"
+  },
+  "gallery": "Gallery",
+  "@gallery": {
+    "description": "Label for the gallery option"
+  },
+  "camera": "Camera",
+  "@camera": {
+    "description": "Label for the camera option"
+  },
+  "remove_photo": "Remove Photo",
+  "@remove_photo": {
+    "description": "Label for removing a photo"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Label for saving changes"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Label for canceling changes"
+  },
+  "profile_updated": "Profile updated",
+  "@profile_updated": {
+    "description": "Success message for profile update"
+  },
+  "name_hint": "Name",
+  "@name_hint": {
+    "description": "Hint for the name input field"
+  },
+  "name_required": "Name is required",
+  "@name_required": {
+    "description": "Error message for required name"
+  },
+  "name_too_short": "Name is too short",
+  "@name_too_short": {
+    "description": "Error message for too short name"
+  },
+  "save_changes": "Save Changes",
+  "@save_changes": {
+    "description": "Label for saving changes"
   }
 }

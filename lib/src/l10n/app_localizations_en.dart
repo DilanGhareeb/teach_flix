@@ -171,4 +171,34 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fillYourDetails => 'Please fill in your details';
+
+  @override
+  String get gallery => 'Gallery';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get remove_photo => 'Remove Photo';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get profile_updated => 'Profile updated';
+
+  @override
+  String get name_hint => 'Name';
+
+  @override
+  String get name_required => 'Name is required';
+
+  @override
+  String get name_too_short => 'Name is too short';
+
+  @override
+  String get save_changes => 'Save Changes';
 }

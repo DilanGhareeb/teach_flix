@@ -177,4 +177,34 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get fillYourDetails => 'تکایە زانیارییەکان پڕبکەرەوە';
+
+  @override
+  String get gallery => 'گەلێری';
+
+  @override
+  String get camera => 'کامێرا';
+
+  @override
+  String get remove_photo => 'وەسفێکی وەسفە بکە';
+
+  @override
+  String get save => 'پاشەکەوتکردن';
+
+  @override
+  String get cancel => 'هەڵوەشاندنەوە';
+
+  @override
+  String get profile_updated => 'پرۆفایل نوێکرایەوە';
+
+  @override
+  String get name_hint => 'ناو بنوسە';
+
+  @override
+  String get name_required => 'ناو پێویستە';
+
+  @override
+  String get name_too_short => 'ناو زۆر کورتە';
+
+  @override
+  String get save_changes => 'گۆڕانکارییەکان پاشەکەوت بکە';
 }

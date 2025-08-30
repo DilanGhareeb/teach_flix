@@ -6,6 +6,7 @@ import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiDatasource authApiDatasource;
@@ -43,4 +44,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<Either<Failure, void>> signOut() => authApiDatasource.signOut();
+
+  @override
+  Future<Either<Failure, UserEntity>> updateUserInfo({
+    required UpdateUserParams params,
+  }) async {
+    final either = await authApiDatasource.updateUserInfo(params: params);
+    return either.fold(Left.new, (UserEntity m) => Right(m));
+  }
 }

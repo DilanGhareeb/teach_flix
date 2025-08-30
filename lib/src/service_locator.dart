@@ -8,6 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
 import 'package:teach_flix/src/fatures/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
@@ -45,6 +46,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => WatchUserProfile(repository: sl()));
   sl.registerFactory(() => Login(repository: sl()));
   sl.registerFactory(() => Register(repository: sl()));
+  sl.registerFactory(() => UpdateUserInfo(sl()));
   sl.registerFactory(() => Logout(repository: sl()));
   sl.registerFactory(
     () => AuthBloc(
@@ -52,6 +54,7 @@ Future<void> setupServiceLocator() async {
       registerUsecase: sl(),
       watchAuthSession: sl(),
       getUserProfile: sl(),
+      updateUserInfo: sl(),
       logoutUsecase: sl(),
     ),
   );

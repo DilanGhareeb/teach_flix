@@ -415,6 +415,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please fill in your details'**
   String get fillYourDetails;
+
+  /// Label for the gallery option
+  ///
+  /// In en, this message translates to:
+  /// **'Gallery'**
+  String get gallery;
+
+  /// Label for the camera option
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// Label for removing a photo
+  ///
+  /// In en, this message translates to:
+  /// **'Remove Photo'**
+  String get remove_photo;
+
+  /// Label for saving changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// Label for canceling changes
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancel;
+
+  /// Success message for profile update
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated'**
+  String get profile_updated;
+
+  /// Hint for the name input field
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get name_hint;
+
+  /// Error message for required name
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get name_required;
+
+  /// Error message for too short name
+  ///
+  /// In en, this message translates to:
+  /// **'Name is too short'**
+  String get name_too_short;
+
+  /// Label for saving changes
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get save_changes;
 }
 
 class _AppLocalizationsDelegate

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
@@ -20,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Register registerUsecase;
   final WatchAuthSession watchAuthSession;
   final WatchUserProfile getUserProfile;
+  final UpdateUserInfo updateUserInfo;
   final Logout logoutUsecase;
 
   StreamSubscription<AuthSession>? _authSub;
@@ -30,6 +32,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.registerUsecase,
     required this.watchAuthSession,
     required this.getUserProfile,
+    required this.updateUserInfo,
     required this.logoutUsecase,
   }) : super(const AuthState()) {
     on<AuthBootstrapRequested>(_onBootstrap);
@@ -37,6 +40,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     on<_AuthProfileChanged>(_onProfileChanged);
     on<_AuthProfileFailed>(_onProfileFailed);
+
+    on<AuthUpdateUserRequested>(_onUpdateUserRequested);
 
     on<AuthLoginRequested>(_onLogin);
     on<AuthRegisterRequested>(_onRegister);
@@ -112,6 +117,18 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         gender: e.gender,
       ),
     );
+    r.fold(
+      (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
+      (_) {},
+    );
+  }
+
+  Future<void> _onUpdateUserRequested(
+    AuthUpdateUserRequested e,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, failure: null));
+    final r = await updateUserInfo(params: e.params);
     r.fold(
       (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
       (_) {},

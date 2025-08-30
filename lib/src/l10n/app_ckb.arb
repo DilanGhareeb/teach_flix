@@ -52,5 +52,15 @@
   "change_password": "گۆڕینی وشەی نهێنی",
   "security": "پاراستن",
   "welcomeBack": "بەخێربێیتەوە",
-  "fillYourDetails": "تکایە زانیارییەکان پڕبکەرەوە"
+  "fillYourDetails": "تکایە زانیارییەکان پڕبکەرەوە",
+  "gallery": "گەلێری",
+  "camera": "کامێرا",
+  "remove_photo": "وەسفێکی وەسفە بکە",
+  "save": "پاشەکەوتکردن",
+  "cancel": "هەڵوەشاندنەوە",
+  "profile_updated": "پرۆفایل نوێکرایەوە",
+  "name_hint": "ناو بنوسە",
+  "name_required": "ناو پێویستە",
+  "name_too_short": "ناو زۆر کورتە",
+  "save_changes": "گۆڕانکارییەکان پاشەکەوت بکە"
 }

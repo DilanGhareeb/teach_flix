@@ -1,4 +1,3 @@
-// domain/usecase/logout_usecase.dart
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';

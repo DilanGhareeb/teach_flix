@@ -40,7 +40,7 @@ class UserModel extends UserEntity {
       email: (map['email'] ?? '').toString(),
       name: (map['name'] ?? '').toString(),
       gender: (map['gender'] ?? '').toString(),
-      profilePictureUrl: map['profilePictureUrl'] as String?,
+      profilePictureUrl: map['avatar_url'] as String?,
       createdAt: parseTimestamp(map['createdAt']),
       updatedAt: parseTimestamp(map['updatedAt']),
       isEmailVerified: (map['isEmailVerified'] as bool?) ?? false,

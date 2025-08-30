@@ -39,6 +39,13 @@ final class AuthLoginRequested extends AuthEvent {
   List<Object?> get props => [email, password];
 }
 
+final class AuthUpdateUserRequested extends AuthEvent {
+  final UpdateUserParams params;
+  const AuthUpdateUserRequested(this.params);
+  @override
+  List<Object?> get props => [params];
+}
+
 final class AuthRegisterRequested extends AuthEvent {
   final String name;
   final String email;

@@ -10,7 +10,6 @@ import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
-import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';

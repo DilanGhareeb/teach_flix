@@ -8,7 +8,9 @@ import 'package:firebase_storage/firebase_storage.dart' as fs;
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/auth/data/models/user_model.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
+import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
 
 abstract class AuthApiDatasource {
   Stream<AuthSession> watchSession();
@@ -20,12 +22,18 @@ abstract class AuthApiDatasource {
   Future<Either<Failure, UserModel>> registerAccount({
     required RegisterParams params,
   });
+
+  Future<Either<Failure, UserEntity>> updateUserInfo({
+    required UpdateUserParams params,
+  });
+
   Future<Either<Failure, void>> signOut();
 }
 
 class AuthApiDatasourceImpl implements AuthApiDatasource {
   final FirebaseFirestore _fireStore;
   final FirebaseAuth _fireAuth;
+  final fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
   static const _users = 'users';
 
   AuthApiDatasourceImpl({
@@ -147,6 +155,50 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       return Right(UserModel.fromMap(data));
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure.fromFirebaseAuthCode(e.code));
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateUserInfo({
+    required UpdateUserParams params,
+  }) async {
+    try {
+      final user = _fireAuth.currentUser;
+      if (user == null) {
+        return left(AuthFailure.fromFirebaseAuthCode("user-not-found"));
+      }
+
+      final uid = user.uid;
+      final userRef = _fireStore.collection('users').doc(uid);
+
+      final updateMap = params.toMap();
+
+      if (params.imageProfile != null) {
+        final ref = storage.ref().child('user_avatars').child('$uid.jpg');
+        await ref.putData(
+          params.imageProfile!,
+          fs.SettableMetadata(contentType: 'image/jpeg'),
+        );
+        final avatarUrl = await ref.getDownloadURL();
+        updateMap['avatarUrl'] = avatarUrl;
+      }
+
+      if (updateMap.isEmpty) {
+        return left(UnknownFailure());
+      }
+
+      await userRef.update(updateMap);
+
+      final updatedSnap = await userRef.get();
+      final updatedModel = UserModel.fromMap(
+        updatedSnap.data()!..['uid'] = uid,
+      );
+
+      return right(updatedModel);
+    } on FirebaseAuthException catch (e) {
+      return left(AuthFailure.fromFirebaseAuthCode(e.code));
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     }
