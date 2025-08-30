@@ -403,6 +403,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Edit Profile'**
   String get edit_profile;
+
+  /// Greeting for returning users
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get welcomeBack;
+
+  /// Prompt for filling in user details
+  ///
+  /// In en, this message translates to:
+  /// **'Please fill in your details'**
+  String get fillYourDetails;
 }
 
 class _AppLocalizationsDelegate

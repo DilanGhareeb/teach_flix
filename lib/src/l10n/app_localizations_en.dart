@@ -165,4 +165,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit_profile => 'Edit Profile';
+
+  @override
+  String get welcomeBack => 'Welcome back';
+
+  @override
+  String get fillYourDetails => 'Please fill in your details';
 }

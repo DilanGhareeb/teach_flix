@@ -209,5 +209,13 @@
   "edit_profile": "Edit Profile",
   "@edit_profile": {
     "description": "Label for the edit profile option"
+  },
+  "welcomeBack": "Welcome back",
+  "@welcomeBack": {
+    "description": "Greeting for returning users"
+  },
+  "fillYourDetails": "Please fill in your details",
+  "@fillYourDetails": {
+    "description": "Prompt for filling in user details"
   }
 }

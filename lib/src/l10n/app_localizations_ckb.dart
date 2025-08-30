@@ -171,4 +171,10 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get edit_profile => 'دەستکاری پرۆفایل';
+
+  @override
+  String get welcomeBack => 'بەخێربێیتەوە';
+
+  @override
+  String get fillYourDetails => 'تکایە زانیارییەکان پڕبکەرەوە';
 }
