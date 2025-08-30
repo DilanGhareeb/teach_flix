@@ -125,33 +125,21 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
         return const Left(UnknownFailure());
       }
 
-      String? downloadUrl;
-      if (params.profilePictureBytes != null &&
-          params.profilePictureBytes!.isNotEmpty) {
-        final fileName =
-            (params.profilePictureFileName?.trim().isNotEmpty ?? false)
-            ? params.profilePictureFileName!.trim()
-            : 'avatar.jpg';
-        final ref = _storage.ref().child('users/$uid/$fileName');
-        await ref.putData(
-          params.profilePictureBytes!,
-          fs.SettableMetadata(contentType: 'image/jpeg'),
-        );
-        downloadUrl = await ref.getDownloadURL();
-      }
-
       final doc = _fireStore.collection(_users).doc(uid);
-      await doc.set({
+
+      final now = DateTime.now().toUtc();
+      final userData = <String, dynamic>{
         'id': uid,
         'email': params.email,
         'name': params.name,
         'gender': params.gender,
-        'profilePictureUrl': downloadUrl ?? params.profilePictureUrl,
         'isEmailVerified': cred.user?.emailVerified ?? false,
         'role': 'student',
-        'createdAt': DateTime.now().toUtc(),
-        'updatedAt': DateTime.now().toUtc(),
-      }, SetOptions(merge: true));
+        'createdAt': now,
+        'updatedAt': now,
+      };
+
+      await doc.set(userData, SetOptions(merge: true));
 
       final snap = await doc.get();
       final data = snap.data();

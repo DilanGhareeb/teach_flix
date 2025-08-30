@@ -1,4 +1,3 @@
-import 'dart:typed_data';
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/core/usecases/usecase.dart';
@@ -20,18 +19,12 @@ class RegisterParams {
   final String email;
   final String password;
   final String gender;
-  final Uint8List? profilePictureBytes;
-  final String? profilePictureFileName;
-  final String? profilePictureUrl;
 
   const RegisterParams({
     required this.name,
     required this.email,
     required this.password,
     required this.gender,
-    this.profilePictureBytes,
-    this.profilePictureFileName,
-    this.profilePictureUrl,
   });
 
   RegisterParams copyWith({
@@ -39,19 +32,12 @@ class RegisterParams {
     String? email,
     String? password,
     String? gender,
-    Uint8List? profilePictureBytes,
-    String? profilePictureFileName,
-    String? profilePictureUrl,
   }) {
     return RegisterParams(
       name: name ?? this.name,
       email: email ?? this.email,
       password: password ?? this.password,
       gender: gender ?? this.gender,
-      profilePictureBytes: profilePictureBytes ?? this.profilePictureBytes,
-      profilePictureFileName:
-          profilePictureFileName ?? this.profilePictureFileName,
-      profilePictureUrl: profilePictureUrl ?? this.profilePictureUrl,
     );
   }
 }

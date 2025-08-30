@@ -22,30 +22,12 @@ class _RegisterPageState extends State<RegisterPage> {
   String gender = 'unspecified';
   bool obscure = true;
 
-  Uint8List? avatarBytes;
-  String? avatarFileName;
-
   @override
   void dispose() {
     nameCtrl.dispose();
     emailCtrl.dispose();
     passCtrl.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(
-      source: ImageSource.gallery,
-      imageQuality: 85,
-    );
-    if (picked == null) return;
-    final bytes = await picked.readAsBytes();
-    if (!mounted) return;
-    setState(() {
-      avatarBytes = bytes;
-      avatarFileName = picked.name;
-    });
   }
 
   void _submit(BuildContext context) {
@@ -61,8 +43,6 @@ class _RegisterPageState extends State<RegisterPage> {
         email: email,
         password: pass,
         gender: gender,
-        avatarBytes: avatarBytes,
-        avatarFileName: avatarFileName,
       ),
     );
   }
@@ -147,41 +127,6 @@ class _RegisterPageState extends State<RegisterPage> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                CircleAvatar(
-                                  radius: 48,
-                                  backgroundImage: avatarBytes != null
-                                      ? MemoryImage(avatarBytes!)
-                                      : null,
-                                  child: avatarBytes == null
-                                      ? Icon(
-                                          Icons.person_rounded,
-                                          size: 48,
-                                          color: cs.onSurfaceVariant,
-                                        )
-                                      : null,
-                                ),
-                                Material(
-                                  color: cs.primary,
-                                  shape: const CircleBorder(),
-                                  child: InkWell(
-                                    customBorder: const CircleBorder(),
-                                    onTap: _pickImage,
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(8),
-                                      child: Icon(
-                                        Icons.camera_alt_rounded,
-                                        size: 18,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
                             Text(
                               localization.createAccount,
                               style: Theme.of(context).textTheme.headlineSmall

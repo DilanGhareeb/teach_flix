@@ -110,7 +110,6 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: e.email,
         password: e.password,
         gender: e.gender,
-        profilePictureUrl: null,
       ),
     );
     r.fold(

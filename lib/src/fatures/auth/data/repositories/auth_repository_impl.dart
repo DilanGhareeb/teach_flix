@@ -18,7 +18,6 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Stream<Either<Failure, UserEntity>> watchUserById(String uid) {
-    // Already a Stream<Either<Failure, UserModel>>
     return authApiDatasource.watchUserById(uid: uid);
   }
 
@@ -38,15 +37,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, UserEntity>> registerAccount({
     required RegisterParams params,
   }) async {
-    final either = await authApiDatasource.registerAccount(
-      params: RegisterParams(
-        name: params.name,
-        email: params.email,
-        password: params.password,
-        gender: params.gender,
-        profilePictureUrl: params.profilePictureUrl,
-      ),
-    );
+    final either = await authApiDatasource.registerAccount(params: params);
     return either.fold(Left.new, (UserModel m) => Right(m));
   }
 

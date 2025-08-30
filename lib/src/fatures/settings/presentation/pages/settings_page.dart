@@ -179,7 +179,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                   const SizedBox(height: 24),
 
-                  /// VERSION
                   Center(
                     child: Text(
                       t.app_version('1.0.0'),

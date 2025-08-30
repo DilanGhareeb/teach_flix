@@ -33,6 +33,8 @@ class QuickAction extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.w500,
