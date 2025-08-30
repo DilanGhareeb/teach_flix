@@ -115,4 +115,33 @@ class AppLocalizationsCkb extends AppLocalizations {
   String errPasswordTooShort(Object min) {
     return 'وشەی نهێنی دەبێت لانی کەم $min تیپ بێت';
   }
+
+  @override
+  String get my_account => 'هەژماری من';
+
+  @override
+  String get settings => 'ڕێکخستن';
+
+  @override
+  String get dark_mode => 'مۆدی تاریک';
+
+  @override
+  String get light_mode => 'مۆدی ڕوناک';
+
+  @override
+  String get language => 'زمان';
+
+  @override
+  String get select_language => 'زمان هەڵبژێرە';
+
+  @override
+  String get english => 'ئینگلیزی';
+
+  @override
+  String get kurdish => 'کوردی';
+
+  @override
+  String app_version(Object version) {
+    return 'وەشانی بەرنامە: $version';
+  }
 }

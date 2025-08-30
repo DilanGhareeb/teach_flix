@@ -134,5 +134,44 @@
     "placeholders": {
       "min": {}
     }
+  },
+  "my_account": "My Account",
+  "@my_account": {
+    "description": "Label for the user's account section"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings page title"
+  },
+  "dark_mode": "Dark Mode",
+  "@dark_mode": {
+    "description": "Label for the dark mode toggle"
+  },
+  "light_mode": "Light Mode",
+  "@light_mode": {
+    "description": "Label for the light mode toggle"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Label for the language selection dropdown"
+  },
+  "select_language": "Select Language",
+  "@select_language": {
+    "description": "Prompt to select a language"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "kurdish": "Kurdish",
+  "@kurdish": {
+    "description": "Kurdish language option"
+  },
+  "app_version": "App Version: {version}",
+  "@app_version": {
+    "description": "Label displaying the app version",
+    "placeholders": {
+      "version": {}
+    }
   }
 }

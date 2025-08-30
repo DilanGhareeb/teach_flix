@@ -109,4 +109,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String errPasswordTooShort(Object min) {
     return 'Password must be at least $min characters';
   }
+
+  @override
+  String get my_account => 'My Account';
+
+  @override
+  String get settings => 'Settings';
+
+  @override
+  String get dark_mode => 'Dark Mode';
+
+  @override
+  String get light_mode => 'Light Mode';
+
+  @override
+  String get language => 'Language';
+
+  @override
+  String get select_language => 'Select Language';
+
+  @override
+  String get english => 'English';
+
+  @override
+  String get kurdish => 'Kurdish';
+
+  @override
+  String app_version(Object version) {
+    return 'App Version: $version';
+  }
 }

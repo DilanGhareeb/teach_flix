@@ -32,5 +32,14 @@
   "errUnknown": "هەڵەیەکی نەزانراو ڕوویدا. تکایە دووبارە هەوڵبدە.",
   "errFieldRequired": "ئەم خانەیە پێویسته",
   "errNameTooShort": "ناوەکە زۆر کورتە",
-  "errPasswordTooShort": "وشەی نهێنی دەبێت لانی کەم {min} تیپ بێت"
+  "errPasswordTooShort": "وشەی نهێنی دەبێت لانی کەم {min} تیپ بێت",
+  "my_account": "هەژماری من",
+  "settings": "ڕێکخستن",
+  "language": "زمان",
+  "select_language": "زمان هەڵبژێرە",
+  "dark_mode": "مۆدی تاریک",
+  "light_mode": "مۆدی ڕوناک",
+  "english": "ئینگلیزی",
+  "kurdish": "کوردی",
+  "app_version": "وەشانی بەرنامە: {version}"
 }

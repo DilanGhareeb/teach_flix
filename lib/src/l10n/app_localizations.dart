@@ -295,6 +295,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password must be at least {min} characters'**
   String errPasswordTooShort(Object min);
+
+  /// Label for the user's account section
+  ///
+  /// In en, this message translates to:
+  /// **'My Account'**
+  String get my_account;
+
+  /// Settings page title
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settings;
+
+  /// Label for the dark mode toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get dark_mode;
+
+  /// Label for the light mode toggle
+  ///
+  /// In en, this message translates to:
+  /// **'Light Mode'**
+  String get light_mode;
+
+  /// Label for the language selection dropdown
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get language;
+
+  /// Prompt to select a language
+  ///
+  /// In en, this message translates to:
+  /// **'Select Language'**
+  String get select_language;
+
+  /// English language option
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get english;
+
+  /// Kurdish language option
+  ///
+  /// In en, this message translates to:
+  /// **'Kurdish'**
+  String get kurdish;
+
+  /// Label displaying the app version
+  ///
+  /// In en, this message translates to:
+  /// **'App Version: {version}'**
+  String app_version(Object version);
 }
 
 class _AppLocalizationsDelegate

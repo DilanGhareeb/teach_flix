@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
+import 'package:teach_flix/src/fatures/settings/presentation/pages/settings_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class MainPage extends StatefulWidget {
@@ -35,7 +36,7 @@ class _MainPageState extends State<MainPage> {
           _HomePage(),
           _LikesPage(),
           _SearchPage(),
-          _ProfilePage(),
+          SettingsPage(),
         ],
       ),
 
