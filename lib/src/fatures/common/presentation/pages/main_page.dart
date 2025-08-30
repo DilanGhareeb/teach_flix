@@ -41,6 +41,9 @@ class _MainPageState extends State<MainPage> {
       ),
 
       bottomNavigationBar: SalomonBottomBar(
+        backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+        itemPadding: EdgeInsets.all(15),
+        itemShape: StadiumBorder(),
         currentIndex: _index,
         onTap: (i) {
           final difference = (i - _index).abs();
@@ -129,14 +132,5 @@ class _SearchPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Placeholder(color: Colors.orange.withOpacity(0.3), strokeWidth: 2);
-  }
-}
-
-class _ProfilePage extends StatelessWidget {
-  const _ProfilePage();
-
-  @override
-  Widget build(BuildContext context) {
-    return Placeholder(color: Colors.teal.withOpacity(0.3), strokeWidth: 2);
   }
 }
