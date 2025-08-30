@@ -74,13 +74,7 @@ class _AuthGate extends StatelessWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
-        if (state.status == AuthStatus.failure && state.failure != null) {
-          final localization = AppLocalizations.of(context)!;
-          final text = ErrorLocalizer.of(state.failure!, localization);
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(text)));
-        }
+        if (state.status == AuthStatus.failure && state.failure != null) {}
       },
       builder: (context, state) {
         switch (state.status) {

@@ -149,10 +149,12 @@ class _RegisterPageState extends State<RegisterPage> {
                                 prefix: const Icon(Icons.badge_rounded),
                               ),
                               validator: (v) {
-                                if (v == null || v.trim().isEmpty)
+                                if (v == null || v.trim().isEmpty) {
                                   return localization.errFieldRequired;
-                                if (v.trim().length < 2)
+                                }
+                                if (v.trim().length < 2) {
                                   return localization.errNameTooShort;
+                                }
                                 return null;
                               },
                             ),
@@ -169,13 +171,15 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               validator: (v) {
                                 final value = v?.trim() ?? '';
-                                if (value.isEmpty)
+                                if (value.isEmpty) {
                                   return localization.errFieldRequired;
+                                }
                                 final emailRe = RegExp(
                                   r'^[^\s@]+@[^\s@]+\.[^\s@]+$',
                                 );
-                                if (!emailRe.hasMatch(value))
+                                if (!emailRe.hasMatch(value)) {
                                   return localization.errInvalidEmail;
+                                }
                                 return null;
                               },
                             ),
