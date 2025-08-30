@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
@@ -11,7 +12,7 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart
 
 abstract class AuthApiDatasource {
   Stream<AuthSession> watchSession();
-  Future<Either<Failure, UserModel>> fetchUserById({required String uid});
+  Stream<Either<Failure, UserModel>> watchUserById({required String uid});
   Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
     required String email,
     required String password,
@@ -37,26 +38,45 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
        _storage = storage ?? fs.FirebaseStorage.instance;
 
   @override
-  Stream<AuthSession> watchSession() =>
-      _fireAuth.authStateChanges().map((user) => AuthSession(uid: user?.uid));
+  Stream<AuthSession> watchSession() => _fireAuth.idTokenChanges().map(
+    (user) => AuthSession(isAuthenticated: user != null, uid: user?.uid),
+  );
 
   @override
-  Future<Either<Failure, UserModel>> fetchUserById({
-    required String uid,
-  }) async {
-    try {
-      final snap = await _fireStore.collection(_users).doc(uid).get();
-      final data = snap.data();
-      if (data == null) {
-        return const Left(UnknownFailure());
-      }
-      return Right(UserModel.fromMap(data));
-    } on FirebaseException catch (e) {
-      return Left(FirestoreFailure.fromFirebaseCode(e.code));
-    } catch (e) {
-      inspect(e);
-      return const Left(UnknownFailure());
-    }
+  Stream<Either<Failure, UserModel>> watchUserById({required String uid}) {
+    final ref = _fireStore.collection(_users).doc(uid);
+
+    return ref.snapshots().transform(
+      StreamTransformer.fromHandlers(
+        handleData:
+            (
+              DocumentSnapshot<Map<String, dynamic>> snap,
+              EventSink<Either<Failure, UserModel>> sink,
+            ) {
+              final data = snap.data();
+
+              if (!snap.exists || data == null) {
+                sink.add(const Left(UnknownFailure()));
+                return;
+              }
+
+              try {
+                final model = UserModel.fromMap({...data, 'id': snap.id});
+                sink.add(Right(model));
+              } catch (_) {
+                sink.add(const Left(UnknownFailure()));
+              }
+            },
+        handleError:
+            (error, stackTrace, EventSink<Either<Failure, UserModel>> sink) {
+              if (error is FirebaseException) {
+                sink.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
+              } else {
+                sink.add(const Left(UnknownFailure()));
+              }
+            },
+      ),
+    );
   }
 
   @override
@@ -129,8 +149,8 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
         'profilePictureUrl': downloadUrl ?? params.profilePictureUrl,
         'isEmailVerified': cred.user?.emailVerified ?? false,
         'role': 'student',
-        'createdAt': FieldValue.serverTimestamp(),
-        'updatedAt': FieldValue.serverTimestamp(),
+        'createdAt': DateTime.now().toUtc(),
+        'updatedAt': DateTime.now().toUtc(),
       }, SetOptions(merge: true));
 
       final snap = await doc.get();
@@ -143,9 +163,6 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       return Left(AuthFailure.fromFirebaseAuthCode(e.code));
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
-    } catch (e) {
-      inspect(e);
-      return const Left(UnknownFailure());
     }
   }
 

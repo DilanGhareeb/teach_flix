@@ -144,4 +144,31 @@ class AppLocalizationsCkb extends AppLocalizations {
   String app_version(Object version) {
     return 'وەشانی بەرنامە: $version';
   }
+
+  @override
+  String get anonymous => 'نەناسراو';
+
+  @override
+  String get no_email => 'ئیمەیل نییە';
+
+  @override
+  String get account => 'هەژمار';
+
+  @override
+  String get change_password => 'گۆڕینی وشەی نهێنی';
+
+  @override
+  String get activity => 'چالاکی';
+
+  @override
+  String get security => 'پاراستن';
+
+  @override
+  String get appearance => 'ڕووکار';
+
+  @override
+  String get logout => 'چوونەدەرەوە';
+
+  @override
+  String get edit_profile => 'دەستکاری پرۆفایل';
 }

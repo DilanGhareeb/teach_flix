@@ -1,10 +1,12 @@
 import 'dart:typed_data';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
+import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class RegisterPage extends StatefulWidget {

@@ -173,5 +173,41 @@
     "placeholders": {
       "version": {}
     }
+  },
+  "anonymous": "Anonymous",
+  "@anonymous": {
+    "description": "Label for anonymous user"
+  },
+  "no_email": "No email",
+  "@no_email": {
+    "description": "Label when no email is available"
+  },
+  "account": "Account & Security",
+  "@account": {
+    "description": "Section title for account and security settings"
+  },
+  "change_password": "Change Password",
+  "@change_password": {
+    "description": "Label for the change password option"
+  },
+  "activity": "Activity",
+  "@activity": {
+    "description": "Label for the activity option"
+  },
+  "security": "Security",
+  "@security": {
+    "description": "Label for the security option"
+  },
+  "appearance": "Appearance",
+  "@appearance": {
+    "description": "Label for the appearance option"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Label for the logout option"
+  },
+  "edit_profile": "Edit Profile",
+  "@edit_profile": {
+    "description": "Label for the edit profile option"
   }
 }

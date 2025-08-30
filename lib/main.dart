@@ -1,4 +1,3 @@
-// lib/main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,21 +81,18 @@ class _AuthGate extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        if (state.status == AuthStatus.loading) {
-          return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
-          );
+        switch (state.status) {
+          case AuthStatus.loading:
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          case AuthStatus.authenticated:
+            return const MainPage();
+          case AuthStatus.unauthenticated:
+            return const LoginPage();
+          case AuthStatus.failure:
+            return const LoginPage();
         }
-        if (state.status == AuthStatus.authenticated) {
-          return const KeyedSubtree(
-            key: ValueKey('main-shell'),
-            child: MainPage(),
-          );
-        }
-        return const KeyedSubtree(
-          key: ValueKey('login-shell'),
-          child: LoginPage(),
-        );
       },
     );
   }

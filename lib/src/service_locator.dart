@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
 import 'package:teach_flix/src/fatures/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
-import 'package:teach_flix/src/fatures/auth/domain/usecase/get_user_profile_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.dart';
@@ -42,7 +42,7 @@ Future<void> setupServiceLocator() async {
     () => AuthRepositoryImpl(authApiDatasource: sl()),
   );
   sl.registerFactory(() => WatchAuthSession(repository: sl()));
-  sl.registerFactory(() => GetUserProfile(repository: sl()));
+  sl.registerFactory(() => WatchUserProfile(repository: sl()));
   sl.registerFactory(() => Login(repository: sl()));
   sl.registerFactory(() => Register(repository: sl()));
   sl.registerFactory(() => Logout(repository: sl()));
@@ -56,13 +56,10 @@ Future<void> setupServiceLocator() async {
     ),
   );
 
-  // --- Settings graph (App Preferences) ---
-  // SharedPreferences is async; let GetIt create it and wait.
   sl.registerSingletonAsync<SharedPreferences>(() async {
     return await SharedPreferences.getInstance();
   });
 
-  // Wait until SharedPreferences is ready before wiring dependents.
   await sl.isReady<SharedPreferences>();
 
   sl.registerLazySingleton<AppPreferenceLocal>(

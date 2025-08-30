@@ -41,5 +41,14 @@
   "light_mode": "مۆدی ڕوناک",
   "english": "ئینگلیزی",
   "kurdish": "کوردی",
-  "app_version": "وەشانی بەرنامە: {version}"
+  "app_version": "وەشانی بەرنامە: {version}",
+  "anonymous": "نەناسراو",
+  "no_email": "ئیمەیل نییە",
+  "account": "هەژمار",
+  "edit_profile": "دەستکاری پرۆفایل",
+  "logout": "چوونەدەرەوە",
+  "appearance": "ڕووکار",
+  "activity": "چالاکی",
+  "change_password": "گۆڕینی وشەی نهێنی",
+  "security": "پاراستن"
 }

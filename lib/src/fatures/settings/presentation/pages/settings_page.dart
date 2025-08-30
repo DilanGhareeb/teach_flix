@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
+import 'package:teach_flix/src/fatures/settings/presentation/widgets/action_header_card.dart';
+import 'package:teach_flix/src/fatures/settings/presentation/widgets/quick_action.dart';
+import 'package:teach_flix/src/fatures/settings/presentation/widgets/section_card.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -20,69 +24,173 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(title: Text(t.settings)),
-      body: BlocBuilder<SettingsBloc, SettingsState>(
-        builder: (context, state) {
-          if (state.status == SettingsStatus.loading ||
-              state.status == SettingsStatus.initial) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: BlocBuilder<AuthBloc, AuthState>(
+        builder: (context, userState) {
+          return BlocBuilder<SettingsBloc, SettingsState>(
+            builder: (context, state) {
+              if (state.status == SettingsStatus.loading ||
+                  state.status == SettingsStatus.initial) {
+                return const Center(child: CircularProgressIndicator());
+              }
 
-          return ListView(
-            padding: const EdgeInsets.only(top: 30, left: 25.0, right: 25.0),
-            children: [
-              // Theme toggle
-              SwitchListTile(
-                title: Text(
-                  t.dark_mode,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                value: state.isDark,
-                onChanged: (v) {
-                  context.read<SettingsBloc>().add(SettingsThemeChanged(v));
-                },
-              ),
+              final user = userState.user;
+              final name = user?.name ?? t.anonymous;
+              final email = user?.email ?? t.no_email;
+              final photo = user?.profilePictureUrl;
 
-              const SizedBox(height: 10),
-
-              // Language selection dropdown
-              ListTile(
-                title: Text(
-                  t.language,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                trailing: DropdownButton<String>(
-                  value: state.languageCode,
-                  onChanged: (String? newLanguage) {
-                    if (newLanguage != null &&
-                        newLanguage != state.languageCode) {
-                      context.read<SettingsBloc>().add(
-                        SettingsLanguageChanged(newLanguage),
-                      );
-                      // If your app supports hot language switching, trigger it elsewhere
-                      // (e.g., via a LocaleNotifier or Router refresh)
-                    }
-                  },
-                  items: [
-                    DropdownMenuItem(value: 'ckb', child: Text(t.kurdish)),
-                    DropdownMenuItem(value: 'en', child: Text(t.english)),
-                  ],
-                ),
-              ),
-
-              // App version info
-              Padding(
-                padding: const EdgeInsets.only(top: 24.0),
-                child: Center(
-                  child: Text(
-                    t.app_version('1.0.0'),
-                    style: const TextStyle(fontSize: 14.0, color: Colors.grey),
+              return ListView(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+                children: [
+                  /// ACCOUNT HEADER CARD
+                  AccountHeaderCard(
+                    name: name,
+                    email: email,
+                    photoUrl: photo,
+                    onEditProfile: () {
+                      // TODO: navigate to your Edit Profile page
+                      // context.push('/profile/edit');
+                    },
                   ),
-                ),
-              ),
-            ],
+
+                  const SizedBox(height: 16),
+
+                  Row(
+                    children: [
+                      Expanded(
+                        child: QuickAction(
+                          icon: Icons.lock_outline,
+                          label: t.change_password,
+                          onTap: () {
+                            // TODO: navigate to change password
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: QuickAction(
+                          icon: Icons.history,
+                          label: t.activity,
+                          onTap: () {
+                            // TODO: navigate to activity/logs
+                          },
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: QuickAction(
+                          icon: Icons.verified_user_outlined,
+                          label: t.security,
+                          onTap: () {
+                            // TODO: navigate to 2FA/security
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  /// APPEARANCE
+                  Text(t.appearance, style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  SectionCard(
+                    children: [
+                      SwitchListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        title: Text(t.dark_mode),
+                        value: state.isDark,
+                        onChanged: (v) => context.read<SettingsBloc>().add(
+                          SettingsThemeChanged(v),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// LANGUAGE
+                  Text(t.language, style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  SectionCard(
+                    children: [
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        title: Text(t.language),
+                        trailing: DropdownButton<String>(
+                          value: state.languageCode,
+                          onChanged: (String? newLanguage) {
+                            if (newLanguage != null &&
+                                newLanguage != state.languageCode) {
+                              context.read<SettingsBloc>().add(
+                                SettingsLanguageChanged(newLanguage),
+                              );
+                            }
+                          },
+                          items: [
+                            DropdownMenuItem(
+                              value: 'ckb',
+                              child: Text(t.kurdish),
+                            ),
+                            DropdownMenuItem(
+                              value: 'en',
+                              child: Text(t.english),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  /// ACCOUNT & SECURITY
+                  Text(t.account, style: theme.textTheme.titleMedium),
+                  const SizedBox(height: 8),
+                  SectionCard(
+                    children: [
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        leading: const Icon(Icons.badge_outlined),
+                        subtitle: Text(user?.id ?? '-'),
+                      ),
+                      const Divider(height: 1),
+                      ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        leading: const Icon(Icons.logout),
+                        title: Text(t.logout),
+                        onTap: () {
+                          context.read<AuthBloc>().add(AuthLogoutRequested());
+                        },
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  /// VERSION
+                  Center(
+                    child: Text(
+                      t.app_version('1.0.0'),
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: const Color(0xFF9E9E9E), // grey600
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
           );
         },
       ),

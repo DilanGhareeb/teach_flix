@@ -13,13 +13,15 @@ class AuthState extends Equatable {
     this.failure,
   });
 
-  AuthState copyWith({AuthStatus? status, UserEntity? user, Failure? failure}) {
-    return AuthState(
-      status: status ?? this.status,
-      user: user ?? this.user,
-      failure: failure,
-    );
-  }
+  AuthState copyWith({
+    AuthStatus? status,
+    UserEntity? user,
+    Failure? failure,
+  }) => AuthState(
+    status: status ?? this.status,
+    user: user ?? this.user,
+    failure: failure,
+  );
 
   @override
   List<Object?> get props => [status, user, failure];

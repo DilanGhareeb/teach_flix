@@ -349,6 +349,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'App Version: {version}'**
   String app_version(Object version);
+
+  /// Label for anonymous user
+  ///
+  /// In en, this message translates to:
+  /// **'Anonymous'**
+  String get anonymous;
+
+  /// Label when no email is available
+  ///
+  /// In en, this message translates to:
+  /// **'No email'**
+  String get no_email;
+
+  /// Section title for account and security settings
+  ///
+  /// In en, this message translates to:
+  /// **'Account & Security'**
+  String get account;
+
+  /// Label for the change password option
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get change_password;
+
+  /// Label for the activity option
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get activity;
+
+  /// Label for the security option
+  ///
+  /// In en, this message translates to:
+  /// **'Security'**
+  String get security;
+
+  /// Label for the appearance option
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearance;
+
+  /// Label for the logout option
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logout;
+
+  /// Label for the edit profile option
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get edit_profile;
 }
 
 class _AppLocalizationsDelegate

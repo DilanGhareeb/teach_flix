@@ -4,12 +4,12 @@ import 'package:teach_flix/src/core/usecases/usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 
-class GetUserProfile extends Usecase<String, UserEntity> {
+class WatchUserProfile extends StreamUsecase<String, UserEntity> {
   final AuthRepository repository;
-  GetUserProfile({required this.repository});
+  WatchUserProfile({required this.repository});
 
   @override
-  Future<Either<Failure, UserEntity>> call({required String params}) {
-    return repository.fetchUserById(params);
+  Stream<Either<Failure, UserEntity>> call({required String params}) {
+    return repository.watchUserById(params);
   }
 }

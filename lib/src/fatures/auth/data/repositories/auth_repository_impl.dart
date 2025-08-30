@@ -17,9 +17,9 @@ class AuthRepositoryImpl implements AuthRepository {
   }
 
   @override
-  Future<Either<Failure, UserEntity>> fetchUserById(String uid) async {
-    final either = await authApiDatasource.fetchUserById(uid: uid);
-    return either.fold(Left.new, (UserModel m) => Right(m));
+  Stream<Either<Failure, UserEntity>> watchUserById(String uid) {
+    // Already a Stream<Either<Failure, UserModel>>
+    return authApiDatasource.watchUserById(uid: uid);
   }
 
   @override

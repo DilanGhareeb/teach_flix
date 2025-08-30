@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 
 class UserModel extends UserEntity {
@@ -17,20 +18,33 @@ class UserModel extends UserEntity {
   });
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
+    final roleRaw = (map['role'] ?? '').toString().toLowerCase();
+    final role = switch (roleRaw) {
+      'admin' => Role.admin,
+      'instructor' => Role.instructor,
+      _ => Role.student,
+    };
+
+    DateTime parseTimestamp(dynamic value) {
+      if (value is Timestamp) return value.toDate();
+      if (value is DateTime) return value;
+      if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
+      if (value is String)
+        return DateTime.tryParse(value) ??
+            DateTime.fromMillisecondsSinceEpoch(0);
+      return DateTime.fromMillisecondsSinceEpoch(0);
+    }
+
     return UserModel(
-      id: map['id'] ?? '',
-      email: map['email'] ?? '',
-      name: map['name'] ?? '',
-      gender: map['gender'] ?? '',
-      profilePictureUrl: map['profilePictureUrl'],
-      createdAt: map['createdAt'].toDate(),
-      updatedAt: map['updatedAt'].toDate(),
-      isEmailVerified: map['isEmailVerified'],
-      role: map['role'] == 'admin'
-          ? Role.admin
-          : map['role'] == 'instructor'
-          ? Role.instructor
-          : Role.student,
+      id: (map['id'] ?? '').toString(),
+      email: (map['email'] ?? '').toString(),
+      name: (map['name'] ?? '').toString(),
+      gender: (map['gender'] ?? '').toString(),
+      profilePictureUrl: map['profilePictureUrl'] as String?,
+      createdAt: parseTimestamp(map['createdAt']),
+      updatedAt: parseTimestamp(map['updatedAt']),
+      isEmailVerified: (map['isEmailVerified'] as bool?) ?? false,
+      role: role,
     );
   }
 

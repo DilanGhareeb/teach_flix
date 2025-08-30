@@ -5,6 +5,10 @@ abstract class Usecase<Input, Output> {
   Future<Either<Failure, Output>> call({required Input params});
 }
 
+abstract class StreamUsecase<Input, Output> {
+  Stream<Either<Failure, Output>> call({required Input params});
+}
+
 abstract class NormalNoParamsUsecase<Output> {
   Output call();
 }

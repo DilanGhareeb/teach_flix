@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                   Text(localization.noAccount),
                   TextButton(
                     onPressed: () {
-                      Navigator.of(context).pushReplacement(
+                      Navigator.of(context).push(
                         CupertinoPageRoute(
                           builder: (_) => const RegisterPage(),
                         ),

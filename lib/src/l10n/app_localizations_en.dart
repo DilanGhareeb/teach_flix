@@ -138,4 +138,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String app_version(Object version) {
     return 'App Version: $version';
   }
+
+  @override
+  String get anonymous => 'Anonymous';
+
+  @override
+  String get no_email => 'No email';
+
+  @override
+  String get account => 'Account & Security';
+
+  @override
+  String get change_password => 'Change Password';
+
+  @override
+  String get activity => 'Activity';
+
+  @override
+  String get security => 'Security';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get logout => 'Logout';
+
+  @override
+  String get edit_profile => 'Edit Profile';
 }

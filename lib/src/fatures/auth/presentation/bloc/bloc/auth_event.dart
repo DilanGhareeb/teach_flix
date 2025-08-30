@@ -17,6 +17,20 @@ final class _AuthSessionChanged extends AuthEvent {
   List<Object?> get props => [session.uid];
 }
 
+class _AuthProfileChanged extends AuthEvent {
+  final UserEntity user;
+  const _AuthProfileChanged(this.user);
+  @override
+  List<Object?> get props => [user];
+}
+
+class _AuthProfileFailed extends AuthEvent {
+  final Failure failure;
+  const _AuthProfileFailed(this.failure);
+  @override
+  List<Object?> get props => [failure];
+}
+
 final class AuthLoginRequested extends AuthEvent {
   final String email;
   final String password;

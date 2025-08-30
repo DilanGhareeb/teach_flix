@@ -7,7 +7,7 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart
 abstract class AuthRepository {
   Stream<AuthSession> watchSession();
 
-  Future<Either<Failure, UserEntity>> fetchUserById(String uid);
+  Stream<Either<Failure, UserEntity>> watchUserById(String uid);
 
   Future<Either<Failure, UserEntity>> signInWithEmailAndPassword({
     required String email,
