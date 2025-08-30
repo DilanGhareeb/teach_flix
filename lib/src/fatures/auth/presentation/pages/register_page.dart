@@ -1,7 +1,5 @@
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
@@ -19,7 +17,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final passCtrl = TextEditingController();
   final formKey = GlobalKey<FormState>();
 
-  String gender = 'unspecified';
+  String gender = 'male';
   bool obscure = true;
 
   @override
@@ -216,12 +214,11 @@ class _RegisterPageState extends State<RegisterPage> {
                             const SizedBox(height: 14),
                             DropdownButtonFormField<String>(
                               isExpanded: true,
-                              initialValue: gender,
+                              initialValue:
+                                  gender == 'male' || gender == 'female'
+                                  ? gender
+                                  : null,
                               items: [
-                                DropdownMenuItem(
-                                  value: 'unspecified',
-                                  child: Text(localization.unspecified),
-                                ),
                                 DropdownMenuItem(
                                   value: 'male',
                                   child: Text(localization.male),
@@ -240,7 +237,14 @@ class _RegisterPageState extends State<RegisterPage> {
                                   Icons.person_outline_rounded,
                                 ),
                               ),
+                              validator: (value) {
+                                if (value != 'male' && value != 'female') {
+                                  return localization.errFieldRequired;
+                                }
+                                return null;
+                              },
                             ),
+
                             const SizedBox(height: 22),
                             BlocBuilder<AuthBloc, AuthState>(
                               buildWhen: (p, c) => p.status != c.status,

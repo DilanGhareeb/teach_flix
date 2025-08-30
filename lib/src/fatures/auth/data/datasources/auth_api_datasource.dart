@@ -26,7 +26,6 @@ abstract class AuthApiDatasource {
 class AuthApiDatasourceImpl implements AuthApiDatasource {
   final FirebaseFirestore _fireStore;
   final FirebaseAuth _fireAuth;
-  final fs.FirebaseStorage _storage;
   static const _users = 'users';
 
   AuthApiDatasourceImpl({
@@ -34,8 +33,7 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
     FirebaseAuth? fireAuth,
     fs.FirebaseStorage? storage,
   }) : _fireStore = fireStore ?? FirebaseFirestore.instance,
-       _fireAuth = fireAuth ?? FirebaseAuth.instance,
-       _storage = storage ?? fs.FirebaseStorage.instance;
+       _fireAuth = fireAuth ?? FirebaseAuth.instance;
 
   @override
   Stream<AuthSession> watchSession() => _fireAuth.idTokenChanges().map(
