@@ -29,9 +29,10 @@ class UserModel extends UserEntity {
       if (value is Timestamp) return value.toDate();
       if (value is DateTime) return value;
       if (value is int) return DateTime.fromMillisecondsSinceEpoch(value);
-      if (value is String)
+      if (value is String) {
         return DateTime.tryParse(value) ??
             DateTime.fromMillisecondsSinceEpoch(0);
+      }
       return DateTime.fromMillisecondsSinceEpoch(0);
     }
 
@@ -40,7 +41,7 @@ class UserModel extends UserEntity {
       email: (map['email'] ?? '').toString(),
       name: (map['name'] ?? '').toString(),
       gender: (map['gender'] ?? '').toString(),
-      profilePictureUrl: map['avatar_url'] as String?,
+      profilePictureUrl: map['avatarUrl'] as String?,
       createdAt: parseTimestamp(map['createdAt']),
       updatedAt: parseTimestamp(map['updatedAt']),
       isEmailVerified: (map['isEmailVerified'] as bool?) ?? false,
