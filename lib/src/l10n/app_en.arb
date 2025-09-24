@@ -269,5 +269,37 @@
   "balance": "Balance",
   "@balance": {
     "description": "Label displaying the user's balance"
+  },
+  "apply_teacher": "Apply to become a Teacher",
+  "@apply_teacher": {
+    "description": "Label for applying to become a teacher"
+  },
+  "please_upload_id": "Please upload a valid ID",
+  "@please_upload_id": {
+    "description": "Prompt to upload a valid identification document"
+  },
+  "application_submitted": "Application submitted",
+  "@application_submitted": {
+    "description": "Success message for submitting an application"
+  },
+  "select_category": "Select a category",
+  "@select_category": {
+    "description": "Prompt to select a category"
+  },
+  "field_required": "This field is required",
+  "@field_required": {
+    "description": "Error message for required form fields"
+  },
+  "tap_to_upload": "Tap to upload",
+  "@tap_to_upload": {
+    "description": "Prompt to tap to upload a file"
+  },
+  "submit_application": "Submit Application",
+  "@submit_application": {
+    "description": "Label for submitting an application"
+  },
+  "upload_teacher_id": "Upload Teacher ID",
+  "@upload_teacher_id": {
+    "description": "Label for uploading a teacher identification document"
   }
 }

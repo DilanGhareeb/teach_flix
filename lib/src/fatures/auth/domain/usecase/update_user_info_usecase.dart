@@ -21,25 +21,34 @@ class UpdateUserInfo extends Usecase<UpdateUserParams, UserEntity> {
 class UpdateUserParams extends Equatable {
   final String? name;
   final String? gender;
+  final Role? role;
   final Uint8List? imageProfile;
 
-  const UpdateUserParams(this.name, this.gender, this.imageProfile);
+  const UpdateUserParams(
+    this.name,
+    this.gender,
+    this.imageProfile, {
+    this.role,
+  });
 
   UpdateUserParams copyWith({
     String? name,
     String? gender,
     Uint8List? imageProfile,
+    Role? role,
   }) {
     return UpdateUserParams(
       name ?? this.name,
       gender ?? this.gender,
       imageProfile ?? this.imageProfile,
+      role: role ?? this.role,
     );
   }
 
   Map<String, dynamic> toMap() => {
     if (name != null) 'name': name,
     if (gender != null) 'gender': gender,
+    if (role != null) 'role': role.toString().split('.').last,
   };
 
   @override

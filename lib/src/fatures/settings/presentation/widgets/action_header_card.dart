@@ -12,6 +12,7 @@ class AccountHeaderCard extends StatelessWidget {
     required this.balance,
     required this.photoUrl,
     required this.onEditProfile,
+    required this.onApplyTeacher,
   });
 
   final String name;
@@ -20,10 +21,12 @@ class AccountHeaderCard extends StatelessWidget {
   final String? photoUrl;
   final double balance;
   final VoidCallback onEditProfile;
+  final VoidCallback onApplyTeacher;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final t = AppLocalizations.of(context)!;
     final formatter = Formatter();
 
     return Container(
@@ -42,7 +45,7 @@ class AccountHeaderCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Top Row with Avatar + Info + Edit
+          /// Profile Row
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -111,10 +114,10 @@ class AccountHeaderCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(
-                  AppLocalizations.of(context)!.balance,
+                  t.balance,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onPrimary.withAlpha(220),
                   ),
@@ -130,6 +133,31 @@ class AccountHeaderCard extends StatelessWidget {
               ],
             ),
           ),
+
+          /// Student → Apply button
+          if (role.toLowerCase() == 'student') ...[
+            const SizedBox(height: 16),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.onPrimary,
+                  foregroundColor: theme.colorScheme.primary,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  elevation: 0,
+                ),
+                onPressed: onApplyTeacher,
+                icon: const Icon(Icons.school_outlined),
+                label: Text(
+                  t.apply_teacher,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+            ),
+          ],
         ],
       ),
     );

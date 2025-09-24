@@ -493,6 +493,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Balance'**
   String get balance;
+
+  /// Label for applying to become a teacher
+  ///
+  /// In en, this message translates to:
+  /// **'Apply to become a Teacher'**
+  String get apply_teacher;
+
+  /// Prompt to upload a valid identification document
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload a valid ID'**
+  String get please_upload_id;
+
+  /// Success message for submitting an application
+  ///
+  /// In en, this message translates to:
+  /// **'Application submitted'**
+  String get application_submitted;
+
+  /// Prompt to select a category
+  ///
+  /// In en, this message translates to:
+  /// **'Select a category'**
+  String get select_category;
+
+  /// Error message for required form fields
+  ///
+  /// In en, this message translates to:
+  /// **'This field is required'**
+  String get field_required;
+
+  /// Prompt to tap to upload a file
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to upload'**
+  String get tap_to_upload;
+
+  /// Label for submitting an application
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Application'**
+  String get submit_application;
+
+  /// Label for uploading a teacher identification document
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Teacher ID'**
+  String get upload_teacher_id;
 }
 
 class _AppLocalizationsDelegate

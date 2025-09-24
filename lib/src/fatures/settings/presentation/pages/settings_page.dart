@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/edit_profile_page.dart';
+import 'package:teach_flix/src/fatures/auth/presentation/pages/teacher_application_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/widgets/action_header_card.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/widgets/section_card.dart';
@@ -91,8 +93,15 @@ class _SettingsPageState extends State<SettingsPage> {
                       role: user?.role.name ?? "student",
                       onEditProfile: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
+                          CupertinoPageRoute(
                             builder: (_) => const EditProfilePage(),
+                          ),
+                        );
+                      },
+                      onApplyTeacher: () {
+                        Navigator.of(context).push(
+                          CupertinoPageRoute(
+                            builder: (_) => const TeacherApplicationPage(),
                           ),
                         );
                       },

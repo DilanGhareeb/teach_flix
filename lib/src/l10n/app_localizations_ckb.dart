@@ -216,4 +216,28 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get balance => 'بالانس';
+
+  @override
+  String get apply_teacher => 'داواکاری بوون بە مامۆستا';
+
+  @override
+  String get please_upload_id => 'تکایە ناسنامەکەت دابنێ';
+
+  @override
+  String get application_submitted => 'داواکارییەکە نێردرا';
+
+  @override
+  String get select_category => 'پۆلێک هەڵبژێرە';
+
+  @override
+  String get field_required => 'ئەم خانەیە پێویسته';
+
+  @override
+  String get tap_to_upload => 'بۆ ناردن کرتە بکە';
+
+  @override
+  String get submit_application => 'داواکاری بنێرە';
+
+  @override
+  String get upload_teacher_id => 'ناسنامەی مامۆستا دابنێ';
 }

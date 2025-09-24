@@ -210,4 +210,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get balance => 'Balance';
+
+  @override
+  String get apply_teacher => 'Apply to become a Teacher';
+
+  @override
+  String get please_upload_id => 'Please upload a valid ID';
+
+  @override
+  String get application_submitted => 'Application submitted';
+
+  @override
+  String get select_category => 'Select a category';
+
+  @override
+  String get field_required => 'This field is required';
+
+  @override
+  String get tap_to_upload => 'Tap to upload';
+
+  @override
+  String get submit_application => 'Submit Application';
+
+  @override
+  String get upload_teacher_id => 'Upload Teacher ID';
 }

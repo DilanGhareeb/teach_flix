@@ -65,5 +65,13 @@
   "save_changes": "گۆڕانکارییەکان پاشەکەوت بکە",
   "courses": "کۆرسەکان",
   "search_courses": "گەڕان بە ناو کۆرسەکان",
-  "balance": "بالانس"
+  "balance": "بالانس",
+  "apply_teacher": "داواکاری بوون بە مامۆستا",
+  "please_upload_id": "تکایە ناسنامەکەت دابنێ",
+  "application_submitted": "داواکارییەکە نێردرا",
+  "select_category": "پۆلێک هەڵبژێرە",
+  "field_required": "ئەم خانەیە پێویسته",
+  "tap_to_upload": "بۆ ناردن کرتە بکە",
+  "submit_application": "داواکاری بنێرە",
+  "upload_teacher_id": "ناسنامەی مامۆستا دابنێ"
 }
