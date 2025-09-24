@@ -207,4 +207,13 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get save_changes => 'گۆڕانکارییەکان پاشەکەوت بکە';
+
+  @override
+  String get courses => 'کۆرسەکان';
+
+  @override
+  String get search_courses => 'گەڕان بە ناو کۆرسەکان';
+
+  @override
+  String get balance => 'بالانس';
 }

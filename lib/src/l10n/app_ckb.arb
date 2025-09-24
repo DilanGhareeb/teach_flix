@@ -62,5 +62,8 @@
   "name_hint": "ناو بنوسە",
   "name_required": "ناو پێویستە",
   "name_too_short": "ناو زۆر کورتە",
-  "save_changes": "گۆڕانکارییەکان پاشەکەوت بکە"
+  "save_changes": "گۆڕانکارییەکان پاشەکەوت بکە",
+  "courses": "کۆرسەکان",
+  "search_courses": "گەڕان بە ناو کۆرسەکان",
+  "balance": "بالانس"
 }

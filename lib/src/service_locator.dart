@@ -28,11 +28,9 @@ import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.
 final sl = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
-  // --- Core Firebase ---
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
 
-  // --- Auth graph ---
   sl.registerLazySingleton<AuthApiDatasource>(
     () => AuthApiDatasourceImpl(
       fireStore: sl<FirebaseFirestore>(),
@@ -73,13 +71,11 @@ Future<void> setupServiceLocator() async {
     () => AppPreferenceRepositoryImpl(sl<AppPreferenceLocal>()),
   );
 
-  // Use cases
   sl.registerFactory(() => GetLanguageCode(sl<AppPreferenceRepository>()));
   sl.registerFactory(() => GetTheme(sl<AppPreferenceRepository>()));
   sl.registerFactory(() => ChangeLanguageCode(sl<AppPreferenceRepository>()));
   sl.registerFactory(() => ChangeTheme(sl<AppPreferenceRepository>()));
 
-  // Bloc
   sl.registerFactory(
     () => SettingsBloc(
       getLanguageCode: sl(),

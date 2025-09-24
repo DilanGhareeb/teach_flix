@@ -106,13 +106,10 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       }
       return Right(UserModel.fromMap(data));
     } on FirebaseAuthException catch (e) {
-      inspect(e);
       return Left(AuthFailure.fromFirebaseAuthCode(e.code));
     } on FirebaseException catch (e) {
-      inspect(e);
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
-      inspect(e);
       return const Left(UnknownFailure());
     }
   }
@@ -141,6 +138,7 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
         'gender': params.gender,
         'isEmailVerified': cred.user?.emailVerified ?? false,
         'role': 'student',
+        'balance': 0.0,
         'createdAt': now,
         'updatedAt': now,
       };

@@ -201,4 +201,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get save_changes => 'Save Changes';
+
+  @override
+  String get courses => 'Courses';
+
+  @override
+  String get search_courses => 'Search courses';
+
+  @override
+  String get balance => 'Balance';
 }

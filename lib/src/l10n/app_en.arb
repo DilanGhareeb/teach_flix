@@ -257,5 +257,17 @@
   "save_changes": "Save Changes",
   "@save_changes": {
     "description": "Label for saving changes"
+  },
+  "courses": "Courses",
+  "@courses": {
+    "description": "Label for the courses section"
+  },
+  "search_courses": "Search courses",
+  "@search_courses": {
+    "description": "Placeholder text for searching courses"
+  },
+  "balance": "Balance",
+  "@balance": {
+    "description": "Label displaying the user's balance"
   }
 }

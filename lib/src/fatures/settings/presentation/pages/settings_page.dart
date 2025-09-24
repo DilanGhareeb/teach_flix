@@ -75,6 +75,7 @@ class _SettingsPageState extends State<SettingsPage> {
 
               final user = userState.user;
               final name = user?.name ?? t.anonymous;
+              final balance = user?.balance ?? 0.0;
               final email = user?.email ?? t.no_email;
               final photo = user?.profilePictureUrl;
 
@@ -82,11 +83,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: ListView(
                   padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
                   children: [
-                    /// ACCOUNT HEADER CARD
                     AccountHeaderCard(
                       name: name,
                       email: email,
                       photoUrl: photo,
+                      balance: balance,
+                      role: user?.role.name ?? "student",
                       onEditProfile: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
@@ -162,7 +164,6 @@ class _SettingsPageState extends State<SettingsPage> {
 
                     const SizedBox(height: 16),
 
-                    /// ACCOUNT & SECURITY
                     Text(t.account, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     SectionCard(
@@ -198,7 +199,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Text(
                         t.app_version('1.0.0'),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: const Color(0xFF9E9E9E), // grey600
+                          color: const Color(0xFF9E9E9E),
                         ),
                       ),
                     ),

@@ -475,6 +475,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Save Changes'**
   String get save_changes;
+
+  /// Label for the courses section
+  ///
+  /// In en, this message translates to:
+  /// **'Courses'**
+  String get courses;
+
+  /// Placeholder text for searching courses
+  ///
+  /// In en, this message translates to:
+  /// **'Search courses'**
+  String get search_courses;
+
+  /// Label displaying the user's balance
+  ///
+  /// In en, this message translates to:
+  /// **'Balance'**
+  String get balance;
 }
 
 class _AppLocalizationsDelegate
