@@ -309,5 +309,245 @@
   "errAlreadyEnrolled": "You are already enrolled in this course.",
   "@errAlreadyEnrolled": {
     "description": "Error message for already being enrolled in a course"
+  },
+  "enrolled": "Enrolled",
+  "@enrolled": {
+    "description": "Label indicating the user is enrolled in a course"
+  },
+  "enroll_now": "Enroll Now",
+  "@enroll_now": {
+    "description": "Call to action for enrolling in a course"
+  },
+  "course_details": "Course Details",
+  "@course_details": {
+    "description": "Title for the course details page"
+  },
+  "course_content": "Course Content",
+  "@course_content": {
+    "description": "Label for the course content section"
+  },
+  "no_content_available": "No content available",
+  "@no_content_available": {
+    "description": "Message indicating no content is available"
+  },
+  "create_course": "Create Course",
+  "@create_course": {
+    "description": "Title for the create course page"
+  },
+  "course_title": "Course Title",
+  "@course_title": {
+    "description": "Label for the course title input field"
+  },
+  "enter_course_title": "Enter course title",
+  "@enter_course_title": {
+    "description": "Placeholder text for entering a course title"
+  },
+  "title_required": "Title is required",
+  "@title_required": {
+    "description": "Error message for required course title"
+  },
+  "description_required": "Description is required",
+  "@description_required": {
+    "description": "Error message for required course description"
+  },
+  "price_required": "Price is required",
+  "@price_required": {
+    "description": "Error message for required course price"
+  },
+  "invalid_price": "Invalid price",
+  "@invalid_price": {
+    "description": "Error message for invalid course price"
+  },
+  "course_image_url": "Course Image URL",
+  "@course_image_url": {
+    "description": "Label for the course image URL input field"
+  },
+  "preview_video_url": "Preview Video URL",
+  "@preview_video_url": {
+    "description": "Label for the preview video URL input field"
+  },
+  "add_chapter": "Add Chapter",
+  "@add_chapter": {
+    "description": "Button text for adding a new chapter"
+  },
+  "chapter_title": "Chapter Title",
+  "@chapter_title": {
+    "description": "Label for the chapter title input field"
+  },
+  "videos": "Videos",
+  "@videos": {
+    "description": "Label for the videos section"
+  },
+  "quizzes": "Quizzes",
+  "@quizzes": {
+    "description": "Label for the quizzes section"
+  },
+  "add_video": "Add Video",
+  "@add_video": {
+    "description": "Button text for adding a new video"
+  },
+  "video_title": "Video Title",
+  "@video_title": {
+    "description": "Label for the video title input field"
+  },
+  "youtube_url": "YouTube URL",
+  "@youtube_url": {
+    "description": "Label for the YouTube URL input field"
+  },
+  "duration_minutes": "Duration (Minutes)",
+  "@duration_minutes": {
+    "description": "Label for the video duration input field in minutes"
+  },
+  "order_index": "Order Index",
+  "@order_index": {
+    "description": "Label for the order index input field"
+  },
+  "see_all": "See All",
+  "@see_all": {
+    "description": "Button text for seeing all items in a list"
+  },
+  "no_courses_found": "No courses found",
+  "@no_courses_found": {
+    "description": "Message indicating no courses were found"
+  },
+  "error_loading_courses": "Error loading courses",
+  "@error_loading_courses": {
+    "description": "Error message for failing to load courses"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Button text for retrying an action"
+  },
+  "course_purchased_successfully": "Course purchased successfully",
+  "@course_purchased_successfully": {
+    "description": "Success message for purchasing a course"
+  },
+  "preview_video": "Preview Video",
+  "@preview_video": {
+    "description": "Label for the preview video section"
+  },
+  "preview_functionality_coming_soon": "Preview functionality coming soon",
+  "@preview_functionality_coming_soon": {
+    "description": "Message indicating that preview functionality is coming soon"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Button text for closing a dialog or screen"
+  },
+  "course_created_successfully": "Course created successfully",
+  "@course_created_successfully": {
+    "description": "Success message for creating a course"
+  },
+  "enter_course_description": "Enter course description",
+  "@enter_course_description": {
+    "description": "Placeholder text for entering a course description"
+  },
+  "category": "Category",
+  "@category": {
+    "description": "Label for the course category input field"
+  },
+  "price": "Price",
+  "@price": {
+    "description": "Label for the course price input field"
+  },
+  "enter_price": "Enter price",
+  "@enter_price": {
+    "description": "Placeholder text for entering a course price"
+  },
+  "enter_image_url": "Enter image URL",
+  "@enter_image_url": {
+    "description": "Placeholder text for entering an image URL"
+  },
+  "image_url_required": "Image URL is required",
+  "@image_url_required": {
+    "description": "Error message for required image URL"
+  },
+  "enter_preview_video_url": "Enter preview video URL",
+  "@enter_preview_video_url": {
+    "description": "Placeholder text for entering a preview video URL"
+  },
+  "preview_video_required": "Preview video is required",
+  "@preview_video_required": {
+    "description": "Error message for required preview video"
+  },
+  "enter_chapter_title": "Enter chapter title",
+  "@enter_chapter_title": {
+    "description": "Placeholder text for entering a chapter title"
+  },
+  "no_videos_added": "No videos added",
+  "@no_videos_added": {
+    "description": "Message indicating no videos have been added"
+  },
+  "no_quizzes_added": "No quizzes added",
+  "@no_quizzes_added": {
+    "description": "Message indicating no quizzes have been added"
+  },
+  "add": "Add",
+  "@add": {
+    "description": "Button text for adding an item"
+  },
+  "enter_video_title": "Enter video title",
+  "@enter_video_title": {
+    "description": "Placeholder text for entering a video title"
+  },
+  "enter_youtube_url": "Enter YouTube URL",
+  "@enter_youtube_url": {
+    "description": "Placeholder text for entering a YouTube URL"
+  },
+  "youtube_url_required": "YouTube URL is required",
+  "@youtube_url_required": {
+    "description": "Error message for required YouTube URL"
+  },
+  "invalid_youtube_url": "Invalid YouTube URL",
+  "@invalid_youtube_url": {
+    "description": "Error message for invalid YouTube URL"
+  },
+  "enter_video_description": "Enter video description",
+  "@enter_video_description": {
+    "description": "Placeholder text for entering a video description"
+  },
+  "enter_duration_minutes": "Enter duration in minutes",
+  "@enter_duration_minutes": {
+    "description": "Placeholder text for entering video duration in minutes"
+  },
+  "duration_required": "Duration is required",
+  "@duration_required": {
+    "description": "Error message for required video duration"
+  },
+  "invalid_duration": "Invalid duration",
+  "@invalid_duration": {
+    "description": "Error message for invalid video duration"
+  },
+  "enter_order_index": "Enter order index",
+  "@enter_order_index": {
+    "description": "Placeholder text for entering an order index"
+  },
+  "order_required": "Order is required",
+  "@order_required": {
+    "description": "Error message for required order index"
+  },
+  "invalid_order": "Invalid order",
+  "@invalid_order": {
+    "description": "Error message for invalid order index"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Label for the course description input field"
+  },
+  "all_categories": "All Categories",
+  "@all_categories": {
+    "description": "Label for the all categories option"
+  },
+  "categories": "Categories",
+  "@categories": {
+    "description": "Label for the categories section"
+  },
+  "featured_courses": "Featured Courses",
+  "@featured_courses": {
+    "description": "Label for the featured courses section"
+  },
+  "welcome_back": "Welcome back",
+  "@welcome_back": {
+    "description": "Greeting for returning users"
   }
 }

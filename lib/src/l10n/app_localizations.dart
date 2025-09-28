@@ -553,6 +553,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are already enrolled in this course.'**
   String get errAlreadyEnrolled;
+
+  /// Label indicating the user is enrolled in a course
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled'**
+  String get enrolled;
+
+  /// Call to action for enrolling in a course
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll Now'**
+  String get enroll_now;
+
+  /// Title for the course details page
+  ///
+  /// In en, this message translates to:
+  /// **'Course Details'**
+  String get course_details;
+
+  /// Label for the course content section
+  ///
+  /// In en, this message translates to:
+  /// **'Course Content'**
+  String get course_content;
+
+  /// Message indicating no content is available
+  ///
+  /// In en, this message translates to:
+  /// **'No content available'**
+  String get no_content_available;
+
+  /// Title for the create course page
+  ///
+  /// In en, this message translates to:
+  /// **'Create Course'**
+  String get create_course;
+
+  /// Label for the course title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Course Title'**
+  String get course_title;
+
+  /// Placeholder text for entering a course title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter course title'**
+  String get enter_course_title;
+
+  /// Error message for required course title
+  ///
+  /// In en, this message translates to:
+  /// **'Title is required'**
+  String get title_required;
+
+  /// Error message for required course description
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get description_required;
+
+  /// Error message for required course price
+  ///
+  /// In en, this message translates to:
+  /// **'Price is required'**
+  String get price_required;
+
+  /// Error message for invalid course price
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid price'**
+  String get invalid_price;
+
+  /// Label for the course image URL input field
+  ///
+  /// In en, this message translates to:
+  /// **'Course Image URL'**
+  String get course_image_url;
+
+  /// Label for the preview video URL input field
+  ///
+  /// In en, this message translates to:
+  /// **'Preview Video URL'**
+  String get preview_video_url;
+
+  /// Button text for adding a new chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Add Chapter'**
+  String get add_chapter;
+
+  /// Label for the chapter title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter Title'**
+  String get chapter_title;
+
+  /// Label for the videos section
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get videos;
+
+  /// Label for the quizzes section
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes'**
+  String get quizzes;
+
+  /// Button text for adding a new video
+  ///
+  /// In en, this message translates to:
+  /// **'Add Video'**
+  String get add_video;
+
+  /// Label for the video title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Video Title'**
+  String get video_title;
+
+  /// Label for the YouTube URL input field
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube URL'**
+  String get youtube_url;
+
+  /// Label for the video duration input field in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'Duration (Minutes)'**
+  String get duration_minutes;
+
+  /// Label for the order index input field
+  ///
+  /// In en, this message translates to:
+  /// **'Order Index'**
+  String get order_index;
+
+  /// Button text for seeing all items in a list
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get see_all;
+
+  /// Message indicating no courses were found
+  ///
+  /// In en, this message translates to:
+  /// **'No courses found'**
+  String get no_courses_found;
+
+  /// Error message for failing to load courses
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading courses'**
+  String get error_loading_courses;
+
+  /// Button text for retrying an action
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Success message for purchasing a course
+  ///
+  /// In en, this message translates to:
+  /// **'Course purchased successfully'**
+  String get course_purchased_successfully;
+
+  /// Label for the preview video section
+  ///
+  /// In en, this message translates to:
+  /// **'Preview Video'**
+  String get preview_video;
+
+  /// Message indicating that preview functionality is coming soon
+  ///
+  /// In en, this message translates to:
+  /// **'Preview functionality coming soon'**
+  String get preview_functionality_coming_soon;
+
+  /// Button text for closing a dialog or screen
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Success message for creating a course
+  ///
+  /// In en, this message translates to:
+  /// **'Course created successfully'**
+  String get course_created_successfully;
+
+  /// Placeholder text for entering a course description
+  ///
+  /// In en, this message translates to:
+  /// **'Enter course description'**
+  String get enter_course_description;
+
+  /// Label for the course category input field
+  ///
+  /// In en, this message translates to:
+  /// **'Category'**
+  String get category;
+
+  /// Label for the course price input field
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get price;
+
+  /// Placeholder text for entering a course price
+  ///
+  /// In en, this message translates to:
+  /// **'Enter price'**
+  String get enter_price;
+
+  /// Placeholder text for entering an image URL
+  ///
+  /// In en, this message translates to:
+  /// **'Enter image URL'**
+  String get enter_image_url;
+
+  /// Error message for required image URL
+  ///
+  /// In en, this message translates to:
+  /// **'Image URL is required'**
+  String get image_url_required;
+
+  /// Placeholder text for entering a preview video URL
+  ///
+  /// In en, this message translates to:
+  /// **'Enter preview video URL'**
+  String get enter_preview_video_url;
+
+  /// Error message for required preview video
+  ///
+  /// In en, this message translates to:
+  /// **'Preview video is required'**
+  String get preview_video_required;
+
+  /// Placeholder text for entering a chapter title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter chapter title'**
+  String get enter_chapter_title;
+
+  /// Message indicating no videos have been added
+  ///
+  /// In en, this message translates to:
+  /// **'No videos added'**
+  String get no_videos_added;
+
+  /// Message indicating no quizzes have been added
+  ///
+  /// In en, this message translates to:
+  /// **'No quizzes added'**
+  String get no_quizzes_added;
+
+  /// Button text for adding an item
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// Placeholder text for entering a video title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter video title'**
+  String get enter_video_title;
+
+  /// Placeholder text for entering a YouTube URL
+  ///
+  /// In en, this message translates to:
+  /// **'Enter YouTube URL'**
+  String get enter_youtube_url;
+
+  /// Error message for required YouTube URL
+  ///
+  /// In en, this message translates to:
+  /// **'YouTube URL is required'**
+  String get youtube_url_required;
+
+  /// Error message for invalid YouTube URL
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid YouTube URL'**
+  String get invalid_youtube_url;
+
+  /// Placeholder text for entering a video description
+  ///
+  /// In en, this message translates to:
+  /// **'Enter video description'**
+  String get enter_video_description;
+
+  /// Placeholder text for entering video duration in minutes
+  ///
+  /// In en, this message translates to:
+  /// **'Enter duration in minutes'**
+  String get enter_duration_minutes;
+
+  /// Error message for required video duration
+  ///
+  /// In en, this message translates to:
+  /// **'Duration is required'**
+  String get duration_required;
+
+  /// Error message for invalid video duration
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid duration'**
+  String get invalid_duration;
+
+  /// Placeholder text for entering an order index
+  ///
+  /// In en, this message translates to:
+  /// **'Enter order index'**
+  String get enter_order_index;
+
+  /// Error message for required order index
+  ///
+  /// In en, this message translates to:
+  /// **'Order is required'**
+  String get order_required;
+
+  /// Error message for invalid order index
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid order'**
+  String get invalid_order;
+
+  /// Label for the course description input field
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get description;
+
+  /// Label for the all categories option
+  ///
+  /// In en, this message translates to:
+  /// **'All Categories'**
+  String get all_categories;
+
+  /// Label for the categories section
+  ///
+  /// In en, this message translates to:
+  /// **'Categories'**
+  String get categories;
+
+  /// Label for the featured courses section
+  ///
+  /// In en, this message translates to:
+  /// **'Featured Courses'**
+  String get featured_courses;
+
+  /// Greeting for returning users
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome back'**
+  String get welcome_back;
 }
 
 class _AppLocalizationsDelegate

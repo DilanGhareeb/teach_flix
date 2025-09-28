@@ -241,4 +241,185 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errAlreadyEnrolled => 'You are already enrolled in this course.';
+
+  @override
+  String get enrolled => 'Enrolled';
+
+  @override
+  String get enroll_now => 'Enroll Now';
+
+  @override
+  String get course_details => 'Course Details';
+
+  @override
+  String get course_content => 'Course Content';
+
+  @override
+  String get no_content_available => 'No content available';
+
+  @override
+  String get create_course => 'Create Course';
+
+  @override
+  String get course_title => 'Course Title';
+
+  @override
+  String get enter_course_title => 'Enter course title';
+
+  @override
+  String get title_required => 'Title is required';
+
+  @override
+  String get description_required => 'Description is required';
+
+  @override
+  String get price_required => 'Price is required';
+
+  @override
+  String get invalid_price => 'Invalid price';
+
+  @override
+  String get course_image_url => 'Course Image URL';
+
+  @override
+  String get preview_video_url => 'Preview Video URL';
+
+  @override
+  String get add_chapter => 'Add Chapter';
+
+  @override
+  String get chapter_title => 'Chapter Title';
+
+  @override
+  String get videos => 'Videos';
+
+  @override
+  String get quizzes => 'Quizzes';
+
+  @override
+  String get add_video => 'Add Video';
+
+  @override
+  String get video_title => 'Video Title';
+
+  @override
+  String get youtube_url => 'YouTube URL';
+
+  @override
+  String get duration_minutes => 'Duration (Minutes)';
+
+  @override
+  String get order_index => 'Order Index';
+
+  @override
+  String get see_all => 'See All';
+
+  @override
+  String get no_courses_found => 'No courses found';
+
+  @override
+  String get error_loading_courses => 'Error loading courses';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get course_purchased_successfully => 'Course purchased successfully';
+
+  @override
+  String get preview_video => 'Preview Video';
+
+  @override
+  String get preview_functionality_coming_soon =>
+      'Preview functionality coming soon';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get course_created_successfully => 'Course created successfully';
+
+  @override
+  String get enter_course_description => 'Enter course description';
+
+  @override
+  String get category => 'Category';
+
+  @override
+  String get price => 'Price';
+
+  @override
+  String get enter_price => 'Enter price';
+
+  @override
+  String get enter_image_url => 'Enter image URL';
+
+  @override
+  String get image_url_required => 'Image URL is required';
+
+  @override
+  String get enter_preview_video_url => 'Enter preview video URL';
+
+  @override
+  String get preview_video_required => 'Preview video is required';
+
+  @override
+  String get enter_chapter_title => 'Enter chapter title';
+
+  @override
+  String get no_videos_added => 'No videos added';
+
+  @override
+  String get no_quizzes_added => 'No quizzes added';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get enter_video_title => 'Enter video title';
+
+  @override
+  String get enter_youtube_url => 'Enter YouTube URL';
+
+  @override
+  String get youtube_url_required => 'YouTube URL is required';
+
+  @override
+  String get invalid_youtube_url => 'Invalid YouTube URL';
+
+  @override
+  String get enter_video_description => 'Enter video description';
+
+  @override
+  String get enter_duration_minutes => 'Enter duration in minutes';
+
+  @override
+  String get duration_required => 'Duration is required';
+
+  @override
+  String get invalid_duration => 'Invalid duration';
+
+  @override
+  String get enter_order_index => 'Enter order index';
+
+  @override
+  String get order_required => 'Order is required';
+
+  @override
+  String get invalid_order => 'Invalid order';
+
+  @override
+  String get description => 'Description';
+
+  @override
+  String get all_categories => 'All Categories';
+
+  @override
+  String get categories => 'Categories';
+
+  @override
+  String get featured_courses => 'Featured Courses';
+
+  @override
+  String get welcome_back => 'Welcome back';
 }

@@ -12,6 +12,7 @@ import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dar
 import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 import 'package:teach_flix/src/service_locator.dart';
 
@@ -36,6 +37,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<SettingsBloc>(
           create: (_) =>
               sl<SettingsBloc>()..add(const SettingsBootstrapRequested()),
+        ),
+        BlocProvider<CoursesBloc>(
+          create: (_) => sl<CoursesBloc>()..add(LoadCoursesEvent()),
         ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(

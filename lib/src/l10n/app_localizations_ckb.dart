@@ -246,4 +246,185 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get errAlreadyEnrolled => 'تۆ پێشتر لەم کۆرسە داخڵبوویت';
+
+  @override
+  String get enrolled => 'تۆمارکراو';
+
+  @override
+  String get enroll_now => 'ئێستا تۆمار بکە';
+
+  @override
+  String get course_details => 'وردەکارییەکانی کۆرس';
+
+  @override
+  String get course_content => 'ناوەڕۆکی کۆرس';
+
+  @override
+  String get no_content_available => 'هیچ ناوەڕۆکێک بەردەست نییە';
+
+  @override
+  String get create_course => 'کۆرس دروست بکە';
+
+  @override
+  String get course_title => 'ناونیشانی کۆرس';
+
+  @override
+  String get enter_course_title => 'ناونیشانی کۆرس داخڵ بکە';
+
+  @override
+  String get title_required => 'ناونیشان پێویستە';
+
+  @override
+  String get description_required => 'باسکردن پێویستە';
+
+  @override
+  String get price_required => 'نرخ پێویستە';
+
+  @override
+  String get invalid_price => 'نرخی نادروست';
+
+  @override
+  String get course_image_url => 'بەستەری وێنەی کۆرس';
+
+  @override
+  String get preview_video_url => 'بەستەری ڤیدیۆی پێشبینین';
+
+  @override
+  String get add_chapter => 'بەش زیاد بکە';
+
+  @override
+  String get chapter_title => 'ناونیشانی بەش';
+
+  @override
+  String get videos => 'ڤیدیۆکان';
+
+  @override
+  String get quizzes => 'تاقیکردنەوەکان';
+
+  @override
+  String get add_video => 'ڤیدیۆ زیاد بکە';
+
+  @override
+  String get video_title => 'ناونیشانی ڤیدیۆ';
+
+  @override
+  String get youtube_url => 'بەستەری یوتیوب';
+
+  @override
+  String get duration_minutes => 'ماوە (خولەک)';
+
+  @override
+  String get order_index => 'ژمارەی ڕیزبەندی';
+
+  @override
+  String get see_all => 'هەموو ببینە';
+
+  @override
+  String get no_courses_found => 'هیچ کۆرسێک نەدۆزرایەوە';
+
+  @override
+  String get error_loading_courses => 'هەڵە لە بارکردنی کۆرسەکان';
+
+  @override
+  String get retry => 'دووبارە هەوڵ بدەوە';
+
+  @override
+  String get course_purchased_successfully => 'کۆرس بە سەرکەوتووی کڕدرا';
+
+  @override
+  String get preview_video => 'ڤیدیۆی پێشبینین';
+
+  @override
+  String get preview_functionality_coming_soon =>
+      'تایبەتمەندی پێشبینین بەزووە دێت';
+
+  @override
+  String get close => 'دابخە';
+
+  @override
+  String get course_created_successfully => 'کۆرس بە سەرکەوتووی دروست کرا';
+
+  @override
+  String get enter_course_description => 'باسکردنی کۆرس داخڵ بکە';
+
+  @override
+  String get category => 'پۆل';
+
+  @override
+  String get price => 'نرخ';
+
+  @override
+  String get enter_price => 'نرخ داخڵ بکە';
+
+  @override
+  String get enter_image_url => 'بەستەری وێنە داخڵ بکە';
+
+  @override
+  String get image_url_required => 'بەستەری وێنە پێویستە';
+
+  @override
+  String get enter_preview_video_url => 'بەستەری ڤیدیۆی پێشبینین داخڵ بکە';
+
+  @override
+  String get preview_video_required => 'ڤیدیۆی پێشبینین پێویستە';
+
+  @override
+  String get enter_chapter_title => 'ناونیشانی بەش داخڵ بکە';
+
+  @override
+  String get no_videos_added => 'هیچ ڤیدیۆیەک زیاد نەکراوە';
+
+  @override
+  String get no_quizzes_added => 'هیچ تاقیکردنەوەیەک زیاد نەکراوە';
+
+  @override
+  String get add => 'زیاد بکە';
+
+  @override
+  String get enter_video_title => 'ناونیشانی ڤیدیۆ داخڵ بکە';
+
+  @override
+  String get enter_youtube_url => 'بەستەری یوتیوب داخڵ بکە';
+
+  @override
+  String get youtube_url_required => 'بەستەری یوتیوب پێویستە';
+
+  @override
+  String get invalid_youtube_url => 'بەستەری یوتیوبی نادروست';
+
+  @override
+  String get enter_video_description => 'باسکردنی ڤیدیۆ داخڵ بکە';
+
+  @override
+  String get enter_duration_minutes => 'ماوە بە خولەک داخڵ بکە';
+
+  @override
+  String get duration_required => 'ماوە پێویستە';
+
+  @override
+  String get invalid_duration => 'ماوەی نادروست';
+
+  @override
+  String get enter_order_index => 'ژمارەی ڕیزبەندی داخڵ بکە';
+
+  @override
+  String get order_required => 'ڕیزبەندی پێویستە';
+
+  @override
+  String get invalid_order => 'ڕیزبەندی نادروست';
+
+  @override
+  String get description => 'باسکردن';
+
+  @override
+  String get all_categories => 'هەموو پۆلەکان';
+
+  @override
+  String get categories => 'پۆلەکان';
+
+  @override
+  String get featured_courses => 'کۆرسە تایبەتەکان';
+
+  @override
+  String get welcome_back => 'بەخێربێیتەوە';
 }

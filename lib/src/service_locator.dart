@@ -16,6 +16,7 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.da
 import 'package:teach_flix/src/fatures/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 
+// Settings
 import 'package:teach_flix/src/fatures/settings/data/datasources/app_prefernce_local.dart';
 import 'package:teach_flix/src/fatures/settings/data/repositories/app_preference_repository_impl.dart';
 import 'package:teach_flix/src/fatures/settings/domain/repositories/app_preference_repository.dart';
@@ -25,12 +26,33 @@ import 'package:teach_flix/src/fatures/settings/domain/usecases/get_language_cod
 import 'package:teach_flix/src/fatures/settings/domain/usecases/get_theme_usecase.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
 
+// Courses - Data Layer
+import 'package:teach_flix/src/fatures/courses/data/datasources/course_firebase_datasource.dart';
+import 'package:teach_flix/src/fatures/courses/data/repositories/course_repository_impl.dart';
+
+// Courses - Domain Layer
+import 'package:teach_flix/src/fatures/courses/domain/repositories/course_repository.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/add_chapter_to_course.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/add_video_to_chapter.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/create_course.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/get_all_courses.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/get_course_by_id.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/get_courses_by_category.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/get_enrolled_courses.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/purchase_course.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/search_courses.dart';
+
+// Courses - Presentation Layer
+import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
+
 final sl = GetIt.instance;
 
 Future<void> setupServiceLocator() async {
+  // Firebase instances
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
 
+  // Auth feature
   sl.registerLazySingleton<AuthApiDatasource>(
     () => AuthApiDatasourceImpl(
       fireStore: sl<FirebaseFirestore>(),
@@ -57,12 +79,14 @@ Future<void> setupServiceLocator() async {
     ),
   );
 
+  // SharedPreferences
   sl.registerSingletonAsync<SharedPreferences>(() async {
     return await SharedPreferences.getInstance();
   });
 
   await sl.isReady<SharedPreferences>();
 
+  // Settings feature
   sl.registerLazySingleton<AppPreferenceLocal>(
     () => AppPreferenceLocalImpl(sl<SharedPreferences>()),
   );
@@ -82,6 +106,41 @@ Future<void> setupServiceLocator() async {
       getTheme: sl(),
       changeLanguageCode: sl(),
       changeTheme: sl(),
+    ),
+  );
+
+  // Courses feature - Data Layer
+  sl.registerLazySingleton<CourseFirebaseDataSource>(
+    () => CourseFirebaseDataSourceImpl(firestore: sl<FirebaseFirestore>()),
+  );
+
+  sl.registerLazySingleton<CourseRepository>(
+    () => CourseRepositoryImpl(dataSource: sl<CourseFirebaseDataSource>()),
+  );
+
+  // Courses feature - Use Cases
+  sl.registerFactory(() => AddChapterToCourse(sl()));
+  sl.registerFactory(() => AddVideoToChapter(sl()));
+  sl.registerFactory(() => CreateCourse(sl()));
+  sl.registerFactory(() => GetAllCourses(sl()));
+  sl.registerFactory(() => GetCourseById(sl()));
+  sl.registerFactory(() => GetCoursesByCategory(sl()));
+  sl.registerFactory(() => GetEnrolledCourses(sl()));
+  sl.registerFactory(() => PurchaseCourse(sl()));
+  sl.registerFactory(() => SearchCourses(sl()));
+
+  // Courses feature - Bloc
+  sl.registerFactory(
+    () => CoursesBloc(
+      getAllCourses: sl(),
+      getCoursesByCategory: sl(),
+      searchCourses: sl(),
+      getCourseById: sl(),
+      getEnrolledCourses: sl(),
+      createCourse: sl(),
+      addChapterToCourse: sl(),
+      addVideoToChapter: sl(),
+      purchaseCourse: sl(),
     ),
   );
 }
