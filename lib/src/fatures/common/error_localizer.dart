@@ -38,6 +38,12 @@ class ErrorLocalizer {
       return localization.errServerGeneric;
     } else if (f is UnknownFailure) {
       return localization.errUnknown;
+    } else if (f is NotFoundFailure) {
+      return localization.errFsNotFound;
+    } else if (f is InsufficientBalanceFailure) {
+      return localization.errInsufficientBalance;
+    } else if (f is AlreadyEnrolledFailure) {
+      return localization.errAlreadyEnrolled;
     }
 
     final base = localization.errUnknown;

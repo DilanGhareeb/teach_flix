@@ -234,4 +234,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get upload_teacher_id => 'Upload Teacher ID';
+
+  @override
+  String get errInsufficientBalance =>
+      'You do not have enough balance to purchase this course.';
+
+  @override
+  String get errAlreadyEnrolled => 'You are already enrolled in this course.';
 }

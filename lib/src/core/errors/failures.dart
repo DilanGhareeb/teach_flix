@@ -73,3 +73,15 @@ class ServerFailure extends Failure {
 class UnknownFailure extends Failure {
   const UnknownFailure({super.code});
 }
+
+class NotFoundFailure extends Failure {
+  const NotFoundFailure({super.code});
+}
+
+class InsufficientBalanceFailure extends Failure {
+  const InsufficientBalanceFailure({super.code});
+}
+
+class AlreadyEnrolledFailure extends Failure {
+  const AlreadyEnrolledFailure({super.code});
+}

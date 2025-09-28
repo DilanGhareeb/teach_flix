@@ -73,5 +73,7 @@
   "field_required": "ئەم خانەیە پێویسته",
   "tap_to_upload": "بۆ ناردن کرتە بکە",
   "submit_application": "داواکاری بنێرە",
-  "upload_teacher_id": "ناسنامەی مامۆستا دابنێ"
+  "upload_teacher_id": "ناسنامەی مامۆستا دابنێ",
+  "errInsufficientBalance": "باڵانسەکەت بەشی کڕینی ئەم کۆرسە ناکات",
+  "errAlreadyEnrolled": "تۆ پێشتر لەم کۆرسە داخڵبوویت"
 }

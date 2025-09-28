@@ -301,5 +301,13 @@
   "upload_teacher_id": "Upload Teacher ID",
   "@upload_teacher_id": {
     "description": "Label for uploading a teacher identification document"
+  },
+  "errInsufficientBalance": "You do not have enough balance to purchase this course.",
+  "@errInsufficientBalance": {
+    "description": "Error message for insufficient balance when purchasing a course"
+  },
+  "errAlreadyEnrolled": "You are already enrolled in this course.",
+  "@errAlreadyEnrolled": {
+    "description": "Error message for already being enrolled in a course"
   }
 }

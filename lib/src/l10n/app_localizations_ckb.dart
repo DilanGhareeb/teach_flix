@@ -240,4 +240,10 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get upload_teacher_id => 'ناسنامەی مامۆستا دابنێ';
+
+  @override
+  String get errInsufficientBalance => 'باڵانسەکەت بەشی کڕینی ئەم کۆرسە ناکات';
+
+  @override
+  String get errAlreadyEnrolled => 'تۆ پێشتر لەم کۆرسە داخڵبوویت';
 }

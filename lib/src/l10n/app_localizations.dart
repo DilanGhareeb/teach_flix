@@ -541,6 +541,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upload Teacher ID'**
   String get upload_teacher_id;
+
+  /// Error message for insufficient balance when purchasing a course
+  ///
+  /// In en, this message translates to:
+  /// **'You do not have enough balance to purchase this course.'**
+  String get errInsufficientBalance;
+
+  /// Error message for already being enrolled in a course
+  ///
+  /// In en, this message translates to:
+  /// **'You are already enrolled in this course.'**
+  String get errAlreadyEnrolled;
 }
 
 class _AppLocalizationsDelegate
