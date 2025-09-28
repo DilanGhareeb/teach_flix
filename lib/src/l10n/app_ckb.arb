@@ -135,5 +135,20 @@
   "all_categories": "هەموو پۆلەکان",
   "categories": "پۆلەکان",
   "featured_courses": "کۆرسە تایبەتەکان",
-  "welcome_back": "بەخێربێیتەوە"
+  "welcome_back": "بەخێربێیتەوە",
+  "refresh": "ڕیفرێش",
+  "try_different_search_or_category": "گەڕان یان پۆلی جیاواز تاقیبکەرەوە",
+  "loading": "بارکردنی کۆرسەکان...",
+  "dashboard": "داشبۆرد",
+  "live": "ڵایڤ",
+  "instructor": "مامۆستا",
+  "live_sessions": "ڵایڤی ڕاستەوخۆ",
+  "instructor_dashboard": "داشبۆردی مامۆستا",
+  "add_new_course": "زیادکردنی کۆرسی نوێ",
+  "my_courses": "کۆرسەکانم",
+  "manage_courses": "بەڕێوەبردنی کۆرسەکان",
+  "analytics": "ئانالیتیکس",
+  "view_statistics": "بینینی ئامارەکان",
+  "students": "خوێندکارەکان",
+  "manage_students": "بەڕێوەبردنی خوێندکارەکان"
 }

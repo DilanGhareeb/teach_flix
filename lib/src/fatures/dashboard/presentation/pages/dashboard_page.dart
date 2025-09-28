@@ -342,7 +342,7 @@ class _DashboardPageState extends State<DashboardPage>
                                 color: colorScheme.primary,
                               ),
                               label: Text(
-                                'Refresh',
+                                t.refresh,
                                 style: TextStyle(color: colorScheme.primary),
                               ),
                             ),
@@ -376,7 +376,7 @@ class _DashboardPageState extends State<DashboardPage>
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'Loading courses...',
+                                        t.loading,
                                         style: textTheme.bodyMedium?.copyWith(
                                           color: colorScheme.onSurface
                                               .withOpacity(0.7),
@@ -422,7 +422,7 @@ class _DashboardPageState extends State<DashboardPage>
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Try adjusting your search or category filter',
+                                          t.try_different_search_or_category,
                                           style: textTheme.bodySmall?.copyWith(
                                             color: colorScheme.onSurface
                                                 .withOpacity(0.5),

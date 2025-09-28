@@ -549,5 +549,65 @@
   "welcome_back": "Welcome back",
   "@welcome_back": {
     "description": "Greeting for returning users"
+  },
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Button text for refreshing content"
+  },
+  "try_different_search_or_category": "Try adjusting your search or category filter",
+  "@try_different_search_or_category": {
+    "description": "Suggestion to adjust search or category filter when no results are found"
+  },
+  "loading": "Loading courses...",
+  "@loading": {
+    "description": "Message indicating that courses are being loaded"
+  },
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Label for the dashboard section"
+  },
+  "live": "Live",
+  "@live": {
+    "description": "Label for the live section"
+  },
+  "instructor": "Instructor",
+  "@instructor": {
+    "description": "Label for the instructor section"
+  },
+  "live_sessions": "Live Sessions",
+  "@live_sessions": {
+    "description": "Label for the live sessions section"
+  },
+  "instructor_dashboard": "Instructor Dashboard",
+  "@instructor_dashboard": {
+    "description": "Title for the instructor dashboard page"
+  },
+  "add_new_course": "Add new course",
+  "@add_new_course": {
+    "description": "Button text for adding a new course"
+  },
+  "my_courses": "My Courses",
+  "@my_courses": {
+    "description": "Label for the user's courses section"
+  },
+  "manage_courses": "Manage courses",
+  "@manage_courses": {
+    "description": "Label for managing courses"
+  },
+  "analytics": "Analytics",
+  "@analytics": {
+    "description": "Label for the analytics section"
+  },
+  "view_statistics": "View statistics",
+  "@view_statistics": {
+    "description": "Button text for viewing statistics"
+  },
+  "students": "Students",
+  "@students": {
+    "description": "Label for the students section"
+  },
+  "manage_students": "Manage students",
+  "@manage_students": {
+    "description": "Label for managing students"
   }
 }

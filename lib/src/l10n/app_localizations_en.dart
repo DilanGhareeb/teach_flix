@@ -422,4 +422,50 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get welcome_back => 'Welcome back';
+
+  @override
+  String get refresh => 'Refresh';
+
+  @override
+  String get try_different_search_or_category =>
+      'Try adjusting your search or category filter';
+
+  @override
+  String get loading => 'Loading courses...';
+
+  @override
+  String get dashboard => 'Dashboard';
+
+  @override
+  String get live => 'Live';
+
+  @override
+  String get instructor => 'Instructor';
+
+  @override
+  String get live_sessions => 'Live Sessions';
+
+  @override
+  String get instructor_dashboard => 'Instructor Dashboard';
+
+  @override
+  String get add_new_course => 'Add new course';
+
+  @override
+  String get my_courses => 'My Courses';
+
+  @override
+  String get manage_courses => 'Manage courses';
+
+  @override
+  String get analytics => 'Analytics';
+
+  @override
+  String get view_statistics => 'View statistics';
+
+  @override
+  String get students => 'Students';
+
+  @override
+  String get manage_students => 'Manage students';
 }

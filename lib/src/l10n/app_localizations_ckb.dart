@@ -427,4 +427,50 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get welcome_back => 'بەخێربێیتەوە';
+
+  @override
+  String get refresh => 'ڕیفرێش';
+
+  @override
+  String get try_different_search_or_category =>
+      'گەڕان یان پۆلی جیاواز تاقیبکەرەوە';
+
+  @override
+  String get loading => 'بارکردنی کۆرسەکان...';
+
+  @override
+  String get dashboard => 'داشبۆرد';
+
+  @override
+  String get live => 'ڵایڤ';
+
+  @override
+  String get instructor => 'مامۆستا';
+
+  @override
+  String get live_sessions => 'ڵایڤی ڕاستەوخۆ';
+
+  @override
+  String get instructor_dashboard => 'داشبۆردی مامۆستا';
+
+  @override
+  String get add_new_course => 'زیادکردنی کۆرسی نوێ';
+
+  @override
+  String get my_courses => 'کۆرسەکانم';
+
+  @override
+  String get manage_courses => 'بەڕێوەبردنی کۆرسەکان';
+
+  @override
+  String get analytics => 'ئانالیتیکس';
+
+  @override
+  String get view_statistics => 'بینینی ئامارەکان';
+
+  @override
+  String get students => 'خوێندکارەکان';
+
+  @override
+  String get manage_students => 'بەڕێوەبردنی خوێندکارەکان';
 }

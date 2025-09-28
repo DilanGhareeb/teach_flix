@@ -913,6 +913,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Welcome back'**
   String get welcome_back;
+
+  /// Button text for refreshing content
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get refresh;
+
+  /// Suggestion to adjust search or category filter when no results are found
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search or category filter'**
+  String get try_different_search_or_category;
+
+  /// Message indicating that courses are being loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Loading courses...'**
+  String get loading;
+
+  /// Label for the dashboard section
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboard;
+
+  /// Label for the live section
+  ///
+  /// In en, this message translates to:
+  /// **'Live'**
+  String get live;
+
+  /// Label for the instructor section
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor'**
+  String get instructor;
+
+  /// Label for the live sessions section
+  ///
+  /// In en, this message translates to:
+  /// **'Live Sessions'**
+  String get live_sessions;
+
+  /// Title for the instructor dashboard page
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Dashboard'**
+  String get instructor_dashboard;
+
+  /// Button text for adding a new course
+  ///
+  /// In en, this message translates to:
+  /// **'Add new course'**
+  String get add_new_course;
+
+  /// Label for the user's courses section
+  ///
+  /// In en, this message translates to:
+  /// **'My Courses'**
+  String get my_courses;
+
+  /// Label for managing courses
+  ///
+  /// In en, this message translates to:
+  /// **'Manage courses'**
+  String get manage_courses;
+
+  /// Label for the analytics section
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics'**
+  String get analytics;
+
+  /// Button text for viewing statistics
+  ///
+  /// In en, this message translates to:
+  /// **'View statistics'**
+  String get view_statistics;
+
+  /// Label for the students section
+  ///
+  /// In en, this message translates to:
+  /// **'Students'**
+  String get students;
+
+  /// Label for managing students
+  ///
+  /// In en, this message translates to:
+  /// **'Manage students'**
+  String get manage_students;
 }
 
 class _AppLocalizationsDelegate
