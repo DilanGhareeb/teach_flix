@@ -153,30 +153,6 @@ class CourseCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    // Play Button
-                    Positioned.fill(
-                      child: Center(
-                        child: Container(
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
-                                blurRadius: 12,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Icon(
-                            Icons.play_arrow_rounded,
-                            size: 32,
-                            color: colorScheme.primary,
-                          ),
-                        ),
-                      ),
-                    ),
                   ],
                 ),
               ),

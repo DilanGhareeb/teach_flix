@@ -1003,6 +1003,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Manage students'**
   String get manage_students;
+
+  /// Title for the search results page
+  ///
+  /// In en, this message translates to:
+  /// **'Search Results'**
+  String get search_results;
 }
 
 class _AppLocalizationsDelegate

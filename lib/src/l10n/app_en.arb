@@ -609,5 +609,9 @@
   "manage_students": "Manage students",
   "@manage_students": {
     "description": "Label for managing students"
+  },
+  "search_results": "Search Results",
+  "@search_results": {
+    "description": "Title for the search results page"
   }
 }

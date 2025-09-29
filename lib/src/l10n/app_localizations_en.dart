@@ -468,4 +468,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get manage_students => 'Manage students';
+
+  @override
+  String get search_results => 'Search Results';
 }

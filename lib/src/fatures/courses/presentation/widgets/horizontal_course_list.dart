@@ -14,6 +14,9 @@ class HorizontalCourseList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = Localizations.localeOf(context);
+    final isRtl = ['ckb', 'ar', 'fa', 'ur', 'he'].contains(locale.languageCode);
+
     return SizedBox(
       height: 400, // Fixed height for cards
       child: ListView.builder(
@@ -25,7 +28,8 @@ class HorizontalCourseList extends StatelessWidget {
           final course = courses[index];
           return Padding(
             padding: EdgeInsets.only(
-              right: index < courses.length - 1 ? 16 : 0,
+              left: isRtl ? (index < courses.length - 1 ? 16 : 0) : 0,
+              right: isRtl ? 0 : (index < courses.length - 1 ? 16 : 0),
             ),
             child: CourseCard(
               course: course,
