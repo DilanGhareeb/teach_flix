@@ -1009,6 +1009,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Results'**
   String get search_results;
+
+  /// Message indicating no search results were found
+  ///
+  /// In en, this message translates to:
+  /// **'No results found'**
+  String get no_results_found;
+
+  /// Suggestion to try a different search term when no results are found
+  ///
+  /// In en, this message translates to:
+  /// **'Try a different search term'**
+  String get try_different_search;
+
+  /// Message indicating that a search is in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Searching...'**
+  String get searching;
+
+  /// Error message when an instructor tries to purchase their own course
+  ///
+  /// In en, this message translates to:
+  /// **'Instructors cannot purchase their own courses.'**
+  String get errInstructorCannotPurchaseOwnCourse;
 }
 
 class _AppLocalizationsDelegate

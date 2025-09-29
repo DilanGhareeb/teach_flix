@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
@@ -170,7 +171,9 @@ class _DashboardPageState extends State<DashboardPage>
                                   radius: 30,
                                   backgroundImage:
                                       user?.profilePictureUrl != null
-                                      ? NetworkImage(user!.profilePictureUrl!)
+                                      ? CachedNetworkImageProvider(
+                                          user!.profilePictureUrl!,
+                                        )
                                       : const AssetImage(
                                               'assets/images/profile.png',
                                             )
@@ -288,12 +291,9 @@ class _DashboardPageState extends State<DashboardPage>
                   // Category Selector - Hide when searching
                   if (!_isSearching)
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: CategorySelector(
-                          selectedCategory: _selectedCategory,
-                          onCategorySelected: _onCategorySelected,
-                        ),
+                      child: CategorySelector(
+                        selectedCategory: _selectedCategory,
+                        onCategorySelected: _onCategorySelected,
                       ),
                     ),
 
@@ -338,7 +338,7 @@ class _DashboardPageState extends State<DashboardPage>
                                   ),
                                   const SizedBox(height: 16),
                                   Text(
-                                    _isSearching ? t.search : t.loading,
+                                    _isSearching ? t.searching : t.loading,
                                     style: textTheme.bodyMedium?.copyWith(
                                       color: colorScheme.onSurface.withOpacity(
                                         0.7,
@@ -380,7 +380,7 @@ class _DashboardPageState extends State<DashboardPage>
                                     const SizedBox(height: 16),
                                     Text(
                                       _isSearching
-                                          ? t.no_courses_found
+                                          ? t.no_results_found
                                           : t.no_courses_found,
                                       style: textTheme.titleMedium?.copyWith(
                                         color: colorScheme.onSurface
@@ -390,7 +390,7 @@ class _DashboardPageState extends State<DashboardPage>
                                     const SizedBox(height: 8),
                                     Text(
                                       _isSearching
-                                          ? t.try_different_search_or_category
+                                          ? t.try_different_search
                                           : t.try_different_search_or_category,
                                       style: textTheme.bodySmall?.copyWith(
                                         color: colorScheme.onSurface

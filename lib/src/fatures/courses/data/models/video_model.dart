@@ -5,8 +5,6 @@ class VideoModel extends VideoEntity {
     required super.id,
     required super.title,
     required super.youtubeUrl,
-    required super.duration,
-    required super.description,
     required super.orderIndex,
   });
 
@@ -15,8 +13,6 @@ class VideoModel extends VideoEntity {
       id: map['id'] ?? '',
       title: map['title'] ?? '',
       youtubeUrl: map['youtubeUrl'] ?? '',
-      duration: Duration(seconds: map['duration'] ?? 0),
-      description: map['description'] ?? '',
       orderIndex: map['orderIndex'] ?? 0,
     );
   }
@@ -26,8 +22,6 @@ class VideoModel extends VideoEntity {
       'id': id,
       'title': title,
       'youtubeUrl': youtubeUrl,
-      'duration': duration.inSeconds,
-      'description': description,
       'orderIndex': orderIndex,
     };
   }

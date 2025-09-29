@@ -151,5 +151,9 @@
   "view_statistics": "بینینی ئامارەکان",
   "students": "خوێندکارەکان",
   "manage_students": "بەڕێوەبردنی خوێندکارەکان",
-  "search_results": "ئەنجامی گەڕان"
+  "search_results": "ئەنجامی گەڕان",
+  "no_results_found": "هیچ ئەنجامێک نەدۆزرایەوە",
+  "try_different_search": "گەڕانێکی جیاواز بکە",
+  "searching": "دەگەڕێت...",
+  "errInstructorCannotPurchaseOwnCourse": "مامۆستا ناتوانێت کۆرسی خۆی بکڕێت"
 }

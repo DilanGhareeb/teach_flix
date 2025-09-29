@@ -44,6 +44,8 @@ class ErrorLocalizer {
       return localization.errInsufficientBalance;
     } else if (f is AlreadyEnrolledFailure) {
       return localization.errAlreadyEnrolled;
+    } else if (f is InstructorCannotPurchaseOwnCourseFailure) {
+      return localization.errInstructorCannotPurchaseOwnCourse;
     }
 
     final base = localization.errUnknown;

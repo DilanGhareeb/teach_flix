@@ -85,3 +85,7 @@ class InsufficientBalanceFailure extends Failure {
 class AlreadyEnrolledFailure extends Failure {
   const AlreadyEnrolledFailure({super.code});
 }
+
+class InstructorCannotPurchaseOwnCourseFailure extends Failure {
+  const InstructorCannotPurchaseOwnCourseFailure({super.code});
+}

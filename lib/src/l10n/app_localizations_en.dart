@@ -471,4 +471,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get search_results => 'Search Results';
+
+  @override
+  String get no_results_found => 'No results found';
+
+  @override
+  String get try_different_search => 'Try a different search term';
+
+  @override
+  String get searching => 'Searching...';
+
+  @override
+  String get errInstructorCannotPurchaseOwnCourse =>
+      'Instructors cannot purchase their own courses.';
 }

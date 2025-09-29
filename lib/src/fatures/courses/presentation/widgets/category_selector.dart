@@ -50,21 +50,18 @@ class CategorySelector extends StatelessWidget {
     String value,
     bool isSelected,
   ) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: FilterChip(
-        label: Text(label),
-        selected: isSelected,
-        onSelected: (_) => onCategorySelected(value),
-        backgroundColor: Theme.of(context).colorScheme.surface,
-        selectedColor: Theme.of(context).colorScheme.primaryContainer,
-        checkmarkColor: Theme.of(context).colorScheme.primary,
-        labelStyle: TextStyle(
-          color: isSelected
-              ? Theme.of(context).colorScheme.onPrimaryContainer
-              : Theme.of(context).colorScheme.onSurface,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
+    return FilterChip(
+      label: Text(label),
+      selected: isSelected,
+      onSelected: (_) => onCategorySelected(value),
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      selectedColor: Theme.of(context).colorScheme.primaryContainer,
+      checkmarkColor: Theme.of(context).colorScheme.primary,
+      labelStyle: TextStyle(
+        color: isSelected
+            ? Theme.of(context).colorScheme.onPrimaryContainer
+            : Theme.of(context).colorScheme.onSurface,
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
   }

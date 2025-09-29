@@ -148,23 +148,38 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
   @override
   Future<Either<Failure, CourseModel>> createCourse(CourseModel course) async {
     try {
-      final docRef = _firestore.collection('courses').doc();
-      final courseWithId = CourseModel(
-        id: docRef.id,
-        title: course.title,
-        description: course.description,
-        imageUrl: course.imageUrl,
-        previewVideoUrl: course.previewVideoUrl,
-        category: course.category,
-        price: course.price,
-        instructorId: course.instructorId,
-        createAt: DateTime.now(),
-        ratings: course.ratings,
-        chapters: course.chapters,
-      );
+      return await _firestore.runTransaction<Either<Failure, CourseModel>>((
+        transaction,
+      ) async {
+        final docRef = _firestore.collection('courses').doc();
+        final courseWithId = CourseModel(
+          id: docRef.id,
+          title: course.title,
+          description: course.description,
+          imageUrl: course.imageUrl,
+          previewVideoUrl: course.previewVideoUrl,
+          category: course.category,
+          price: course.price,
+          instructorId: course.instructorId,
+          createAt: DateTime.now(),
+          ratings: course.ratings,
+          chapters: course.chapters,
+        );
 
-      await docRef.set(courseWithId.toFirestore());
-      return Right(courseWithId);
+        // Create the course
+        transaction.set(docRef, courseWithId.toFirestore());
+
+        // Automatically enroll the instructor in their own course
+        final enrollmentRef = _firestore.collection('enrollments').doc();
+        transaction.set(enrollmentRef, {
+          'userId': course.instructorId,
+          'courseId': docRef.id,
+          'enrolledAt': Timestamp.now(),
+          'isInstructor': true, // Mark as instructor enrollment
+        });
+
+        return Right(courseWithId);
+      });
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
@@ -191,7 +206,22 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
   @override
   Future<Either<Failure, void>> deleteCourse(String id) async {
     try {
-      await _firestore.collection('courses').doc(id).delete();
+      // Delete the course and all related enrollments
+      await _firestore.runTransaction((transaction) async {
+        // Delete the course
+        transaction.delete(_firestore.collection('courses').doc(id));
+
+        // Get and delete all enrollments for this course
+        final enrollmentsSnapshot = await _firestore
+            .collection('enrollments')
+            .where('courseId', isEqualTo: id)
+            .get();
+
+        for (final doc in enrollmentsSnapshot.docs) {
+          transaction.delete(doc.reference);
+        }
+      });
+
       return const Right(null);
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
@@ -203,10 +233,13 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
   @override
   Future<Either<Failure, List<CourseModel>>> searchCourses(String query) async {
     try {
+      // Convert query to lowercase for case-insensitive search
+      final lowerQuery = query.toLowerCase();
+
       final querySnapshot = await _firestore
           .collection('courses')
-          .where('title', isGreaterThanOrEqualTo: query)
-          .where('title', isLessThanOrEqualTo: '$query\uf8ff')
+          .where('titleLowercase', isGreaterThanOrEqualTo: lowerQuery)
+          .where('titleLowercase', isLessThanOrEqualTo: '$lowerQuery\uf8ff')
           .get();
 
       final courses = querySnapshot.docs
@@ -226,10 +259,22 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
     String courseId,
   ) async {
     try {
+      // Check if already enrolled
+      final existingEnrollment = await _firestore
+          .collection('enrollments')
+          .where('userId', isEqualTo: userId)
+          .where('courseId', isEqualTo: courseId)
+          .get();
+
+      if (existingEnrollment.docs.isNotEmpty) {
+        return const Left(AlreadyEnrolledFailure());
+      }
+
       await _firestore.collection('enrollments').add({
         'userId': userId,
         'courseId': courseId,
         'enrolledAt': Timestamp.now(),
+        'isInstructor': false,
       });
       return const Right(null);
     } on FirebaseException catch (e) {
@@ -268,7 +313,7 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
       return await _firestore.runTransaction<Either<Failure, void>>((
         transaction,
       ) async {
-        // Get course price
+        // Get course
         final courseDoc = await transaction.get(
           _firestore.collection('courses').doc(courseId),
         );
@@ -276,7 +321,14 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           return const Left(NotFoundFailure());
         }
 
-        final coursePrice = courseDoc.data()!['price'] as double;
+        final courseData = courseDoc.data()!;
+        final coursePrice = courseData['price'] as double;
+        final instructorId = courseData['instructorId'] as String;
+
+        // Check if user is the instructor (instructors don't pay for their own courses)
+        if (userId == instructorId) {
+          return const Left(InstructorCannotPurchaseOwnCourseFailure());
+        }
 
         // Get user balance
         final userDoc = await transaction.get(
@@ -304,7 +356,7 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           return const Left(AlreadyEnrolledFailure());
         }
 
-        // Deduct balance
+        // Deduct balance from user
         transaction.update(_firestore.collection('users').doc(userId), {
           'balance': currentBalance - coursePrice,
         });
@@ -314,12 +366,14 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           'userId': userId,
           'courseId': courseId,
           'enrolledAt': Timestamp.now(),
+          'isInstructor': false,
         });
 
         // Add transaction record
         transaction.set(_firestore.collection('transactions').doc(), {
           'userId': userId,
           'courseId': courseId,
+          'instructorId': instructorId,
           'amount': coursePrice,
           'type': 'course_purchase',
           'createdAt': Timestamp.now(),

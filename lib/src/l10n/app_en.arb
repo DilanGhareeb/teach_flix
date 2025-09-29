@@ -613,5 +613,21 @@
   "search_results": "Search Results",
   "@search_results": {
     "description": "Title for the search results page"
+  },
+  "no_results_found": "No results found",
+  "@no_results_found": {
+    "description": "Message indicating no search results were found"
+  },
+  "try_different_search": "Try a different search term",
+  "@try_different_search": {
+    "description": "Suggestion to try a different search term when no results are found"
+  },
+  "searching": "Searching...",
+  "@searching": {
+    "description": "Message indicating that a search is in progress"
+  },
+  "errInstructorCannotPurchaseOwnCourse": "Instructors cannot purchase their own courses.",
+  "@errInstructorCannotPurchaseOwnCourse": {
+    "description": "Error message when an instructor tries to purchase their own course"
   }
 }

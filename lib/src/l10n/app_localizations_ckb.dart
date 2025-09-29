@@ -476,4 +476,17 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get search_results => 'ئەنجامی گەڕان';
+
+  @override
+  String get no_results_found => 'هیچ ئەنجامێک نەدۆزرایەوە';
+
+  @override
+  String get try_different_search => 'گەڕانێکی جیاواز بکە';
+
+  @override
+  String get searching => 'دەگەڕێت...';
+
+  @override
+  String get errInstructorCannotPurchaseOwnCourse =>
+      'مامۆستا ناتوانێت کۆرسی خۆی بکڕێت';
 }
