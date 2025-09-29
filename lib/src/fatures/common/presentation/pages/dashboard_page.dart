@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/category_selector.dart';
-import 'package:teach_flix/src/fatures/courses/presentation/widgets/course_grid.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/widgets/horizontal_course_list.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -355,102 +355,51 @@ class _DashboardPageState extends State<DashboardPage>
 
                     // Courses Content
                     SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        child: BlocBuilder<CoursesBloc, CoursesState>(
-                          builder: (context, state) {
-                            if (state is CoursesLoading) {
+                      child: BlocBuilder<CoursesBloc, CoursesState>(
+                        builder: (context, state) {
+                          if (state is CoursesLoading) {
+                            return Container(
+                              height: 200,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest
+                                    .withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      t.loading,
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.7),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          } else if (state is CoursesLoaded) {
+                            if (state.courses.isEmpty) {
                               return Container(
                                 height: 200,
+                                margin: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
                                 decoration: BoxDecoration(
                                   color: colorScheme.surfaceContainerHighest
                                       .withOpacity(0.5),
                                   borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Center(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircularProgressIndicator(
-                                        color: colorScheme.primary,
-                                      ),
-                                      const SizedBox(height: 16),
-                                      Text(
-                                        t.loading,
-                                        style: textTheme.bodyMedium?.copyWith(
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.7),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            } else if (state is CoursesLoaded) {
-                              if (state.courses.isEmpty) {
-                                return Container(
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    color: colorScheme.surfaceContainerHighest
-                                        .withOpacity(0.5),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: colorScheme.outline.withOpacity(
-                                        0.2,
-                                      ),
-                                    ),
-                                  ),
-                                  child: Center(
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(
-                                          Icons.school_outlined,
-                                          size: 48,
-                                          color: colorScheme.onSurface
-                                              .withOpacity(0.4),
-                                        ),
-                                        const SizedBox(height: 16),
-                                        Text(
-                                          t.no_courses_found,
-                                          style: textTheme.titleMedium
-                                              ?.copyWith(
-                                                color: colorScheme.onSurface
-                                                    .withOpacity(0.7),
-                                              ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          t.try_different_search_or_category,
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color: colorScheme.onSurface
-                                                .withOpacity(0.5),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              }
-                              return AnimatedSwitcher(
-                                duration: const Duration(milliseconds: 300),
-                                child: CourseGrid(
-                                  key: ValueKey(state.courses.length),
-                                  courses: state.courses,
-                                  onCourseTap: _onCourseTap,
-                                ),
-                              );
-                            } else if (state is CoursesError) {
-                              return Container(
-                                height: 200,
-                                decoration: BoxDecoration(
-                                  color: colorScheme.errorContainer.withOpacity(
-                                    0.1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                    color: colorScheme.error.withOpacity(0.3),
+                                    color: colorScheme.outline.withOpacity(0.2),
                                   ),
                                 ),
                                 child: Center(
@@ -458,44 +407,25 @@ class _DashboardPageState extends State<DashboardPage>
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Icon(
-                                        Icons.error_outline,
+                                        Icons.school_outlined,
                                         size: 48,
-                                        color: colorScheme.error,
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.4),
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'Oops! Something went wrong',
+                                        t.no_courses_found,
                                         style: textTheme.titleMedium?.copyWith(
-                                          color: colorScheme.error,
+                                          color: colorScheme.onSurface
+                                              .withOpacity(0.7),
                                         ),
                                       ),
                                       const SizedBox(height: 8),
-                                      Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 40,
-                                        ),
-                                        child: Text(
-                                          state.message,
-                                          style: textTheme.bodySmall?.copyWith(
-                                            color: colorScheme.onErrorContainer,
-                                          ),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 3,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 16),
-                                      ElevatedButton.icon(
-                                        onPressed: () {
-                                          context.read<CoursesBloc>().add(
-                                            RefreshCoursesEvent(),
-                                          );
-                                        },
-                                        icon: const Icon(Icons.refresh),
-                                        label: const Text('Try Again'),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: colorScheme.error,
-                                          foregroundColor: colorScheme.onError,
+                                      Text(
+                                        t.try_different_search_or_category,
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: colorScheme.onSurface
+                                              .withOpacity(0.5),
                                         ),
                                       ),
                                     ],
@@ -504,9 +434,82 @@ class _DashboardPageState extends State<DashboardPage>
                               );
                             }
 
-                            return const SizedBox.shrink();
-                          },
-                        ),
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: HorizontalCourseList(
+                                key: ValueKey(state.courses.length),
+                                courses: state.courses,
+                                onCourseTap: _onCourseTap,
+                              ),
+                            );
+                          } else if (state is CoursesError) {
+                            return Container(
+                              height: 200,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.errorContainer.withOpacity(
+                                  0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: colorScheme.error.withOpacity(0.3),
+                                ),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      size: 48,
+                                      color: colorScheme.error,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'Oops! Something went wrong',
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color: colorScheme.error,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 40,
+                                      ),
+                                      child: Text(
+                                        state.message,
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: colorScheme.onErrorContainer,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        context.read<CoursesBloc>().add(
+                                          RefreshCoursesEvent(),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.refresh),
+                                      label: const Text('Try Again'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: colorScheme.error,
+                                        foregroundColor: colorScheme.onError,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          }
+
+                          return const SizedBox.shrink();
+                        },
                       ),
                     ),
 

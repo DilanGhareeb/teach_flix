@@ -4,34 +4,53 @@ import 'package:teach_flix/src/fatures/courses/presentation/widgets/course_card.
 
 class CourseGrid extends StatelessWidget {
   final List<CourseEntity> courses;
-  final Function(CourseEntity) onCourseTap;
-  final bool showPrice;
+  final Function(CourseEntity)? onCourseTap;
 
-  const CourseGrid({
-    super.key,
-    required this.courses,
-    required this.onCourseTap,
-    this.showPrice = true,
-  });
+  const CourseGrid({super.key, required this.courses, this.onCourseTap});
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 12,
-        crossAxisSpacing: 12,
-        childAspectRatio: 3 / 4,
-      ),
-      itemCount: courses.length,
-      itemBuilder: (context, index) {
-        final course = courses[index];
-        return CourseCard(
-          course: course,
-          onTap: () => onCourseTap(course),
-          showPrice: showPrice,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Responsive grid based on screen width
+        int crossAxisCount;
+        double childAspectRatio;
+
+        if (constraints.maxWidth > 1200) {
+          // Desktop/Large tablets
+          crossAxisCount = 3;
+          childAspectRatio = 0.75;
+        } else if (constraints.maxWidth > 800) {
+          // Tablets
+          crossAxisCount = 2;
+          childAspectRatio = 0.72;
+        } else if (constraints.maxWidth > 600) {
+          // Small tablets/Large phones
+          crossAxisCount = 2;
+          childAspectRatio = 0.70;
+        } else {
+          // Phones
+          crossAxisCount = 1;
+          childAspectRatio = 0.85;
+        }
+
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+          ),
+          itemCount: courses.length,
+          itemBuilder: (context, index) {
+            final course = courses[index];
+            return CourseCard(
+              course: course,
+              onTap: () => onCourseTap?.call(course),
+            );
+          },
         );
       },
     );

@@ -4,7 +4,7 @@ import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/pages/create_course_page.dart';
-import 'package:teach_flix/src/fatures/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:teach_flix/src/fatures/common/presentation/pages/dashboard_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/pages/settings_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
