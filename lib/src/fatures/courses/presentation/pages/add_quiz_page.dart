@@ -77,27 +77,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
 
             const SizedBox(height: 16),
 
-            // Quiz Description
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: t.description,
-                hintText: t.enter_quiz_description,
-                prefixIcon: Icon(
-                  Icons.description_rounded,
-                  color: colorScheme.primary,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                filled: true,
-                fillColor: colorScheme.surfaceContainerHighest,
-              ),
-              maxLines: 3,
-            ),
-
-            const SizedBox(height: 16),
-
             // Passing Score
             TextFormField(
               controller: _passingScoreController,
@@ -419,7 +398,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
       final quiz = QuizEntity(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
-        description: _descriptionController.text,
         questions: _questions,
         passingScore: int.parse(_passingScoreController.text),
         timeLimit: Duration(minutes: int.parse(_timeLimitController.text)),

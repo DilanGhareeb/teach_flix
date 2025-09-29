@@ -4,7 +4,6 @@ import 'package:teach_flix/src/fatures/courses/domain/entities/question_entity.d
 class QuizEntity extends Equatable {
   final String id;
   final String title;
-  final String description;
   final List<QuestionEntity> questions;
   final int passingScore;
   final Duration timeLimit;
@@ -12,19 +11,11 @@ class QuizEntity extends Equatable {
   const QuizEntity({
     required this.id,
     required this.title,
-    required this.description,
     required this.questions,
     required this.passingScore,
     required this.timeLimit,
   });
 
   @override
-  List<Object?> get props => [
-    id,
-    title,
-    description,
-    questions,
-    passingScore,
-    timeLimit,
-  ];
+  List<Object?> get props => [id, title, questions, passingScore, timeLimit];
 }

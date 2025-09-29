@@ -29,6 +29,14 @@ class CourseEntity extends Equatable {
     required this.chapters,
   });
 
+  double get averageRating {
+    if (ratings.isEmpty) return 0.0;
+    final sum = ratings.fold<double>(0, (prev, rating) => prev + rating.rating);
+    return sum / ratings.length;
+  }
+
+  int get totalRatings => ratings.length;
+
   @override
   List<Object?> get props => [
     id,

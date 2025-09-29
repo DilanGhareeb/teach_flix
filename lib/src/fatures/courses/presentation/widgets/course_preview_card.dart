@@ -21,6 +21,9 @@ class CoursePreviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
 
+    final averageRating = course.averageRating;
+    final totalRatings = course.totalRatings;
+
     return Card(
       margin: const EdgeInsets.all(16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -72,6 +75,30 @@ class CoursePreviewCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 8),
+
+                // Rating Display
+                if (totalRatings > 0)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.amber, size: 20),
+                        const SizedBox(width: 4),
+                        Text(
+                          averageRating.toStringAsFixed(1),
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '($totalRatings ${totalRatings == 1 ? 'rating' : 'ratings'})',
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
+                        ),
+                      ],
+                    ),
+                  ),
+
                 Text(
                   course.description,
                   style: Theme.of(

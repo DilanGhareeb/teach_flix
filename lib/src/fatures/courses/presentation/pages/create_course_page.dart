@@ -1,7 +1,7 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
+import 'package:teach_flix/src/fatures/courses/domain/entities/course_category.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/pages/add_chapter_page.dart';
@@ -22,19 +22,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   final _priceController = TextEditingController();
   final _previewVideoUrlController = TextEditingController();
 
-  String _selectedCategory = 'Programming';
+  String _selectedCategory = CourseCategory.programming.englishName;
 
-  final List<String> _categories = [
-    'Programming',
-    'Design',
-    'Marketing',
-    'Business',
-    'Photography',
-    'Music',
-    'Language',
-    'Fitness',
-  ];
-
+  final List<String> _categories = CourseCategory.allCategoryNames;
   @override
   void dispose() {
     _titleController.dispose();
@@ -275,59 +265,18 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
           ),
 
           // Image Preview
-          if (state.selectedImage != null || state.uploadedImageUrl != null)
+          if (state.selectedImage != null)
             Container(
               width: double.infinity,
               height: 200,
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(16),
-                image: state.selectedImage != null
-                    ? DecorationImage(
-                        image: FileImage(state.selectedImage!),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
+                image: DecorationImage(
+                  image: FileImage(state.selectedImage!),
+                  fit: BoxFit.cover,
+                ),
               ),
-              child: state.status == CoursesStatus.imageUploaded
-                  ? Stack(
-                      children: [
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 6,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.green,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(
-                                  Icons.check_circle,
-                                  color: Colors.white,
-                                  size: 16,
-                                ),
-                                const SizedBox(width: 4),
-                                Text(
-                                  t.uploaded,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  : null,
             )
           else
             Container(
@@ -371,11 +320,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: state.status == CoursesStatus.imageUploading
-                        ? null
-                        : () => context.read<CoursesBloc>().add(
-                            PickImageFromGalleryEvent(),
-                          ),
+                    onPressed: () => context.read<CoursesBloc>().add(
+                      PickImageFromGalleryEvent(),
+                    ),
                     icon: const Icon(Icons.photo_library_rounded),
                     label: Text(t.gallery),
                     style: OutlinedButton.styleFrom(
@@ -389,11 +336,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 const SizedBox(width: 12),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: state.status == CoursesStatus.imageUploading
-                        ? null
-                        : () => context.read<CoursesBloc>().add(
-                            PickImageFromCameraEvent(),
-                          ),
+                    onPressed: () => context.read<CoursesBloc>().add(
+                      PickImageFromCameraEvent(),
+                    ),
                     icon: const Icon(Icons.camera_alt_rounded),
                     label: Text(t.camera),
                     style: OutlinedButton.styleFrom(
@@ -407,57 +352,42 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               ],
             ),
           ),
-
-          // Upload Button
-          if (state.status == CoursesStatus.imagePicked &&
-              state.selectedImage != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: () => context.read<CoursesBloc>().add(
-                    UploadCourseImageEvent(state.selectedImage!),
-                  ),
-                  icon: const Icon(Icons.cloud_upload_rounded),
-                  label: Text(t.upload_image),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 14),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-
-          // Upload Progress
-          if (state.status == CoursesStatus.imageUploading)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-              child: Column(
-                children: [
-                  LinearProgressIndicator(
-                    value: state.imageUploadProgress,
-                    backgroundColor: colorScheme.surfaceContainer,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '${((state.imageUploadProgress ?? 0) * 100).toInt()}% ${t.uploading}',
-                    style: TextStyle(
-                      color: colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
         ],
       ),
     );
+  }
+
+  void _createCourse() {
+    if (_formKey.currentState?.validate() ?? false) {
+      final state = context.read<CoursesBloc>().state;
+
+      // Check if image is selected (not uploaded)
+      if (state.selectedImage == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.please_upload_thumbnail,
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      final authState = context.read<AuthBloc>().state;
+      if (authState.user != null) {
+        context.read<CoursesBloc>().add(
+          SubmitNewCourseEvent(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            category: _selectedCategory,
+            price: double.parse(_priceController.text),
+            previewVideoUrl: _previewVideoUrlController.text,
+            instructorId: authState.user!.id,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildChaptersSection(
@@ -663,37 +593,5 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
         ],
       ),
     );
-  }
-
-  void _createCourse() {
-    if (_formKey.currentState?.validate() ?? false) {
-      final state = context.read<CoursesBloc>().state;
-
-      if (state.uploadedImageUrl == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context)!.please_upload_thumbnail,
-            ),
-            backgroundColor: Colors.orange,
-          ),
-        );
-        return;
-      }
-
-      final authState = context.read<AuthBloc>().state;
-      if (authState.user != null) {
-        context.read<CoursesBloc>().add(
-          SubmitNewCourseEvent(
-            title: _titleController.text,
-            description: _descriptionController.text,
-            category: _selectedCategory,
-            price: double.parse(_priceController.text),
-            previewVideoUrl: _previewVideoUrlController.text,
-            instructorId: authState.user!.id,
-          ),
-        );
-      }
-    }
   }
 }

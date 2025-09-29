@@ -8,12 +8,21 @@ class VideoModel extends VideoEntity {
     required super.orderIndex,
   });
 
+  factory VideoModel.fromEntity(VideoEntity entity) {
+    return VideoModel(
+      id: entity.id,
+      title: entity.title,
+      youtubeUrl: entity.youtubeUrl,
+      orderIndex: entity.orderIndex,
+    );
+  }
+
   factory VideoModel.fromMap(Map<String, dynamic> map) {
     return VideoModel(
-      id: map['id'] ?? '',
-      title: map['title'] ?? '',
-      youtubeUrl: map['youtubeUrl'] ?? '',
-      orderIndex: map['orderIndex'] ?? 0,
+      id: map['id'] as String,
+      title: map['title'] as String,
+      youtubeUrl: map['youtubeUrl'] as String,
+      orderIndex: map['orderIndex'] as int,
     );
   }
 

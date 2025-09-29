@@ -9,13 +9,23 @@ class QuestionModel extends QuestionEntity {
     required super.explanation,
   });
 
+  factory QuestionModel.fromEntity(QuestionEntity entity) {
+    return QuestionModel(
+      id: entity.id,
+      question: entity.question,
+      options: entity.options,
+      correctAnswerIndex: entity.correctAnswerIndex,
+      explanation: entity.explanation,
+    );
+  }
+
   factory QuestionModel.fromMap(Map<String, dynamic> map) {
     return QuestionModel(
-      id: map['id'] ?? '',
-      question: map['question'] ?? '',
-      options: List<String>.from(map['options'] ?? []),
-      correctAnswerIndex: map['correctAnswerIndex'] ?? 0,
-      explanation: map['explanation'] ?? '',
+      id: map['id'] as String,
+      question: map['question'] as String,
+      options: List<String>.from(map['options'] as List<dynamic>),
+      correctAnswerIndex: map['correctAnswerIndex'] as int,
+      explanation: map['explanation'] as String? ?? '',
     );
   }
 

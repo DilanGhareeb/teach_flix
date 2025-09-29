@@ -91,28 +91,7 @@ class _AddVideoPageState extends State<AddVideoPage> {
               ),
               maxLines: 3,
             ),
-            const SizedBox(height: 16),
 
-            TextFormField(
-              controller: _durationController,
-              decoration: InputDecoration(
-                labelText: t.duration_minutes,
-                hintText: t.enter_duration_minutes,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return t.duration_required;
-                }
-                if (int.tryParse(value!) == null) {
-                  return t.invalid_duration;
-                }
-                return null;
-              },
-            ),
             const SizedBox(height: 16),
 
             TextFormField(

@@ -10,15 +10,24 @@ class ChapterModel extends ChapterEntity {
     required super.quizzes,
   });
 
+  factory ChapterModel.fromEntity(ChapterEntity entity) {
+    return ChapterModel(
+      id: entity.id,
+      title: entity.title,
+      videosUrls: entity.videosUrls,
+      quizzes: entity.quizzes,
+    );
+  }
+
   factory ChapterModel.fromMap(Map<String, dynamic> map) {
     return ChapterModel(
-      id: map['id'] ?? '',
-      title: map['title'] ?? '',
-      videosUrls: (map['videosUrls'] as List<dynamic>? ?? [])
-          .map((video) => VideoModel.fromMap(video))
+      id: map['id'] as String,
+      title: map['title'] as String,
+      videosUrls: (map['videosUrls'] as List<dynamic>)
+          .map((video) => VideoModel.fromMap(video as Map<String, dynamic>))
           .toList(),
-      quizzes: (map['quizzes'] as List<dynamic>? ?? [])
-          .map((quiz) => QuizModel.fromMap(quiz))
+      quizzes: (map['quizzes'] as List<dynamic>)
+          .map((quiz) => QuizModel.fromMap(quiz as Map<String, dynamic>))
           .toList(),
     );
   }
@@ -28,9 +37,11 @@ class ChapterModel extends ChapterEntity {
       'id': id,
       'title': title,
       'videosUrls': videosUrls
-          .map((video) => (video as VideoModel).toMap())
+          .map((video) => VideoModel.fromEntity(video).toMap())
           .toList(),
-      'quizzes': quizzes.map((quiz) => (quiz as QuizModel).toMap()).toList(),
+      'quizzes': quizzes
+          .map((quiz) => QuizModel.fromEntity(quiz).toMap())
+          .toList(),
     };
   }
 }

@@ -471,18 +471,57 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     SubmitNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    if (state.uploadedImageUrl == null) {
-      emit(state.copyWith(status: CoursesStatus.failure));
+    print('DEBUG: Starting course submission');
+
+    if (state.selectedImage == null) {
+      print('DEBUG: No image selected');
+      emit(
+        state.copyWith(
+          status: CoursesStatus.failure,
+          failure: UnknownFailure(),
+        ),
+      );
       return;
     }
 
+    print('DEBUG: Image selected, starting upload');
     emit(state.copyWith(status: CoursesStatus.creating, failure: null));
+
+    final uploadResult = await _uploadCourseImage.call(
+      params: UploadCourseImageParams(
+        imageFile: state.selectedImage!,
+        onProgress: (progress) {
+          print(
+            'DEBUG: Upload progress: ${(progress * 100).toStringAsFixed(1)}%',
+          );
+        },
+      ),
+    );
+
+    final String? imageUrl = uploadResult.fold(
+      (failure) {
+        print('DEBUG: Upload failed - ${failure.runtimeType}');
+        emit(state.copyWith(status: CoursesStatus.failure, failure: failure));
+        return null;
+      },
+      (url) {
+        print('DEBUG: Upload successful - $url');
+        return url;
+      },
+    );
+
+    if (imageUrl == null) {
+      print('DEBUG: Image URL is null, stopping');
+      return;
+    }
+
+    print('DEBUG: Creating course with imageUrl: $imageUrl');
 
     final course = CourseEntity(
       id: '',
       title: event.title,
       description: event.description,
-      imageUrl: state.uploadedImageUrl!,
+      imageUrl: imageUrl,
       previewVideoUrl: event.previewVideoUrl,
       category: event.category,
       price: event.price,
@@ -497,15 +536,23 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
 
     result.fold(
-      (failure) =>
-          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
-      (createdCourse) => emit(
-        state.copyWith(
-          status: CoursesStatus.courseCreated,
-          selectedCourse: createdCourse,
-          failure: null,
-        ),
-      ),
+      (failure) {
+        print('DEBUG: Course creation failed - ${failure.runtimeType}');
+        emit(state.copyWith(status: CoursesStatus.failure, failure: failure));
+      },
+      (createdCourse) {
+        print('DEBUG: Course created successfully - ${createdCourse.id}');
+        emit(
+          state.copyWith(
+            status: CoursesStatus.courseCreated,
+            selectedCourse: createdCourse,
+            selectedImage: null,
+            uploadedImageUrl: null,
+            chapters: null,
+            failure: null,
+          ),
+        );
+      },
     );
   }
 }

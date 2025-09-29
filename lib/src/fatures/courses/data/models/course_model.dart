@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
-import 'package:teach_flix/src/fatures/courses/data/models/course_rating_model.dart';
 import 'package:teach_flix/src/fatures/courses/data/models/chapter_model.dart';
+import 'package:teach_flix/src/fatures/courses/data/models/course_rating_model.dart';
 
 class CourseModel extends CourseEntity {
   const CourseModel({
@@ -18,47 +18,7 @@ class CourseModel extends CourseEntity {
     required super.chapters,
   });
 
-  factory CourseModel.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
-
-    return CourseModel(
-      id: doc.id,
-      title: data['title'] ?? '',
-      description: data['description'] ?? '',
-      imageUrl: data['imageUrl'] ?? '',
-      previewVideoUrl: data['previewVideoUrl'] ?? '',
-      category: data['category'] ?? '',
-      price: (data['price'] ?? 0.0).toDouble(),
-      instructorId: data['instructorId'] ?? '',
-      createAt: (data['createAt'] as Timestamp).toDate(),
-      ratings: (data['ratings'] as List<dynamic>? ?? [])
-          .map((rating) => CourseRatingModel.fromMap(rating))
-          .toList(),
-      chapters: (data['chapters'] as List<dynamic>? ?? [])
-          .map((chapter) => ChapterModel.fromMap(chapter))
-          .toList(),
-    );
-  }
-
-  Map<String, dynamic> toFirestore() {
-    return {
-      'title': title,
-      'description': description,
-      'imageUrl': imageUrl,
-      'previewVideoUrl': previewVideoUrl,
-      'category': category,
-      'price': price,
-      'instructorId': instructorId,
-      'createAt': Timestamp.fromDate(createAt),
-      'ratings': ratings
-          .map((rating) => (rating as CourseRatingModel).toMap())
-          .toList(),
-      'chapters': chapters
-          .map((chapter) => (chapter as ChapterModel).toMap())
-          .toList(),
-    };
-  }
-
+  // Add this factory method
   factory CourseModel.fromEntity(CourseEntity entity) {
     return CourseModel(
       id: entity.id,
@@ -73,5 +33,56 @@ class CourseModel extends CourseEntity {
       ratings: entity.ratings,
       chapters: entity.chapters,
     );
+  }
+
+  factory CourseModel.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    return CourseModel(
+      id: doc.id,
+      title: data['title'] as String,
+      description: data['description'] as String,
+      imageUrl: data['imageUrl'] as String,
+      previewVideoUrl: data['previewVideoUrl'] as String,
+      category: data['category'] as String,
+      price: (data['price'] as num).toDouble(),
+      instructorId: data['instructorId'] as String,
+      createAt: (data['createAt'] as Timestamp).toDate(),
+      ratings:
+          (data['ratings'] as List<dynamic>?)
+              ?.map(
+                (rating) =>
+                    CourseRatingModel.fromMap(rating as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
+      chapters:
+          (data['chapters'] as List<dynamic>?)
+              ?.map(
+                (chapter) =>
+                    ChapterModel.fromMap(chapter as Map<String, dynamic>),
+              )
+              .toList() ??
+          [],
+    );
+  }
+
+  Map<String, dynamic> toFirestore() {
+    return {
+      'title': title,
+      'titleLowercase': title.toLowerCase(),
+      'description': description,
+      'imageUrl': imageUrl,
+      'previewVideoUrl': previewVideoUrl,
+      'category': category,
+      'price': price,
+      'instructorId': instructorId,
+      'createAt': Timestamp.fromDate(createAt),
+      'ratings': ratings
+          .map((rating) => CourseRatingModel.fromEntity(rating).toMap())
+          .toList(),
+      'chapters': chapters
+          .map((chapter) => ChapterModel.fromEntity(chapter).toMap())
+          .toList(),
+    };
   }
 }

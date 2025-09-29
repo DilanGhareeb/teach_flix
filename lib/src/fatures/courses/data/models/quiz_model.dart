@@ -5,22 +5,30 @@ class QuizModel extends QuizEntity {
   const QuizModel({
     required super.id,
     required super.title,
-    required super.description,
     required super.questions,
     required super.passingScore,
     required super.timeLimit,
   });
 
+  factory QuizModel.fromEntity(QuizEntity entity) {
+    return QuizModel(
+      id: entity.id,
+      title: entity.title,
+      questions: entity.questions,
+      passingScore: entity.passingScore,
+      timeLimit: entity.timeLimit,
+    );
+  }
+
   factory QuizModel.fromMap(Map<String, dynamic> map) {
     return QuizModel(
-      id: map['id'] ?? '',
-      title: map['title'] ?? '',
-      description: map['description'] ?? '',
-      questions: (map['questions'] as List<dynamic>? ?? [])
-          .map((question) => QuestionModel.fromMap(question))
+      id: map['id'] as String,
+      title: map['title'] as String,
+      questions: (map['questions'] as List<dynamic>)
+          .map((q) => QuestionModel.fromMap(q as Map<String, dynamic>))
           .toList(),
-      passingScore: map['passingScore'] ?? 0,
-      timeLimit: Duration(minutes: map['timeLimit'] ?? 0),
+      passingScore: map['passingScore'] as int,
+      timeLimit: Duration(minutes: map['timeLimitMinutes'] as int),
     );
   }
 
@@ -28,12 +36,11 @@ class QuizModel extends QuizEntity {
     return {
       'id': id,
       'title': title,
-      'description': description,
       'questions': questions
-          .map((question) => (question as QuestionModel).toMap())
+          .map((q) => QuestionModel.fromEntity(q).toMap())
           .toList(),
       'passingScore': passingScore,
-      'timeLimit': timeLimit.inMinutes,
+      'timeLimitMinutes': timeLimit.inMinutes,
     };
   }
 }
