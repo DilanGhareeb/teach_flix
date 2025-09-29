@@ -1,4 +1,5 @@
 // lib/src/service_locator.dart
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -15,6 +16,7 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/upload_course_image.dart';
 
 // Settings
 import 'package:teach_flix/src/fatures/settings/data/datasources/app_prefernce_local.dart';
@@ -51,6 +53,7 @@ Future<void> setupServiceLocator() async {
   // Firebase instances
   sl.registerLazySingleton(() => FirebaseAuth.instance);
   sl.registerLazySingleton(() => FirebaseFirestore.instance);
+  sl.registerLazySingleton(() => FirebaseStorage.instance);
 
   // Auth feature
   sl.registerLazySingleton<AuthApiDatasource>(
@@ -111,7 +114,10 @@ Future<void> setupServiceLocator() async {
 
   // Courses feature - Data Layer
   sl.registerLazySingleton<CourseFirebaseDataSource>(
-    () => CourseFirebaseDataSourceImpl(firestore: sl<FirebaseFirestore>()),
+    () => CourseFirebaseDataSourceImpl(
+      firestore: sl<FirebaseFirestore>(),
+      storage: sl<FirebaseStorage>(),
+    ),
   );
 
   sl.registerLazySingleton<CourseRepository>(
@@ -125,6 +131,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => GetAllCourses(sl()));
   sl.registerFactory(() => GetCourseById(sl()));
   sl.registerFactory(() => GetCoursesByCategory(sl()));
+  sl.registerFactory(() => UploadCourseImage(sl()));
   sl.registerFactory(() => GetEnrolledCourses(sl()));
   sl.registerFactory(() => PurchaseCourse(sl()));
   sl.registerFactory(() => SearchCourses(sl()));
@@ -141,6 +148,7 @@ Future<void> setupServiceLocator() async {
       addChapterToCourse: sl(),
       addVideoToChapter: sl(),
       purchaseCourse: sl(),
+      uploadCourseImage: sl(),
     ),
   );
 }

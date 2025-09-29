@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/category_selector.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/horizontal_course_list.dart';
@@ -146,8 +147,8 @@ class _DashboardPageState extends State<DashboardPage>
                         ],
                       ),
                       child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, state) {
-                          final user = state.user;
+                        builder: (context, authState) {
+                          final user = authState.user;
                           return Row(
                             children: [
                               Container(
@@ -320,7 +321,7 @@ class _DashboardPageState extends State<DashboardPage>
                   SliverToBoxAdapter(
                     child: BlocBuilder<CoursesBloc, CoursesState>(
                       builder: (context, state) {
-                        if (state is CoursesLoading) {
+                        if (state.status == CoursesStatus.loading) {
                           return Container(
                             height: 200,
                             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -349,8 +350,9 @@ class _DashboardPageState extends State<DashboardPage>
                               ),
                             ),
                           );
-                        } else if (state is CoursesLoaded) {
-                          if (state.courses.isEmpty) {
+                        } else if (state.status == CoursesStatus.loaded &&
+                            state.courses != null) {
+                          if (state.courses!.isEmpty) {
                             return Container(
                               height: 200,
                               margin: const EdgeInsets.symmetric(
@@ -406,12 +408,13 @@ class _DashboardPageState extends State<DashboardPage>
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
                             child: HorizontalCourseList(
-                              key: ValueKey(state.courses.length),
-                              courses: state.courses,
+                              key: ValueKey(state.courses!.length),
+                              courses: state.courses!,
                               onCourseTap: _onCourseTap,
                             ),
                           );
-                        } else if (state is CoursesError) {
+                        } else if (state.status == CoursesStatus.failure &&
+                            state.failure != null) {
                           return Container(
                             height: 200,
                             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -446,7 +449,7 @@ class _DashboardPageState extends State<DashboardPage>
                                       horizontal: 40,
                                     ),
                                     child: Text(
-                                      state.message,
+                                      ErrorLocalizer.of(state.failure!, t),
                                       style: textTheme.bodySmall?.copyWith(
                                         color: colorScheme.onErrorContainer,
                                       ),

@@ -87,3 +87,65 @@ class AddVideoToChapterEvent extends CoursesEvent {
 class RefreshCoursesEvent extends CoursesEvent {
   const RefreshCoursesEvent();
 }
+
+// New events for image upload and course creation
+class PickImageFromGalleryEvent extends CoursesEvent {
+  const PickImageFromGalleryEvent();
+}
+
+class PickImageFromCameraEvent extends CoursesEvent {
+  const PickImageFromCameraEvent();
+}
+
+class UploadCourseImageEvent extends CoursesEvent {
+  final File imageFile;
+  const UploadCourseImageEvent(this.imageFile);
+  @override
+  List<Object> get props => [imageFile];
+}
+
+class ClearSelectedImageEvent extends CoursesEvent {
+  const ClearSelectedImageEvent();
+}
+
+class AddChapterToNewCourseEvent extends CoursesEvent {
+  final ChapterEntity chapter;
+  const AddChapterToNewCourseEvent(this.chapter);
+  @override
+  List<Object> get props => [chapter];
+}
+
+class RemoveChapterFromNewCourseEvent extends CoursesEvent {
+  final int index;
+  const RemoveChapterFromNewCourseEvent(this.index);
+  @override
+  List<Object> get props => [index];
+}
+
+class SubmitNewCourseEvent extends CoursesEvent {
+  final String title;
+  final String description;
+  final String category;
+  final double price;
+  final String previewVideoUrl;
+  final String instructorId;
+
+  const SubmitNewCourseEvent({
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.price,
+    required this.previewVideoUrl,
+    required this.instructorId,
+  });
+
+  @override
+  List<Object> get props => [
+    title,
+    description,
+    category,
+    price,
+    previewVideoUrl,
+    instructorId,
+  ];
+}

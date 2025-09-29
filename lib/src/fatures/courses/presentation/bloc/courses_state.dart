@@ -1,86 +1,94 @@
 part of 'courses_bloc.dart';
 
-abstract class CoursesState extends Equatable {
-  const CoursesState();
-  @override
-  List<Object?> get props => [];
+enum CoursesStatus {
+  initial,
+  loading,
+  loaded,
+  failure,
+  creating,
+  courseCreated,
+  updating,
+  courseUpdated,
+  courseDetailLoaded,
+  purchasing,
+  coursePurchased,
+  enrolledCoursesLoaded,
+  imagePicked,
+  imageUploading,
+  imageUploaded,
+  chapterAdded,
+  chapterRemoved,
 }
 
-class CoursesInitial extends CoursesState {
-  const CoursesInitial();
-}
-
-class CoursesLoading extends CoursesState {
-  const CoursesLoading();
-}
-
-class CoursesLoaded extends CoursesState {
-  final List<CourseEntity> courses;
-  final String? currentCategory;
+class CoursesState extends Equatable {
+  final CoursesStatus status;
+  final List<CourseEntity>? courses;
+  final List<CourseEntity>? enrolledCourses;
+  final CourseEntity? selectedCourse;
   final String? searchQuery;
+  final String? currentCategory;
+  final Failure? failure;
 
-  const CoursesLoaded(this.courses, {this.currentCategory, this.searchQuery});
+  // Course creation fields
+  final File? selectedImage;
+  final String? uploadedImageUrl;
+  final double? imageUploadProgress;
+  final List<ChapterEntity>? chapters;
 
-  @override
-  List<Object?> get props => [courses, currentCategory, searchQuery];
+  const CoursesState({
+    this.status = CoursesStatus.initial,
+    this.courses,
+    this.enrolledCourses,
+    this.selectedCourse,
+    this.searchQuery,
+    this.currentCategory,
+    this.failure,
+    this.selectedImage,
+    this.uploadedImageUrl,
+    this.imageUploadProgress,
+    this.chapters,
+  });
 
-  CoursesLoaded copyWith({
+  CoursesState copyWith({
+    CoursesStatus? status,
     List<CourseEntity>? courses,
-    String? currentCategory,
+    List<CourseEntity>? enrolledCourses,
+    CourseEntity? selectedCourse,
     String? searchQuery,
+    String? currentCategory,
+    Failure? failure,
+    File? selectedImage,
+    String? uploadedImageUrl,
+    double? imageUploadProgress,
+    List<ChapterEntity>? chapters,
   }) {
-    return CoursesLoaded(
-      courses ?? this.courses,
-      currentCategory: currentCategory ?? this.currentCategory,
+    return CoursesState(
+      status: status ?? this.status,
+      courses: courses ?? this.courses,
+      enrolledCourses: enrolledCourses ?? this.enrolledCourses,
+      selectedCourse: selectedCourse ?? this.selectedCourse,
       searchQuery: searchQuery ?? this.searchQuery,
+      currentCategory: currentCategory ?? this.currentCategory,
+      failure: failure,
+      selectedImage: selectedImage ?? this.selectedImage,
+      uploadedImageUrl: uploadedImageUrl ?? this.uploadedImageUrl,
+      imageUploadProgress: imageUploadProgress ?? this.imageUploadProgress,
+      chapters: chapters ?? this.chapters,
     );
   }
-}
 
-class CoursesError extends CoursesState {
-  final String message;
-  const CoursesError(this.message);
   @override
-  List<Object> get props => [message];
-}
-
-class CourseDetailLoading extends CoursesState {
-  const CourseDetailLoading();
-}
-
-class CourseDetailLoaded extends CoursesState {
-  final CourseEntity course;
-  const CourseDetailLoaded(this.course);
-  @override
-  List<Object> get props => [course];
-}
-
-class CourseCreating extends CoursesState {
-  const CourseCreating();
-}
-
-class CourseCreated extends CoursesState {
-  final CourseEntity course;
-  const CourseCreated(this.course);
-  @override
-  List<Object> get props => [course];
-}
-
-class CoursePurchasing extends CoursesState {
-  const CoursePurchasing();
-}
-
-class CoursePurchased extends CoursesState {
-  const CoursePurchased();
-}
-
-class CourseUpdating extends CoursesState {
-  const CourseUpdating();
-}
-
-class CourseUpdated extends CoursesState {
-  final CourseEntity course;
-  const CourseUpdated(this.course);
-  @override
-  List<Object> get props => [course];
+  List<Object?> get props => [
+    status,
+    courses,
+    enrolledCourses,
+    selectedCourse,
+    searchQuery,
+    currentCategory,
+    failure,
+    selectedImage,
+    uploadedImageUrl,
+    imageUploadProgress,
+    chapters,
+  ];
 }

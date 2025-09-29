@@ -629,5 +629,205 @@
   "errInstructorCannotPurchaseOwnCourse": "Instructors cannot purchase their own courses.",
   "@errInstructorCannotPurchaseOwnCourse": {
     "description": "Error message when an instructor tries to purchase their own course"
+  },
+  "course_thumbnail": "Course Thumbnail",
+  "@course_thumbnail": {
+    "description": "Label for the course thumbnail image section"
+  },
+  "no_image_selected": "No image selected",
+  "@no_image_selected": {
+    "description": "Message displayed when no thumbnail image has been chosen"
+  },
+  "upload_image": "Upload Image",
+  "@upload_image": {
+    "description": "Button text to initiate image upload"
+  },
+  "uploaded": "Uploaded",
+  "@uploaded": {
+    "description": "Status message indicating successful upload completion"
+  },
+  "uploading": "Uploading...",
+  "@uploading": {
+    "description": "Status message shown during active file upload process"
+  },
+  "please_upload_thumbnail": "Please upload course thumbnail",
+  "@please_upload_thumbnail": {
+    "description": "Validation message prompting user to upload a course thumbnail"
+  },
+  "chapters": "Chapters",
+  "@chapters": {
+    "description": "Label for the course chapters section"
+  },
+  "no_chapters_added": "No chapters added yet",
+  "@no_chapters_added": {
+    "description": "Empty state message when no chapters exist in the course"
+  },
+  "delete_chapter": "Delete Chapter",
+  "@delete_chapter": {
+    "description": "Button text for deleting a chapter"
+  },
+  "delete_chapter_confirmation": "Are you sure you want to delete this chapter?",
+  "@delete_chapter_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm chapter deletion"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Generic delete action button text"
+  },
+  "delete_video": "Delete Video",
+  "@delete_video": {
+    "description": "Button text for deleting a video"
+  },
+  "delete_video_confirmation": "Are you sure you want to delete this video?",
+  "@delete_video_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm video deletion"
+  },
+  "delete_quiz": "Delete Quiz",
+  "@delete_quiz": {
+    "description": "Button text for deleting a quiz"
+  },
+  "delete_quiz_confirmation": "Are you sure you want to delete this quiz?",
+  "@delete_quiz_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm quiz deletion"
+  },
+  "add_quiz": "Add Quiz",
+  "@add_quiz": {
+    "description": "Button text to add a new quiz to the course"
+  },
+  "quiz_title": "Quiz Title",
+  "@quiz_title": {
+    "description": "Label for the quiz title input field"
+  },
+  "enter_quiz_title": "Enter quiz title",
+  "@enter_quiz_title": {
+    "description": "Placeholder text for quiz title input field"
+  },
+  "quiz_description": "Quiz Description",
+  "@quiz_description": {
+    "description": "Label for the quiz description input field"
+  },
+  "enter_quiz_description": "Enter quiz description",
+  "@enter_quiz_description": {
+    "description": "Placeholder text for quiz description input field"
+  },
+  "passing_score": "Passing Score",
+  "@passing_score": {
+    "description": "Label for the quiz passing score input field"
+  },
+  "enter_passing_score": "Enter passing score (e.g., 70)",
+  "@enter_passing_score": {
+    "description": "Placeholder text for passing score input field with example"
+  },
+  "passing_score_required": "Passing score is required",
+  "@passing_score_required": {
+    "description": "Validation error when passing score field is empty"
+  },
+  "invalid_passing_score": "Invalid passing score",
+  "@invalid_passing_score": {
+    "description": "Validation error when passing score value is invalid"
+  },
+  "time_limit_minutes": "Time Limit (Minutes)",
+  "@time_limit_minutes": {
+    "description": "Label for the quiz time limit input field"
+  },
+  "enter_time_limit": "Enter time limit in minutes",
+  "@enter_time_limit": {
+    "description": "Placeholder text for time limit input field"
+  },
+  "time_limit_required": "Time limit is required",
+  "@time_limit_required": {
+    "description": "Validation error when time limit field is empty"
+  },
+  "invalid_time_limit": "Invalid time limit",
+  "@invalid_time_limit": {
+    "description": "Validation error when time limit value is invalid"
+  },
+  "questions": "Questions",
+  "@questions": {
+    "description": "Label for the quiz questions section"
+  },
+  "no_questions_added": "No questions added yet",
+  "@no_questions_added": {
+    "description": "Empty state message when no questions exist in the quiz"
+  },
+  "add_question": "Add Question",
+  "@add_question": {
+    "description": "Button text to add a new question to the quiz"
+  },
+  "delete_question": "Delete Question",
+  "@delete_question": {
+    "description": "Button text for deleting a question"
+  },
+  "delete_question_confirmation": "Are you sure you want to delete this question?",
+  "@delete_question_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm question deletion"
+  },
+  "add_at_least_one_question": "Please add at least one question",
+  "@add_at_least_one_question": {
+    "description": "Validation error when quiz has no questions"
+  },
+  "question": "Question",
+  "@question": {
+    "description": "Label for the question text input field"
+  },
+  "enter_question": "Enter your question",
+  "@enter_question": {
+    "description": "Placeholder text for question input field"
+  },
+  "question_required": "Question is required",
+  "@question_required": {
+    "description": "Validation error when question field is empty"
+  },
+  "options": "Options",
+  "@options": {
+    "description": "Label for the answer options section"
+  },
+  "option": "Option",
+  "@option": {
+    "description": "Label for an individual answer option"
+  },
+  "option_required": "Option is required",
+  "@option_required": {
+    "description": "Validation error when an option field is empty"
+  },
+  "explanation": "Explanation",
+  "@explanation": {
+    "description": "Label for the answer explanation input field"
+  },
+  "optional": "Optional",
+  "@optional": {
+    "description": "Indicator text showing that a field is not required"
+  },
+  "enter_explanation": "Enter explanation for the correct answer",
+  "@enter_explanation": {
+    "description": "Placeholder text for explanation input field"
+  },
+  "errStorageUnauthorized": "You don't have permission to upload files",
+  "@errStorageUnauthorized": {
+    "description": "Error message for unauthorized file upload attempt"
+  },
+  "errStorageCanceled": "Upload was canceled",
+  "@errStorageCanceled": {
+    "description": "Error message for canceled file upload"
+  },
+  "errStorageQuotaExceeded": "Storage quota exceeded",
+  "@errStorageQuotaExceeded": {
+    "description": "Error message for exceeding storage quota"
+  },
+  "errStorageRetryLimitExceeded": "Upload failed after multiple retries",
+  "@errStorageRetryLimitExceeded": {
+    "description": "Error message for upload failure after retry attempts"
+  },
+  "errStorageInvalidChecksum": "File validation failed",
+  "@errStorageInvalidChecksum": {
+    "description": "Error message for file checksum validation failure"
+  },
+  "errStorageUnknown": "Upload failed",
+  "@errStorageUnknown": {
+    "description": "Generic error message for unknown upload failure"
+  },
+  "errImageUploadFailed": "Failed to upload image",
+  "@errImageUploadFailed": {
+    "description": "Error message for image upload failure"
   }
 }

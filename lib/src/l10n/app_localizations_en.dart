@@ -484,4 +484,160 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get errInstructorCannotPurchaseOwnCourse =>
       'Instructors cannot purchase their own courses.';
+
+  @override
+  String get course_thumbnail => 'Course Thumbnail';
+
+  @override
+  String get no_image_selected => 'No image selected';
+
+  @override
+  String get upload_image => 'Upload Image';
+
+  @override
+  String get uploaded => 'Uploaded';
+
+  @override
+  String get uploading => 'Uploading...';
+
+  @override
+  String get please_upload_thumbnail => 'Please upload course thumbnail';
+
+  @override
+  String get chapters => 'Chapters';
+
+  @override
+  String get no_chapters_added => 'No chapters added yet';
+
+  @override
+  String get delete_chapter => 'Delete Chapter';
+
+  @override
+  String get delete_chapter_confirmation =>
+      'Are you sure you want to delete this chapter?';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get delete_video => 'Delete Video';
+
+  @override
+  String get delete_video_confirmation =>
+      'Are you sure you want to delete this video?';
+
+  @override
+  String get delete_quiz => 'Delete Quiz';
+
+  @override
+  String get delete_quiz_confirmation =>
+      'Are you sure you want to delete this quiz?';
+
+  @override
+  String get add_quiz => 'Add Quiz';
+
+  @override
+  String get quiz_title => 'Quiz Title';
+
+  @override
+  String get enter_quiz_title => 'Enter quiz title';
+
+  @override
+  String get quiz_description => 'Quiz Description';
+
+  @override
+  String get enter_quiz_description => 'Enter quiz description';
+
+  @override
+  String get passing_score => 'Passing Score';
+
+  @override
+  String get enter_passing_score => 'Enter passing score (e.g., 70)';
+
+  @override
+  String get passing_score_required => 'Passing score is required';
+
+  @override
+  String get invalid_passing_score => 'Invalid passing score';
+
+  @override
+  String get time_limit_minutes => 'Time Limit (Minutes)';
+
+  @override
+  String get enter_time_limit => 'Enter time limit in minutes';
+
+  @override
+  String get time_limit_required => 'Time limit is required';
+
+  @override
+  String get invalid_time_limit => 'Invalid time limit';
+
+  @override
+  String get questions => 'Questions';
+
+  @override
+  String get no_questions_added => 'No questions added yet';
+
+  @override
+  String get add_question => 'Add Question';
+
+  @override
+  String get delete_question => 'Delete Question';
+
+  @override
+  String get delete_question_confirmation =>
+      'Are you sure you want to delete this question?';
+
+  @override
+  String get add_at_least_one_question => 'Please add at least one question';
+
+  @override
+  String get question => 'Question';
+
+  @override
+  String get enter_question => 'Enter your question';
+
+  @override
+  String get question_required => 'Question is required';
+
+  @override
+  String get options => 'Options';
+
+  @override
+  String get option => 'Option';
+
+  @override
+  String get option_required => 'Option is required';
+
+  @override
+  String get explanation => 'Explanation';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get enter_explanation => 'Enter explanation for the correct answer';
+
+  @override
+  String get errStorageUnauthorized =>
+      'You don\'t have permission to upload files';
+
+  @override
+  String get errStorageCanceled => 'Upload was canceled';
+
+  @override
+  String get errStorageQuotaExceeded => 'Storage quota exceeded';
+
+  @override
+  String get errStorageRetryLimitExceeded =>
+      'Upload failed after multiple retries';
+
+  @override
+  String get errStorageInvalidChecksum => 'File validation failed';
+
+  @override
+  String get errStorageUnknown => 'Upload failed';
+
+  @override
+  String get errImageUploadFailed => 'Failed to upload image';
 }

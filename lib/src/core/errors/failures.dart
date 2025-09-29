@@ -66,6 +66,51 @@ class FirestoreFailure extends Failure {
   }
 }
 
+enum StorageFailureKind {
+  unauthorized,
+  canceled,
+  quotaExceeded,
+  retryLimitExceeded,
+  invalidChecksum,
+  unknown,
+}
+
+class StorageFailure extends Failure {
+  final StorageFailureKind kind;
+
+  const StorageFailure(this.kind, [String? code]) : super();
+
+  factory StorageFailure.fromFirebaseCode(String code) {
+    switch (code) {
+      case 'unauthorized':
+      case 'unauthenticated':
+        return const StorageFailure(
+          StorageFailureKind.unauthorized,
+          'unauthorized',
+        );
+      case 'canceled':
+        return const StorageFailure(StorageFailureKind.canceled, 'canceled');
+      case 'quota-exceeded':
+        return const StorageFailure(
+          StorageFailureKind.quotaExceeded,
+          'quota-exceeded',
+        );
+      case 'retry-limit-exceeded':
+        return const StorageFailure(
+          StorageFailureKind.retryLimitExceeded,
+          'retry-limit-exceeded',
+        );
+      case 'invalid-checksum':
+        return const StorageFailure(
+          StorageFailureKind.invalidChecksum,
+          'invalid-checksum',
+        );
+      default:
+        return StorageFailure(StorageFailureKind.unknown, code);
+    }
+  }
+}
+
 class ServerFailure extends Failure {
   const ServerFailure({super.code});
 }

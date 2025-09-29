@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/courses/data/datasources/course_firebase_datasource.dart';
@@ -98,5 +100,13 @@ class CourseRepositoryImpl implements CourseRepository {
     String instructorId,
   ) {
     return dataSource.watchCoursesByInstructor(instructorId);
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadCourseImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  }) async {
+    return await dataSource.uploadImage(imageFile, onProgress: onProgress);
   }
 }

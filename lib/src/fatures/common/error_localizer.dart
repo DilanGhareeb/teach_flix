@@ -34,6 +34,21 @@ class ErrorLocalizer {
         case FirestoreFailureKind.unknown:
           return localization.errFsUnknown;
       }
+    } else if (f is StorageFailure) {
+      switch (f.kind) {
+        case StorageFailureKind.unauthorized:
+          return localization.errStorageUnauthorized;
+        case StorageFailureKind.canceled:
+          return localization.errStorageCanceled;
+        case StorageFailureKind.quotaExceeded:
+          return localization.errStorageQuotaExceeded;
+        case StorageFailureKind.retryLimitExceeded:
+          return localization.errStorageRetryLimitExceeded;
+        case StorageFailureKind.invalidChecksum:
+          return localization.errStorageInvalidChecksum;
+        case StorageFailureKind.unknown:
+          return localization.errStorageUnknown;
+      }
     } else if (f is ServerFailure) {
       return localization.errServerGeneric;
     } else if (f is UnknownFailure) {
@@ -47,7 +62,6 @@ class ErrorLocalizer {
     } else if (f is InstructorCannotPurchaseOwnCourseFailure) {
       return localization.errInstructorCannotPurchaseOwnCourse;
     }
-
     final base = localization.errUnknown;
     return kDebugMode && f.code != null ? '$base (${f.code})' : base;
   }

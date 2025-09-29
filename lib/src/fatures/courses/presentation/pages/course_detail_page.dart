@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/course_preview_card.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
@@ -29,17 +30,18 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
       appBar: AppBar(title: Text(t.course_details), elevation: 0),
       body: BlocListener<CoursesBloc, CoursesState>(
         listener: (context, state) {
-          if (state is CoursePurchased) {
+          if (state.status == CoursesStatus.coursePurchased) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(t.course_purchased_successfully),
                 backgroundColor: Colors.green,
               ),
             );
-          } else if (state is CoursesError) {
+          } else if (state.status == CoursesStatus.failure &&
+              state.failure != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(ErrorLocalizer.of(state.failure!, t)),
                 backgroundColor: Colors.red,
               ),
             );
@@ -47,30 +49,35 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
         },
         child: BlocBuilder<CoursesBloc, CoursesState>(
           builder: (context, state) {
-            if (state is CourseDetailLoading) {
+            if (state.status == CoursesStatus.loading) {
               return const Center(child: CircularProgressIndicator());
-            } else if (state is CourseDetailLoaded) {
+            } else if (state.status == CoursesStatus.courseDetailLoaded &&
+                state.selectedCourse != null) {
               return SingleChildScrollView(
                 child: Column(
                   children: [
                     CoursePreviewCard(
-                      course: state.course,
-                      onEnroll: () => _purchaseCourse(context, state.course.id),
-                      onPreview: () =>
-                          _previewCourse(context, state.course.previewVideoUrl),
+                      course: state.selectedCourse!,
+                      onEnroll: () =>
+                          _purchaseCourse(context, state.selectedCourse!.id),
+                      onPreview: () => _previewCourse(
+                        context,
+                        state.selectedCourse!.previewVideoUrl,
+                      ),
                     ),
-                    _buildCourseContent(context, state.course, t),
+                    _buildCourseContent(context, state.selectedCourse!, t),
                   ],
                 ),
               );
-            } else if (state is CoursesError) {
+            } else if (state.status == CoursesStatus.failure &&
+                state.failure != null) {
               return Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
                     const SizedBox(height: 16),
-                    Text(state.message),
+                    Text(ErrorLocalizer.of(state.failure!, t)),
                     const SizedBox(height: 16),
                     ElevatedButton(
                       onPressed: () {
@@ -122,7 +129,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                       (video) => ListTile(
                         leading: const Icon(Icons.play_circle_outline),
                         title: Text(video.title),
-                        subtitle: Text('${video.duration.inMinutes} min'),
+                        subtitle: Text('Video'),
                         onTap: () {
                           // Navigate to video player
                         },

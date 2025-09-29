@@ -1,20 +1,21 @@
-// lib/src/fatures/courses/presentation/bloc/courses_bloc.dart
-import 'dart:math';
-
+import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/video_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_all_courses.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_course_by_id.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/create_course.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/upload_course_image.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/search_courses.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_courses_by_category.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/purchase_course.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_enrolled_courses.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/add_chapter_to_course.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/add_video_to_chapter.dart';
+import 'package:teach_flix/src/core/errors/failures.dart';
 
 part 'courses_event.dart';
 part 'courses_state.dart';
@@ -23,6 +24,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final GetAllCourses _getAllCourses;
   final GetCourseById _getCourseById;
   final CreateCourse _createCourse;
+  final UploadCourseImage _uploadCourseImage;
   final SearchCourses _searchCourses;
   final GetCoursesByCategory _getCoursesByCategory;
   final PurchaseCourse _purchaseCourse;
@@ -34,6 +36,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required GetAllCourses getAllCourses,
     required GetCourseById getCourseById,
     required CreateCourse createCourse,
+    required UploadCourseImage uploadCourseImage,
     required SearchCourses searchCourses,
     required GetCoursesByCategory getCoursesByCategory,
     required PurchaseCourse purchaseCourse,
@@ -43,13 +46,14 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   }) : _getAllCourses = getAllCourses,
        _getCourseById = getCourseById,
        _createCourse = createCourse,
+       _uploadCourseImage = uploadCourseImage,
        _searchCourses = searchCourses,
        _getCoursesByCategory = getCoursesByCategory,
        _purchaseCourse = purchaseCourse,
        _getEnrolledCourses = getEnrolledCourses,
        _addChapterToCourse = addChapterToCourse,
        _addVideoToChapter = addVideoToChapter,
-       super(CoursesInitial()) {
+       super(const CoursesState()) {
     on<LoadCoursesEvent>(_onLoadCourses);
     on<LoadCourseDetailEvent>(_onLoadCourseDetail);
     on<CreateCourseEvent>(_onCreateCourse);
@@ -61,17 +65,33 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<AddChapterToCourseEvent>(_onAddChapterToCourse);
     on<AddVideoToChapterEvent>(_onAddVideoToChapter);
     on<RefreshCoursesEvent>(_onRefreshCourses);
+
+    // New event handlers
+    on<PickImageFromGalleryEvent>(_onPickImageFromGallery);
+    on<PickImageFromCameraEvent>(_onPickImageFromCamera);
+    on<UploadCourseImageEvent>(_onUploadCourseImage);
+    on<ClearSelectedImageEvent>(_onClearSelectedImage);
+    on<AddChapterToNewCourseEvent>(_onAddChapterToNewCourse);
+    on<RemoveChapterFromNewCourseEvent>(_onRemoveChapterFromNewCourse);
+    on<SubmitNewCourseEvent>(_onSubmitNewCourse);
   }
 
   Future<void> _onLoadCourses(
     LoadCoursesEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getAllCourses();
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) => emit(CoursesLoaded(courses)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.loaded,
+          courses: courses,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -79,13 +99,20 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     LoadCourseDetailEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CourseDetailLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getCourseById(
       params: GetCourseByIdParams(id: event.courseId),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (course) => emit(CourseDetailLoaded(course)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (course) => emit(
+        state.copyWith(
+          status: CoursesStatus.courseDetailLoaded,
+          selectedCourse: course,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -93,13 +120,20 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     CreateCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CourseCreating());
+    emit(state.copyWith(status: CoursesStatus.creating, failure: null));
     final result = await _createCourse(
       params: CreateCourseParams(course: event.course),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (course) => emit(CourseCreated(course)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (course) => emit(
+        state.copyWith(
+          status: CoursesStatus.courseCreated,
+          selectedCourse: course,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -107,13 +141,21 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     SearchCoursesEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _searchCourses(
       params: SearchCoursesParams(query: event.query),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) => emit(CoursesLoaded(courses, searchQuery: event.query)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.loaded,
+          courses: courses,
+          searchQuery: event.query,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -121,14 +163,21 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     LoadCoursesByCategoryEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getCoursesByCategory(
       params: GetCoursesByCategoryParams(category: event.category),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) =>
-          emit(CoursesLoaded(courses, currentCategory: event.category)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.loaded,
+          courses: courses,
+          currentCategory: event.category,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -136,14 +185,21 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     FilterCoursesByCategoryEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getCoursesByCategory(
       params: GetCoursesByCategoryParams(category: event.category),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) =>
-          emit(CoursesLoaded(courses, currentCategory: event.category)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.loaded,
+          courses: courses,
+          currentCategory: event.category,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -151,7 +207,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     PurchaseCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursePurchasing());
+    emit(state.copyWith(status: CoursesStatus.purchasing, failure: null));
     final result = await _purchaseCourse(
       params: PurchaseCourseParams(
         userId: event.userId,
@@ -159,8 +215,11 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       ),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (_) => emit(CoursePurchased()),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (_) => emit(
+        state.copyWith(status: CoursesStatus.coursePurchased, failure: null),
+      ),
     );
   }
 
@@ -168,13 +227,20 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     LoadEnrolledCoursesEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getEnrolledCourses(
       params: GetEnrolledCoursesParams(userId: event.userId),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) => emit(CoursesLoaded(courses)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.enrolledCoursesLoaded,
+          enrolledCourses: courses,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -182,7 +248,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     AddChapterToCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CourseUpdating());
+    emit(state.copyWith(status: CoursesStatus.updating, failure: null));
     final result = await _addChapterToCourse(
       params: AddChapterToCourseParams(
         courseId: event.courseId,
@@ -190,8 +256,15 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       ),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (course) => emit(CourseUpdated(course)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (course) => emit(
+        state.copyWith(
+          status: CoursesStatus.courseUpdated,
+          selectedCourse: course,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -199,7 +272,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     AddVideoToChapterEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CourseUpdating());
+    emit(state.copyWith(status: CoursesStatus.updating, failure: null));
     final result = await _addVideoToChapter(
       params: AddVideoToChapterParams(
         courseId: event.courseId,
@@ -208,8 +281,15 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       ),
     );
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (course) => emit(CourseUpdated(course)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (course) => emit(
+        state.copyWith(
+          status: CoursesStatus.courseUpdated,
+          selectedCourse: course,
+          failure: null,
+        ),
+      ),
     );
   }
 
@@ -217,11 +297,215 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     RefreshCoursesEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(CoursesLoading());
+    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
     final result = await _getAllCourses();
     result.fold(
-      (failure) => emit(CoursesError(failure.toString())),
-      (courses) => emit(CoursesLoaded(courses)),
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (courses) => emit(
+        state.copyWith(
+          status: CoursesStatus.loaded,
+          courses: courses,
+          failure: null,
+        ),
+      ),
+    );
+  }
+
+  // New event handlers for course creation flow
+  Future<void> _onPickImageFromGallery(
+    PickImageFromGalleryEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        emit(
+          state.copyWith(
+            status: CoursesStatus.imagePicked,
+            selectedImage: File(pickedFile.path),
+            failure: null,
+          ),
+        );
+      }
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: CoursesStatus.failure,
+          failure: UnknownFailure(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onPickImageFromCamera(
+    PickImageFromCameraEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: ImageSource.camera,
+        maxWidth: 1920,
+        maxHeight: 1080,
+        imageQuality: 85,
+      );
+
+      if (pickedFile != null) {
+        emit(
+          state.copyWith(
+            status: CoursesStatus.imagePicked,
+            selectedImage: File(pickedFile.path),
+            failure: null,
+          ),
+        );
+      }
+    } catch (error) {
+      emit(
+        state.copyWith(
+          status: CoursesStatus.failure,
+          failure: UnknownFailure(),
+        ),
+      );
+    }
+  }
+
+  Future<void> _onUploadCourseImage(
+    UploadCourseImageEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    emit(
+      state.copyWith(
+        status: CoursesStatus.imageUploading,
+        imageUploadProgress: 0.0,
+        failure: null,
+      ),
+    );
+
+    final result = await _uploadCourseImage.call(
+      params: UploadCourseImageParams(
+        imageFile: event.imageFile,
+        onProgress: (progress) {
+          emit(
+            state.copyWith(
+              status: CoursesStatus.imageUploading,
+              imageUploadProgress: progress,
+            ),
+          );
+        },
+      ),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (imageUrl) => emit(
+        state.copyWith(
+          status: CoursesStatus.imageUploaded,
+          uploadedImageUrl: imageUrl,
+          imageUploadProgress: 1.0,
+          failure: null,
+        ),
+      ),
+    );
+  }
+
+  void _onClearSelectedImage(
+    ClearSelectedImageEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        status: CoursesStatus.initial,
+        selectedImage: null,
+        uploadedImageUrl: null,
+        imageUploadProgress: 0.0,
+        failure: null,
+      ),
+    );
+  }
+
+  void _onAddChapterToNewCourse(
+    AddChapterToNewCourseEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    final updatedChapters = List<ChapterEntity>.from(state.chapters ?? [])
+      ..add(event.chapter);
+
+    emit(
+      state.copyWith(
+        status: CoursesStatus.chapterAdded,
+        chapters: updatedChapters,
+        failure: null,
+      ),
+    );
+  }
+
+  void _onRemoveChapterFromNewCourse(
+    RemoveChapterFromNewCourseEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    final chapters = state.chapters ?? [];
+    if (event.index >= 0 && event.index < chapters.length) {
+      final updatedChapters = List<ChapterEntity>.from(chapters)
+        ..removeAt(event.index);
+
+      emit(
+        state.copyWith(
+          status: CoursesStatus.chapterRemoved,
+          chapters: updatedChapters,
+          failure: null,
+        ),
+      );
+    }
+  }
+
+  Future<void> _onSubmitNewCourse(
+    SubmitNewCourseEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    if (state.uploadedImageUrl == null) {
+      emit(state.copyWith(status: CoursesStatus.failure));
+      return;
+    }
+
+    emit(state.copyWith(status: CoursesStatus.creating, failure: null));
+
+    final course = CourseEntity(
+      id: '',
+      title: event.title,
+      description: event.description,
+      imageUrl: state.uploadedImageUrl!,
+      previewVideoUrl: event.previewVideoUrl,
+      category: event.category,
+      price: event.price,
+      instructorId: event.instructorId,
+      createAt: DateTime.now(),
+      ratings: [],
+      chapters: state.chapters ?? [],
+    );
+
+    final result = await _createCourse.call(
+      params: CreateCourseParams(course: course),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (createdCourse) => emit(
+        state.copyWith(
+          status: CoursesStatus.courseCreated,
+          selectedCourse: createdCourse,
+          failure: null,
+        ),
+      ),
     );
   }
 }

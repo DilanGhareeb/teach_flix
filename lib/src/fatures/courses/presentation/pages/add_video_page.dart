@@ -155,8 +155,6 @@ class _AddVideoPageState extends State<AddVideoPage> {
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
         youtubeUrl: _youtubeUrlController.text,
-        duration: Duration(minutes: int.parse(_durationController.text)),
-        description: _descriptionController.text,
         orderIndex: int.parse(_orderController.text),
       );
 

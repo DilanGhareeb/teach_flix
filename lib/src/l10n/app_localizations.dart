@@ -1033,6 +1033,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Instructors cannot purchase their own courses.'**
   String get errInstructorCannotPurchaseOwnCourse;
+
+  /// Label for the course thumbnail image section
+  ///
+  /// In en, this message translates to:
+  /// **'Course Thumbnail'**
+  String get course_thumbnail;
+
+  /// Message displayed when no thumbnail image has been chosen
+  ///
+  /// In en, this message translates to:
+  /// **'No image selected'**
+  String get no_image_selected;
+
+  /// Button text to initiate image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload Image'**
+  String get upload_image;
+
+  /// Status message indicating successful upload completion
+  ///
+  /// In en, this message translates to:
+  /// **'Uploaded'**
+  String get uploaded;
+
+  /// Status message shown during active file upload process
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading...'**
+  String get uploading;
+
+  /// Validation message prompting user to upload a course thumbnail
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload course thumbnail'**
+  String get please_upload_thumbnail;
+
+  /// Label for the course chapters section
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get chapters;
+
+  /// Empty state message when no chapters exist in the course
+  ///
+  /// In en, this message translates to:
+  /// **'No chapters added yet'**
+  String get no_chapters_added;
+
+  /// Button text for deleting a chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chapter'**
+  String get delete_chapter;
+
+  /// Confirmation dialog message asking user to confirm chapter deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this chapter?'**
+  String get delete_chapter_confirmation;
+
+  /// Generic delete action button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete'**
+  String get delete;
+
+  /// Button text for deleting a video
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Video'**
+  String get delete_video;
+
+  /// Confirmation dialog message asking user to confirm video deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this video?'**
+  String get delete_video_confirmation;
+
+  /// Button text for deleting a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Quiz'**
+  String get delete_quiz;
+
+  /// Confirmation dialog message asking user to confirm quiz deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this quiz?'**
+  String get delete_quiz_confirmation;
+
+  /// Button text to add a new quiz to the course
+  ///
+  /// In en, this message translates to:
+  /// **'Add Quiz'**
+  String get add_quiz;
+
+  /// Label for the quiz title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Title'**
+  String get quiz_title;
+
+  /// Placeholder text for quiz title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter quiz title'**
+  String get enter_quiz_title;
+
+  /// Label for the quiz description input field
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Description'**
+  String get quiz_description;
+
+  /// Placeholder text for quiz description input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter quiz description'**
+  String get enter_quiz_description;
+
+  /// Label for the quiz passing score input field
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score'**
+  String get passing_score;
+
+  /// Placeholder text for passing score input field with example
+  ///
+  /// In en, this message translates to:
+  /// **'Enter passing score (e.g., 70)'**
+  String get enter_passing_score;
+
+  /// Validation error when passing score field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Passing score is required'**
+  String get passing_score_required;
+
+  /// Validation error when passing score value is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid passing score'**
+  String get invalid_passing_score;
+
+  /// Label for the quiz time limit input field
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit (Minutes)'**
+  String get time_limit_minutes;
+
+  /// Placeholder text for time limit input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter time limit in minutes'**
+  String get enter_time_limit;
+
+  /// Validation error when time limit field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Time limit is required'**
+  String get time_limit_required;
+
+  /// Validation error when time limit value is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid time limit'**
+  String get invalid_time_limit;
+
+  /// Label for the quiz questions section
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get questions;
+
+  /// Empty state message when no questions exist in the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'No questions added yet'**
+  String get no_questions_added;
+
+  /// Button text to add a new question to the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Add Question'**
+  String get add_question;
+
+  /// Button text for deleting a question
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Question'**
+  String get delete_question;
+
+  /// Confirmation dialog message asking user to confirm question deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this question?'**
+  String get delete_question_confirmation;
+
+  /// Validation error when quiz has no questions
+  ///
+  /// In en, this message translates to:
+  /// **'Please add at least one question'**
+  String get add_at_least_one_question;
+
+  /// Label for the question text input field
+  ///
+  /// In en, this message translates to:
+  /// **'Question'**
+  String get question;
+
+  /// Placeholder text for question input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your question'**
+  String get enter_question;
+
+  /// Validation error when question field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Question is required'**
+  String get question_required;
+
+  /// Label for the answer options section
+  ///
+  /// In en, this message translates to:
+  /// **'Options'**
+  String get options;
+
+  /// Label for an individual answer option
+  ///
+  /// In en, this message translates to:
+  /// **'Option'**
+  String get option;
+
+  /// Validation error when an option field is empty
+  ///
+  /// In en, this message translates to:
+  /// **'Option is required'**
+  String get option_required;
+
+  /// Label for the answer explanation input field
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get explanation;
+
+  /// Indicator text showing that a field is not required
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// Placeholder text for explanation input field
+  ///
+  /// In en, this message translates to:
+  /// **'Enter explanation for the correct answer'**
+  String get enter_explanation;
+
+  /// Error message for unauthorized file upload attempt
+  ///
+  /// In en, this message translates to:
+  /// **'You don\'t have permission to upload files'**
+  String get errStorageUnauthorized;
+
+  /// Error message for canceled file upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload was canceled'**
+  String get errStorageCanceled;
+
+  /// Error message for exceeding storage quota
+  ///
+  /// In en, this message translates to:
+  /// **'Storage quota exceeded'**
+  String get errStorageQuotaExceeded;
+
+  /// Error message for upload failure after retry attempts
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed after multiple retries'**
+  String get errStorageRetryLimitExceeded;
+
+  /// Error message for file checksum validation failure
+  ///
+  /// In en, this message translates to:
+  /// **'File validation failed'**
+  String get errStorageInvalidChecksum;
+
+  /// Generic error message for unknown upload failure
+  ///
+  /// In en, this message translates to:
+  /// **'Upload failed'**
+  String get errStorageUnknown;
+
+  /// Error message for image upload failure
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to upload image'**
+  String get errImageUploadFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/courses/data/models/course_model.dart';
 
@@ -27,13 +29,22 @@ abstract class CourseFirebaseDataSource {
   Stream<Either<Failure, List<CourseModel>>> watchCoursesByInstructor(
     String instructorId,
   );
+  Future<Either<Failure, String>> uploadImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  });
+  Future<Either<Failure, void>> deleteImage(String imageUrl);
 }
 
 class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
   final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
 
-  CourseFirebaseDataSourceImpl({FirebaseFirestore? firestore})
-    : _firestore = firestore ?? FirebaseFirestore.instance;
+  CourseFirebaseDataSourceImpl({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _storage = storage ?? FirebaseStorage.instance;
 
   @override
   Future<Either<Failure, List<CourseModel>>> getAllCourses() async {
@@ -428,5 +439,51 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
                 },
           ),
         );
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  }) async {
+    try {
+      final fileName = 'course_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final storageRef = _storage
+          .ref()
+          .child('course_thumbnails')
+          .child(fileName);
+
+      final uploadTask = storageRef.putFile(imageFile);
+
+      // Listen to upload progress
+      if (onProgress != null) {
+        uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+          final progress = snapshot.bytesTransferred / snapshot.totalBytes;
+          onProgress(progress);
+        });
+      }
+
+      await uploadTask;
+      final downloadUrl = await storageRef.getDownloadURL();
+
+      return Right(downloadUrl);
+    } on FirebaseException catch (e) {
+      return Left(StorageFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteImage(String imageUrl) async {
+    try {
+      final ref = _storage.refFromURL(imageUrl);
+      await ref.delete();
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(StorageFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
   }
 }

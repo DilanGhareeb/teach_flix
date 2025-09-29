@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
@@ -25,4 +27,8 @@ abstract class CourseRepository {
   Stream<Either<Failure, List<CourseEntity>>> watchCoursesByInstructor(
     String instructorId,
   );
+  Future<Either<Failure, String>> uploadCourseImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  });
 }

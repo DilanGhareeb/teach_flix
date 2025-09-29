@@ -489,4 +489,156 @@ class AppLocalizationsCkb extends AppLocalizations {
   @override
   String get errInstructorCannotPurchaseOwnCourse =>
       'مامۆستا ناتوانێت کۆرسی خۆی بکڕێت';
+
+  @override
+  String get course_thumbnail => 'وێنۆچکەی کۆرس';
+
+  @override
+  String get no_image_selected => 'هیچ وێنەیەک هەڵنەبژێردراوە';
+
+  @override
+  String get upload_image => 'بارکردنی وێنە';
+
+  @override
+  String get uploaded => 'بارکرا';
+
+  @override
+  String get uploading => 'بارکردن...';
+
+  @override
+  String get please_upload_thumbnail => 'تکایە وێنۆچکەی کۆرس باربکە';
+
+  @override
+  String get chapters => 'بەشەکان';
+
+  @override
+  String get no_chapters_added => 'هێشتا هیچ بەشێک زیادنەکراوە';
+
+  @override
+  String get delete_chapter => 'سڕینەوەی بەش';
+
+  @override
+  String get delete_chapter_confirmation => 'دڵنیایت لە سڕینەوەی ئەم بەشە؟';
+
+  @override
+  String get delete => 'سڕینەوە';
+
+  @override
+  String get delete_video => 'سڕینەوەی ڤیدیۆ';
+
+  @override
+  String get delete_video_confirmation => 'دڵنیایت لە سڕینەوەی ئەم ڤیدیۆیە؟';
+
+  @override
+  String get delete_quiz => 'سڕینەوەی تاقیکردنەوە';
+
+  @override
+  String get delete_quiz_confirmation =>
+      'دڵنیایت لە سڕینەوەی ئەم تاقیکردنەوەیە؟';
+
+  @override
+  String get add_quiz => 'زیادکردنی تاقیکردنەوە';
+
+  @override
+  String get quiz_title => 'ناونیشانی تاقیکردنەوە';
+
+  @override
+  String get enter_quiz_title => 'ناونیشانی تاقیکردنەوە بنووسە';
+
+  @override
+  String get quiz_description => 'پێناسەی تاقیکردنەوە';
+
+  @override
+  String get enter_quiz_description => 'پێناسەی تاقیکردنەوە بنووسە';
+
+  @override
+  String get passing_score => 'نمرەی تێپەڕبوون';
+
+  @override
+  String get enter_passing_score => 'نمرەی تێپەڕبوون بنووسە (بۆ نموونە، ٧٠)';
+
+  @override
+  String get passing_score_required => 'نمرەی تێپەڕبوون پێویستە';
+
+  @override
+  String get invalid_passing_score => 'نمرەی تێپەڕبوون نادروستە';
+
+  @override
+  String get time_limit_minutes => 'کاتی دیاریکراو (خولەک)';
+
+  @override
+  String get enter_time_limit => 'کاتی دیاریکراو بە خولەک بنووسە';
+
+  @override
+  String get time_limit_required => 'کاتی دیاریکراو پێویستە';
+
+  @override
+  String get invalid_time_limit => 'کاتی دیاریکراو نادروستە';
+
+  @override
+  String get questions => 'پرسیارەکان';
+
+  @override
+  String get no_questions_added => 'هێشتا هیچ پرسیارێک زیادنەکراوە';
+
+  @override
+  String get add_question => 'زیادکردنی پرسیار';
+
+  @override
+  String get delete_question => 'سڕینەوەی پرسیار';
+
+  @override
+  String get delete_question_confirmation => 'دڵنیایت لە سڕینەوەی ئەم پرسیارە؟';
+
+  @override
+  String get add_at_least_one_question => 'تکایە لانیکەم یەک پرسیار زیاد بکە';
+
+  @override
+  String get question => 'پرسیار';
+
+  @override
+  String get enter_question => 'پرسیارەکەت بنووسە';
+
+  @override
+  String get question_required => 'پرسیار پێویستە';
+
+  @override
+  String get options => 'هەڵبژاردەکان';
+
+  @override
+  String get option => 'هەڵبژاردە';
+
+  @override
+  String get option_required => 'هەڵبژاردە پێویستە';
+
+  @override
+  String get explanation => 'ڕوونکردنەوە';
+
+  @override
+  String get optional => 'ئیختیاری';
+
+  @override
+  String get enter_explanation => 'ڕوونکردنەوە بۆ وەڵامی ڕاست بنووسە';
+
+  @override
+  String get errStorageUnauthorized => 'مۆڵەتت نییە بۆ بارکردنی فایل';
+
+  @override
+  String get errStorageCanceled => 'بارکردن هەڵوەشێنرایەوە';
+
+  @override
+  String get errStorageQuotaExceeded => 'بڕی کۆگای تەواو بووە';
+
+  @override
+  String get errStorageRetryLimitExceeded =>
+      'بارکردن سەرکەوتوو نەبوو دوای چەند هەوڵێک';
+
+  @override
+  String get errStorageInvalidChecksum => 'بارکردنی وێنە سەرکەوتوو نەبوو';
+
+  @override
+  String get errStorageUnknown => 'بارکردن سەرکەوتوو نەبوو';
+
+  @override
+  String get errImageUploadFailed => 'بارکردنی وێنە سەرکەوتوو نەبوو';
 }

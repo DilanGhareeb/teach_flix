@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
-import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
+import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/add_chapter_page.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -17,7 +20,6 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  final _imageUrlController = TextEditingController();
   final _previewVideoUrlController = TextEditingController();
 
   String _selectedCategory = 'Programming';
@@ -38,7 +40,6 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     _titleController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _imageUrlController.dispose();
     _previewVideoUrlController.dispose();
     super.dispose();
   }
@@ -46,12 +47,13 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
       appBar: AppBar(title: Text(t.create_course), elevation: 0),
-      body: BlocListener<CoursesBloc, CoursesState>(
+      body: BlocConsumer<CoursesBloc, CoursesState>(
         listener: (context, state) {
-          if (state is CourseCreated) {
+          if (state.status == CoursesStatus.courseCreated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(t.course_created_successfully),
@@ -59,139 +61,542 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               ),
             );
             Navigator.pop(context);
-          } else if (state is CoursesError) {
+          } else if (state.status == CoursesStatus.failure &&
+              state.failure != null) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(state.message),
+                content: Text(ErrorLocalizer.of(state.failure!, t)),
                 backgroundColor: Colors.red,
               ),
             );
           }
         },
-        child: BlocBuilder<CoursesBloc, CoursesState>(
-          builder: (context, state) {
-            return Form(
-              key: _formKey,
-              child: ListView(
-                padding: const EdgeInsets.all(16),
-                children: [
-                  _buildTextField(
-                    controller: _titleController,
-                    label: t.course_title,
-                    hint: t.enter_course_title,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return t.title_required;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
+        builder: (context, state) {
+          return Form(
+            key: _formKey,
+            child: CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Course Thumbnail Section
+                        _buildThumbnailSection(context, state, colorScheme, t),
 
-                  _buildTextField(
-                    controller: _descriptionController,
-                    label: t.description,
-                    hint: t.enter_course_description,
-                    maxLines: 4,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return t.description_required;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
+                        const SizedBox(height: 24),
 
-                  DropdownButtonFormField<String>(
-                    initialValue: _selectedCategory,
-                    decoration: InputDecoration(
-                      labelText: t.category,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                    ),
-                    items: _categories.map((category) {
-                      return DropdownMenuItem(
-                        value: category,
-                        child: Text(category),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedCategory = value!;
-                      });
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildTextField(
-                    controller: _priceController,
-                    label: t.price,
-                    hint: t.enter_price,
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return t.price_required;
-                      }
-                      if (double.tryParse(value!) == null) {
-                        return t.invalid_price;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildTextField(
-                    controller: _imageUrlController,
-                    label: t.course_image_url,
-                    hint: t.enter_image_url,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return t.image_url_required;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 16),
-
-                  _buildTextField(
-                    controller: _previewVideoUrlController,
-                    label: t.preview_video_url,
-                    hint: t.enter_preview_video_url,
-                    validator: (value) {
-                      if (value?.isEmpty ?? true) {
-                        return t.preview_video_required;
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 32),
-
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: state is CourseCreating ? null : _createCourse,
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                        // Course Title
+                        _buildTextField(
+                          controller: _titleController,
+                          label: t.course_title,
+                          hint: t.enter_course_title,
+                          icon: Icons.title_rounded,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return t.title_required;
+                            }
+                            return null;
+                          },
                         ),
-                      ),
-                      child: state is CourseCreating
-                          ? const CircularProgressIndicator()
-                          : Text(
-                              t.create_course,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+
+                        const SizedBox(height: 16),
+
+                        // Course Description
+                        _buildTextField(
+                          controller: _descriptionController,
+                          label: t.description,
+                          hint: t.enter_course_description,
+                          icon: Icons.description_rounded,
+                          maxLines: 4,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return t.description_required;
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Category Dropdown
+                        DropdownButtonFormField<String>(
+                          initialValue: _selectedCategory,
+                          decoration: InputDecoration(
+                            labelText: t.category,
+                            prefixIcon: Icon(
+                              Icons.category_rounded,
+                              color: colorScheme.primary,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            filled: true,
+                            fillColor: colorScheme.surfaceContainerHighest,
+                          ),
+                          items: _categories.map((category) {
+                            return DropdownMenuItem(
+                              value: category,
+                              child: Text(category),
+                            );
+                          }).toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedCategory = value!;
+                            });
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Price
+                        _buildTextField(
+                          controller: _priceController,
+                          label: t.price,
+                          hint: t.enter_price,
+                          icon: Icons.attach_money_rounded,
+                          keyboardType: TextInputType.number,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return t.price_required;
+                            }
+                            if (double.tryParse(value!) == null) {
+                              return t.invalid_price;
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        // Preview Video URL
+                        _buildTextField(
+                          controller: _previewVideoUrlController,
+                          label: t.preview_video_url,
+                          hint: t.enter_preview_video_url,
+                          icon: Icons.video_library_rounded,
+                          validator: (value) {
+                            if (value?.isEmpty ?? true) {
+                              return t.preview_video_required;
+                            }
+                            return null;
+                          },
+                        ),
+
+                        const SizedBox(height: 24),
+
+                        // Chapters Section
+                        _buildChaptersSection(context, state, colorScheme, t),
+
+                        const SizedBox(height: 32),
+
+                        // Create Course Button
+                        SizedBox(
+                          width: double.infinity,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed:
+                                state.status == CoursesStatus.creating ||
+                                    state.status == CoursesStatus.imageUploading
+                                ? null
+                                : _createCourse,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: colorScheme.primary,
+                              foregroundColor: colorScheme.onPrimary,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
                               ),
                             ),
+                            child: state.status == CoursesStatus.creating
+                                ? const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.check_circle_rounded),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        t.create_course,
+                                        style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildThumbnailSection(
+    BuildContext context,
+    CoursesState state,
+    ColorScheme colorScheme,
+    AppLocalizations t,
+  ) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(Icons.image_rounded, color: colorScheme.primary),
+                const SizedBox(width: 8),
+                Text(
+                  t.course_thumbnail,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Image Preview
+          if (state.selectedImage != null || state.uploadedImageUrl != null)
+            Container(
+              width: double.infinity,
+              height: 200,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: state.selectedImage != null
+                    ? DecorationImage(
+                        image: FileImage(state.selectedImage!),
+                        fit: BoxFit.cover,
+                      )
+                    : null,
+              ),
+              child: state.status == CoursesStatus.imageUploaded
+                  ? Stack(
+                      children: [
+                        Positioned(
+                          top: 8,
+                          right: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 6,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.green,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                                const SizedBox(width: 4),
+                                Text(
+                                  t.uploaded,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  : null,
+            )
+          else
+            Container(
+              width: double.infinity,
+              height: 200,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                color: colorScheme.surfaceContainer,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: colorScheme.outline,
+                  width: 2,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_rounded,
+                    size: 64,
+                    color: colorScheme.onSurface.withOpacity(0.3),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    t.no_image_selected,
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.5),
                     ),
                   ),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+
+          const SizedBox(height: 16),
+
+          // Image Action Buttons
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: state.status == CoursesStatus.imageUploading
+                        ? null
+                        : () => context.read<CoursesBloc>().add(
+                            PickImageFromGalleryEvent(),
+                          ),
+                    icon: const Icon(Icons.photo_library_rounded),
+                    label: Text(t.gallery),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: state.status == CoursesStatus.imageUploading
+                        ? null
+                        : () => context.read<CoursesBloc>().add(
+                            PickImageFromCameraEvent(),
+                          ),
+                    icon: const Icon(Icons.camera_alt_rounded),
+                    label: Text(t.camera),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Upload Button
+          if (state.status == CoursesStatus.imagePicked &&
+              state.selectedImage != null)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () => context.read<CoursesBloc>().add(
+                    UploadCourseImageEvent(state.selectedImage!),
+                  ),
+                  icon: const Icon(Icons.cloud_upload_rounded),
+                  label: Text(t.upload_image),
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+
+          // Upload Progress
+          if (state.status == CoursesStatus.imageUploading)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: Column(
+                children: [
+                  LinearProgressIndicator(
+                    value: state.imageUploadProgress,
+                    backgroundColor: colorScheme.surfaceContainer,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${((state.imageUploadProgress ?? 0) * 100).toInt()}% ${t.uploading}',
+                    style: TextStyle(
+                      color: colorScheme.onSurface.withOpacity(0.7),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildChaptersSection(
+    BuildContext context,
+    CoursesState state,
+    ColorScheme colorScheme,
+    AppLocalizations t,
+  ) {
+    final chapters = state.chapters ?? [];
+
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.menu_book_rounded, color: colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      t.chapters,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${chapters.length}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: () => _addChapter(context),
+                  icon: Icon(
+                    Icons.add_circle_rounded,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          if (chapters.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.menu_book_outlined,
+                      size: 48,
+                      color: colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      t.no_chapters_added,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              itemCount: chapters.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final chapter = chapters[index];
+                return Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: colorScheme.primaryContainer,
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      chapter.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      '${chapter.videosUrls.length} videos, ${chapter.quizzes.length} quizzes',
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red[400],
+                      ),
+                      onPressed: () => _removeChapter(context, index),
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
       ),
     );
   }
@@ -200,6 +605,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     required TextEditingController controller,
     required String label,
     required String hint,
+    required IconData icon,
     int maxLines = 1,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
@@ -209,7 +615,10 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        prefixIcon: Icon(icon),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+        filled: true,
+        fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
       ),
       maxLines: maxLines,
       keyboardType: keyboardType,
@@ -217,25 +626,73 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     );
   }
 
+  Future<void> _addChapter(BuildContext context) async {
+    final result = await Navigator.push<ChapterEntity>(
+      context,
+      MaterialPageRoute(builder: (context) => AddChapterPage(courseId: 'temp')),
+    );
+
+    if (result != null) {
+      context.read<CoursesBloc>().add(AddChapterToNewCourseEvent(result));
+    }
+  }
+
+  void _removeChapter(BuildContext context, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.delete_chapter),
+        content: Text(
+          AppLocalizations.of(context)!.delete_chapter_confirmation,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              context.read<CoursesBloc>().add(
+                RemoveChapterFromNewCourseEvent(index),
+              );
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _createCourse() {
     if (_formKey.currentState?.validate() ?? false) {
+      final state = context.read<CoursesBloc>().state;
+
+      if (state.uploadedImageUrl == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              AppLocalizations.of(context)!.please_upload_thumbnail,
+            ),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
       final authState = context.read<AuthBloc>().state;
       if (authState.user != null) {
-        final course = CourseEntity(
-          id: '', // Will be generated by Firebase
-          title: _titleController.text,
-          description: _descriptionController.text,
-          imageUrl: _imageUrlController.text,
-          previewVideoUrl: _previewVideoUrlController.text,
-          category: _selectedCategory,
-          price: double.parse(_priceController.text),
-          instructorId: authState.user!.id,
-          createAt: DateTime.now(),
-          ratings: [],
-          chapters: [],
+        context.read<CoursesBloc>().add(
+          SubmitNewCourseEvent(
+            title: _titleController.text,
+            description: _descriptionController.text,
+            category: _selectedCategory,
+            price: double.parse(_priceController.text),
+            previewVideoUrl: _previewVideoUrlController.text,
+            instructorId: authState.user!.id,
+          ),
         );
-
-        context.read<CoursesBloc>().add(CreateCourseEvent(course));
       }
     }
   }

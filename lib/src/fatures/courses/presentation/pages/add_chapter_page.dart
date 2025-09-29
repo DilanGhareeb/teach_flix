@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/video_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/add_video_page.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/add_quiz_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class AddChapterPage extends StatefulWidget {
@@ -29,165 +31,414 @@ class _AddChapterPageState extends State<AddChapterPage> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(t.add_chapter),
-        actions: [TextButton(onPressed: _saveChapter, child: Text(t.save))],
+        elevation: 0,
+        actions: [
+          TextButton.icon(
+            onPressed: _saveChapter,
+            icon: const Icon(Icons.check_circle_rounded),
+            label: Text(t.save),
+            style: TextButton.styleFrom(foregroundColor: colorScheme.primary),
+          ),
+        ],
       ),
       body: Form(
         key: _formKey,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
-            TextFormField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: t.chapter_title,
-                hintText: t.enter_chapter_title,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Chapter Title
+                    TextFormField(
+                      controller: _titleController,
+                      decoration: InputDecoration(
+                        labelText: t.chapter_title,
+                        hintText: t.enter_chapter_title,
+                        prefixIcon: Icon(
+                          Icons.title_rounded,
+                          color: colorScheme.primary,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        filled: true,
+                        fillColor: colorScheme.surfaceContainerHighest,
+                      ),
+                      validator: (value) {
+                        if (value?.isEmpty ?? true) {
+                          return t.title_required;
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    // Videos Section
+                    _buildVideosSection(colorScheme, textTheme, t),
+
+                    const SizedBox(height: 24),
+
+                    // Quizzes Section
+                    _buildQuizzesSection(colorScheme, textTheme, t),
+                  ],
                 ),
               ),
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return t.title_required;
-                }
-                return null;
-              },
             ),
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(t.videos, () => _addVideo()),
-            const SizedBox(height: 8),
-
-            if (_videos.isEmpty)
-              _buildEmptyState(t.no_videos_added, Icons.video_library_outlined)
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _videos.length,
-                itemBuilder: (context, index) {
-                  final video = _videos[index];
-                  return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.play_circle_outline),
-                      title: Text(video.title),
-                      subtitle: Text('${video.duration.inMinutes} min'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () => _removeVideo(index),
-                      ),
-                    ),
-                  );
-                },
-              ),
-
-            const SizedBox(height: 24),
-
-            _buildSectionHeader(t.quizzes, () => _addQuiz()),
-            const SizedBox(height: 8),
-
-            if (_quizzes.isEmpty)
-              _buildEmptyState(t.no_quizzes_added, Icons.quiz_outlined)
-            else
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _quizzes.length,
-                itemBuilder: (context, index) {
-                  final quiz = _quizzes[index];
-                  return Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.quiz_outlined),
-                      title: Text(quiz.title),
-                      subtitle: Text('${quiz.questions.length} questions'),
-                      trailing: IconButton(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () => _removeQuiz(index),
-                      ),
-                    ),
-                  );
-                },
-              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildSectionHeader(String title, VoidCallback onAdd) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-        ),
-        ElevatedButton.icon(
-          onPressed: onAdd,
-          icon: const Icon(Icons.add),
-          label: Text(AppLocalizations.of(context)!.add),
-        ),
-      ],
+  Widget _buildVideosSection(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    AppLocalizations t,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant, width: 2),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.play_circle_rounded, color: colorScheme.primary),
+                    const SizedBox(width: 8),
+                    Text(
+                      t.videos,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${_videos.length}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: _addVideo,
+                  icon: Icon(
+                    Icons.add_circle_rounded,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          if (_videos.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.video_library_outlined,
+                      size: 48,
+                      color: colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      t.no_videos_added,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              itemCount: _videos.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final video = _videos[index];
+                return Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.blue.withOpacity(0.1),
+                      child: Icon(
+                        Icons.play_arrow_rounded,
+                        color: Colors.blue[700],
+                      ),
+                    ),
+                    title: Text(
+                      video.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red[400],
+                      ),
+                      onPressed: () => _removeVideo(index),
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
     );
   }
 
-  Widget _buildEmptyState(String message, IconData icon) {
+  Widget _buildQuizzesSection(
+    ColorScheme colorScheme,
+    TextTheme textTheme,
+    AppLocalizations t,
+  ) {
     return Container(
-      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colorScheme.outlineVariant, width: 2),
+      ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 48, color: Colors.grey[400]),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: Theme.of(
-              context,
-            ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Icon(Icons.quiz_rounded, color: Colors.purple[700]),
+                    const SizedBox(width: 8),
+                    Text(
+                      t.quizzes,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${_quizzes.length}',
+                        style: TextStyle(
+                          color: Colors.purple[700],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                IconButton(
+                  onPressed: _addQuiz,
+                  icon: Icon(
+                    Icons.add_circle_rounded,
+                    color: Colors.purple[700],
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          if (_quizzes.isEmpty)
+            Padding(
+              padding: const EdgeInsets.all(32),
+              child: Center(
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.quiz_outlined,
+                      size: 48,
+                      color: colorScheme.onSurface.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      t.no_quizzes_added,
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.5),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          else
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              itemCount: _quizzes.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              itemBuilder: (context, index) {
+                final quiz = _quizzes[index];
+                return Card(
+                  elevation: 0,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(
+                      color: colorScheme.outline.withOpacity(0.2),
+                    ),
+                  ),
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundColor: Colors.purple.withOpacity(0.1),
+                      child: Icon(
+                        Icons.quiz_outlined,
+                        color: Colors.purple[700],
+                      ),
+                    ),
+                    title: Text(
+                      quiz.title,
+                      style: const TextStyle(fontWeight: FontWeight.w600),
+                    ),
+                    subtitle: Text(
+                      '${quiz.questions.length} questions • ${quiz.timeLimit.inMinutes} min',
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red[400],
+                      ),
+                      onPressed: () => _removeQuiz(index),
+                    ),
+                  ),
+                );
+              },
+            ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _addVideo() async {
+    final result = await Navigator.push<VideoEntity>(
+      context,
+      MaterialPageRoute(builder: (context) => const AddVideoPage()),
+    );
+
+    if (result != null) {
+      setState(() {
+        _videos.add(result);
+      });
+    }
+  }
+
+  Future<void> _addQuiz() async {
+    final result = await Navigator.push<QuizEntity>(
+      context,
+      MaterialPageRoute(builder: (context) => const AddQuizPage()),
+    );
+
+    if (result != null) {
+      setState(() {
+        _quizzes.add(result);
+      });
+    }
+  }
+
+  void _removeVideo(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.delete_video),
+        content: Text(AppLocalizations.of(context)!.delete_video_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _videos.removeAt(index);
+              });
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(AppLocalizations.of(context)!.delete),
           ),
         ],
       ),
     );
   }
 
-  void _addVideo() {
-    Navigator.pushNamed(context, '/add-video', arguments: widget.courseId).then(
-      (result) {
-        if (result is VideoEntity) {
-          setState(() {
-            _videos.add(result);
-          });
-        }
-      },
-    );
-  }
-
-  void _addQuiz() {
-    Navigator.pushNamed(context, '/add-quiz', arguments: widget.courseId).then((
-      result,
-    ) {
-      if (result is QuizEntity) {
-        setState(() {
-          _quizzes.add(result);
-        });
-      }
-    });
-  }
-
-  void _removeVideo(int index) {
-    setState(() {
-      _videos.removeAt(index);
-    });
-  }
-
   void _removeQuiz(int index) {
-    setState(() {
-      _quizzes.removeAt(index);
-    });
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(AppLocalizations.of(context)!.delete_quiz),
+        content: Text(AppLocalizations.of(context)!.delete_quiz_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(AppLocalizations.of(context)!.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _quizzes.removeAt(index);
+              });
+              Navigator.pop(context);
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(AppLocalizations.of(context)!.delete),
+          ),
+        ],
+      ),
+    );
   }
 
   void _saveChapter() {
