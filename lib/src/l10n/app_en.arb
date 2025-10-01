@@ -829,5 +829,117 @@
   "errImageUploadFailed": "Failed to upload image",
   "@errImageUploadFailed": {
     "description": "Error message for image upload failure"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Generic edit action button text"
+  },
+  "edit_chapter": "Edit Chapter",
+  "@edit_chapter": {
+    "description": "Button text for editing a chapter"
+  },
+  "edit_video": "Edit Video",
+  "@edit_video": {
+    "description": "Button text for editing a video"
+  },
+  "edit_quiz": "Edit Quiz",
+  "@edit_quiz": {
+    "description": "Button text for editing a quiz"
+  },
+  "edit_question": "Edit Question",
+  "@edit_question": {
+    "description": "Button text for editing a question"
+  },
+  "video_order_info": "Videos will be played in ascending order based on this index.",
+  "@video_order_info": {
+    "description": "Information about how video order is determined"
+  },
+  "my_learning": "My Learning",
+  "@my_learning": {
+    "description": "Label for the user's learning section"
+  },
+  "no_courses_enrolled": "No Courses Yet",
+  "@no_courses_enrolled": {
+    "description": "Message indicating the user has not enrolled in any courses"
+  },
+  "browse_and_enroll_courses": "Browse and enroll in courses to start your learning journey!",
+  "@browse_and_enroll_courses": {
+    "description": "Prompt encouraging users to browse and enroll in courses"
+  },
+  "browse_courses": "Browse Courses",
+  "@browse_courses": {
+    "description": "Button text for browsing available courses"
+  },
+  "continue_learning": "Continue",
+  "@continue_learning": {
+    "description": "Button text for continuing a course"
+  },
+  "progress": "Progress",
+  "@progress": {
+    "description": "Label for displaying course progress"
+  },
+  "failed_to_load_courses": "Failed to load courses",
+  "@failed_to_load_courses": {
+    "description": "Error message for failing to load courses"
+  },
+  "course": "Course",
+  "@course": {
+    "description": "Generic label for a course"
+  },
+  "video": "Video",
+  "@video": {
+    "description": "Generic label for a video"
+  },
+  "select_content_to_start": "Select content to start learning",
+  "@select_content_to_start": {
+    "description": "Prompt to select course content to begin learning"
+  },
+  "choose_video_or_quiz_from_sidebar": "Choose a video or quiz from the sidebar to begin",
+  "@choose_video_or_quiz_from_sidebar": {
+    "description": "Instruction to select a video or quiz from the sidebar"
+  },
+  "video_player_placeholder": "Video Player (Coming Soon)",
+  "@video_player_placeholder": {
+    "description": "Placeholder text indicating that the video player feature is coming soon"
+  },
+  "previous": "Previous",
+  "@previous": {
+    "description": "Button text for navigating to the previous item"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Button text for navigating to the next item"
+  },
+  "minutes": "minutes",
+  "@minutes": {
+    "description": "Label for minutes unit of time"
+  },
+  "to_pass": "to pass",
+  "@to_pass": {
+    "description": "Label indicating the score needed to pass"
+  },
+  "quiz_functionality_coming_soon": "Quiz functionality coming soon",
+  "@quiz_functionality_coming_soon": {
+    "description": "Message indicating that quiz functionality is coming soon"
+  },
+  "start_quiz": "Start Quiz",
+  "@start_quiz": {
+    "description": "Button text for starting a quiz"
+  },
+  "questions_preview": "Questions Preview",
+  "@questions_preview": {
+    "description": "Label for the questions preview section"
+  },
+  "owned": "Owned",
+  "@owned": {
+    "description": "Label indicating the user owns the course"
+  },
+  "start_learning": "Start Learning",
+  "@start_learning": {
+    "description": "Button text for starting to learn a course"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Button text for previewing content"
   }
 }

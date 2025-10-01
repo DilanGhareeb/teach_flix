@@ -641,4 +641,93 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get errImageUploadFailed => 'بارکردنی وێنە سەرکەوتوو نەبوو';
+
+  @override
+  String get edit => 'دەستکاری';
+
+  @override
+  String get edit_chapter => 'دەستکاری بەش';
+
+  @override
+  String get edit_video => 'دەستکاری ڤیدیۆ';
+
+  @override
+  String get edit_quiz => 'دەستکاری تاقیکردنەوە';
+
+  @override
+  String get edit_question => 'دەستکاری پرسیار';
+
+  @override
+  String get video_order_info =>
+      'ئەم ژمارەیە دیاریکردنی ڤیدیۆ لە ناو بەشەکە دەکات. ڤیدیۆکان بە شێوەی خوارەوە بەپێی ئەم ژمارەیە ڕیزدەکرێن.';
+
+  @override
+  String get my_learning => 'فێربوونەکانم';
+
+  @override
+  String get no_courses_enrolled => 'هێشتا هیچ کۆرسێک نییە';
+
+  @override
+  String get browse_and_enroll_courses =>
+      'بگەڕێ و تۆمار بکە لە کۆرسەکان بۆ دەستپێکردنی گەشتی فێربوونت!';
+
+  @override
+  String get browse_courses => 'گەڕان بە کۆرسەکان';
+
+  @override
+  String get continue_learning => 'بەردەوامبە';
+
+  @override
+  String get progress => 'پێشکەوتن';
+
+  @override
+  String get failed_to_load_courses => 'سەرکەوتوو نەبوو لە بارکردنی کۆرسەکان';
+
+  @override
+  String get course => 'کۆرس';
+
+  @override
+  String get video => 'ڤیدیۆ';
+
+  @override
+  String get select_content_to_start =>
+      'ناوەڕۆکێک هەڵبژێرە بۆ دەستپێکردنی فێربوون';
+
+  @override
+  String get choose_video_or_quiz_from_sidebar =>
+      'ڤیدیۆیەک یان تاقیکردنەوەیەک لە لایەنەوە هەڵبژێرە بۆ دەستپێکردن';
+
+  @override
+  String get video_player_placeholder => 'لێدەری ڤیدیۆ (بەم زووانە)';
+
+  @override
+  String get previous => 'پێشوو';
+
+  @override
+  String get next => 'دواتر';
+
+  @override
+  String get minutes => 'خولەک';
+
+  @override
+  String get to_pass => 'بۆ تێپەڕین';
+
+  @override
+  String get quiz_functionality_coming_soon =>
+      'تایبەتمەندی تاقیکردنەوە بەم زووانە';
+
+  @override
+  String get start_quiz => 'دەستپێکردنی تاقیکردنەوە';
+
+  @override
+  String get questions_preview => 'پێشبینینی پرسیارەکان';
+
+  @override
+  String get owned => 'خاوەندارەتیت';
+
+  @override
+  String get start_learning => 'دەستپێکردنی فێربوون';
+
+  @override
+  String get preview => 'پێشبینین';
 }

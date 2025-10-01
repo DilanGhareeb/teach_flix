@@ -1,8 +1,10 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/course_preview_card.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/course_learning_page.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -20,6 +22,19 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
   void initState() {
     super.initState();
     context.read<CoursesBloc>().add(LoadCourseDetailEvent(widget.courseId));
+
+    // Also load enrolled courses to check ownership
+    final authState = context.read<AuthBloc>().state;
+    if (authState.user != null) {
+      context.read<CoursesBloc>().add(
+        LoadEnrolledCoursesEvent(authState.user!.id),
+      );
+    }
+  }
+
+  bool _isOwned(CoursesState state) {
+    final enrolledCourses = state.enrolledCourses ?? [];
+    return enrolledCourses.any((course) => course.id == widget.courseId);
   }
 
   @override
@@ -37,6 +52,13 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 backgroundColor: Colors.green,
               ),
             );
+            // Reload enrolled courses after purchase
+            final authState = context.read<AuthBloc>().state;
+            if (authState.user != null) {
+              context.read<CoursesBloc>().add(
+                LoadEnrolledCoursesEvent(authState.user!.id),
+              );
+            }
           } else if (state.status == CoursesStatus.failure &&
               state.failure != null) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -53,19 +75,34 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
               return const Center(child: CircularProgressIndicator());
             } else if (state.status == CoursesStatus.courseDetailLoaded &&
                 state.selectedCourse != null) {
+              final isOwned = _isOwned(state);
+
               return SingleChildScrollView(
                 child: Column(
                   children: [
                     CoursePreviewCard(
                       course: state.selectedCourse!,
-                      onEnroll: () =>
-                          _purchaseCourse(context, state.selectedCourse!.id),
+                      isOwned: isOwned,
+                      onEnroll: isOwned
+                          ? null
+                          : () => _purchaseCourse(
+                              context,
+                              state.selectedCourse!.id,
+                            ),
+                      onStartLearning: isOwned
+                          ? () => _startLearning(context, state.selectedCourse!)
+                          : null,
                       onPreview: () => _previewCourse(
                         context,
                         state.selectedCourse!.previewVideoUrl,
                       ),
                     ),
-                    _buildCourseContent(context, state.selectedCourse!, t),
+                    _buildCourseContent(
+                      context,
+                      state.selectedCourse!,
+                      t,
+                      isOwned,
+                    ),
                   ],
                 ),
               );
@@ -99,7 +136,14 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
-  Widget _buildCourseContent(BuildContext context, course, AppLocalizations t) {
+  Widget _buildCourseContent(
+    BuildContext context,
+    course,
+    AppLocalizations t,
+    bool isOwned,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -119,43 +163,93 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
               itemCount: course.chapters.length,
               itemBuilder: (context, index) {
                 final chapter = course.chapters[index];
-                return ExpansionTile(
-                  title: Text(
-                    chapter.title,
-                    style: Theme.of(context).textTheme.titleMedium,
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ExpansionTile(
+                    leading: CircleAvatar(
+                      backgroundColor: colorScheme.primaryContainer,
+                      child: Text(
+                        '${index + 1}',
+                        style: TextStyle(
+                          color: colorScheme.onPrimaryContainer,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    title: Text(
+                      chapter.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    subtitle: Text(
+                      '${chapter.videosUrls.length} videos • ${chapter.quizzes.length} quizzes',
+                      style: TextStyle(
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                    ),
+                    children: [
+                      // Videos
+                      ...chapter.videosUrls.map(
+                        (video) => ListTile(
+                          leading: Icon(
+                            Icons.play_circle_outline,
+                            color: isOwned
+                                ? Colors.blue
+                                : colorScheme.onSurface.withOpacity(0.3),
+                          ),
+                          title: Text(video.title),
+                          subtitle: Text(t.video),
+                          trailing: isOwned
+                              ? null
+                              : Icon(
+                                  Icons.lock_outline,
+                                  color: colorScheme.onSurface.withOpacity(0.3),
+                                  size: 20,
+                                ),
+                          onTap: isOwned ? () {} : null,
+                          enabled: isOwned,
+                        ),
+                      ),
+                      // Quizzes
+                      ...chapter.quizzes.map(
+                        (quiz) => ListTile(
+                          leading: Icon(
+                            Icons.quiz_outlined,
+                            color: isOwned
+                                ? Colors.purple
+                                : colorScheme.onSurface.withOpacity(0.3),
+                          ),
+                          title: Text(quiz.title),
+                          subtitle: Text(
+                            '${quiz.questions.length} ${t.questions}',
+                          ),
+                          trailing: isOwned
+                              ? null
+                              : Icon(
+                                  Icons.lock_outline,
+                                  color: colorScheme.onSurface.withOpacity(0.3),
+                                  size: 20,
+                                ),
+                          onTap: isOwned ? () {} : null,
+                          enabled: isOwned,
+                        ),
+                      ),
+                    ],
                   ),
-                  children: [
-                    ...chapter.videosUrls.map(
-                      (video) => ListTile(
-                        leading: const Icon(Icons.play_circle_outline),
-                        title: Text(video.title),
-                        subtitle: Text('Video'),
-                        onTap: () {
-                          // Navigate to video player
-                        },
-                      ),
-                    ),
-                    ...chapter.quizzes.map(
-                      (quiz) => ListTile(
-                        leading: const Icon(Icons.quiz_outlined),
-                        title: Text(quiz.title),
-                        subtitle: Text('${quiz.questions.length} questions'),
-                        onTap: () {
-                          // Navigate to quiz
-                        },
-                      ),
-                    ),
-                  ],
                 );
               },
             )
           else
             Center(
-              child: Text(
-                t.no_content_available,
-                style: Theme.of(
-                  context,
-                ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Text(
+                  t.no_content_available,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.grey[600]),
+                ),
               ),
             ),
         ],
@@ -172,8 +266,16 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     }
   }
 
+  void _startLearning(BuildContext context, course) {
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => CourseLearningPage(course: course),
+      ),
+    );
+  }
+
   void _previewCourse(BuildContext context, String previewUrl) {
-    // Implement video preview functionality
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

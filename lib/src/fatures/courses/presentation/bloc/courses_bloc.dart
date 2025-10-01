@@ -66,7 +66,6 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<AddVideoToChapterEvent>(_onAddVideoToChapter);
     on<RefreshCoursesEvent>(_onRefreshCourses);
 
-    // New event handlers
     on<PickImageFromGalleryEvent>(_onPickImageFromGallery);
     on<PickImageFromCameraEvent>(_onPickImageFromCamera);
     on<UploadCourseImageEvent>(_onUploadCourseImage);
@@ -74,6 +73,9 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<AddChapterToNewCourseEvent>(_onAddChapterToNewCourse);
     on<RemoveChapterFromNewCourseEvent>(_onRemoveChapterFromNewCourse);
     on<SubmitNewCourseEvent>(_onSubmitNewCourse);
+    on<UpdateChapterInNewCourseEvent>(_onUpdateChapterInNewCourse);
+    on<ReorderChaptersEvent>(_onReorderChapters);
+    on<ClearCourseCreationStateEvent>(_onClearCourseCreationState);
   }
 
   Future<void> _onLoadCourses(
@@ -465,6 +467,63 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
         ),
       );
     }
+  }
+
+  void _onUpdateChapterInNewCourse(
+    UpdateChapterInNewCourseEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    final currentChapters = List<ChapterEntity>.from(state.chapters ?? []);
+
+    if (event.index >= 0 && event.index < currentChapters.length) {
+      currentChapters[event.index] = event.updatedChapter;
+      emit(
+        state.copyWith(
+          status: CoursesStatus.chapterAdded, // Reuse existing status
+          chapters: currentChapters,
+          failure: null,
+        ),
+      );
+    }
+  }
+
+  void _onReorderChapters(
+    ReorderChaptersEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    final currentChapters = List<ChapterEntity>.from(state.chapters ?? []);
+
+    int newIndex = event.newIndex;
+    if (newIndex > event.oldIndex) {
+      newIndex -= 1;
+    }
+
+    final chapter = currentChapters.removeAt(event.oldIndex);
+    currentChapters.insert(newIndex, chapter);
+
+    emit(
+      state.copyWith(
+        status: CoursesStatus.chapterAdded, // Reuse existing status
+        chapters: currentChapters,
+        failure: null,
+      ),
+    );
+  }
+
+  void _onClearCourseCreationState(
+    ClearCourseCreationStateEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    emit(
+      state.copyWith(
+        status: CoursesStatus.initial,
+        clearImage: true,
+        clearChapters: true,
+        uploadedImageUrl: null,
+        imageUploadProgress: 0.0,
+        failure: null,
+      ),
+    );
   }
 
   Future<void> _onSubmitNewCourse(

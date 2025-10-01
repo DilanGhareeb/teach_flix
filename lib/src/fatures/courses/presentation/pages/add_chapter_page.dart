@@ -8,8 +8,13 @@ import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class AddChapterPage extends StatefulWidget {
   final String courseId;
+  final ChapterEntity? existingChapter;
 
-  const AddChapterPage({super.key, required this.courseId});
+  const AddChapterPage({
+    super.key,
+    required this.courseId,
+    this.existingChapter,
+  });
 
   @override
   State<AddChapterPage> createState() => _AddChapterPageState();
@@ -19,8 +24,20 @@ class _AddChapterPageState extends State<AddChapterPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
 
-  final List<VideoEntity> _videos = [];
-  final List<QuizEntity> _quizzes = [];
+  List<VideoEntity> _videos = [];
+  List<QuizEntity> _quizzes = [];
+
+  bool get isEditMode => widget.existingChapter != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditMode) {
+      _titleController.text = widget.existingChapter!.title;
+      _videos = List.from(widget.existingChapter!.videosUrls);
+      _quizzes = List.from(widget.existingChapter!.quizzes);
+    }
+  }
 
   @override
   void dispose() {
@@ -36,7 +53,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.add_chapter),
+        title: Text(isEditMode ? t.edit_chapter : t.add_chapter),
         elevation: 0,
         actions: [
           TextButton.icon(
@@ -151,7 +168,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
                   ],
                 ),
                 IconButton(
-                  onPressed: _addVideo,
+                  onPressed: () => _addVideo(),
                   icon: Icon(
                     Icons.add_circle_rounded,
                     color: colorScheme.primary,
@@ -184,47 +201,96 @@ class _AddChapterPageState extends State<AddChapterPage> {
               ),
             )
           else
-            ListView.separated(
+            ReorderableListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _videos.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final video = _videos.removeAt(oldIndex);
+                  _videos.insert(newIndex, video);
+                });
+              },
               itemBuilder: (context, index) {
                 final video = _videos[index];
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.blue.withOpacity(0.1),
-                      child: Icon(
-                        Icons.play_arrow_rounded,
-                        color: Colors.blue[700],
-                      ),
-                    ),
-                    title: Text(
-                      video.title,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red[400],
-                      ),
-                      onPressed: () => _removeVideo(index),
-                    ),
-                  ),
+                return _buildVideoCard(
+                  video,
+                  index,
+                  colorScheme,
+                  key: ValueKey(video.id),
                 );
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildVideoCard(
+    VideoEntity video,
+    int index,
+    ColorScheme colorScheme, {
+    required Key key,
+  }) {
+    final t = AppLocalizations.of(context)!;
+
+    return Card(
+      key: key,
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outline.withOpacity(0.2)),
+      ),
+      child: ListTile(
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.drag_handle_rounded,
+              color: colorScheme.onSurface.withOpacity(0.5),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+              backgroundColor: Colors.blue.withOpacity(0.1),
+              child: Text(
+                '${index + 1}',
+                style: TextStyle(
+                  color: Colors.blue[700],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        title: Text(
+          video.title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          'Position: ${index + 1}',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit_outlined, color: colorScheme.primary),
+              onPressed: () => _editVideo(index),
+              tooltip: t.edit,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_outline_rounded, color: Colors.red[400]),
+              onPressed: () => _removeVideo(index),
+              tooltip: t.delete,
+            ),
+          ],
+        ),
+        onTap: () => _editVideo(index),
       ),
     );
   }
@@ -280,7 +346,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
                   ],
                 ),
                 IconButton(
-                  onPressed: _addQuiz,
+                  onPressed: () => _addQuiz(),
                   icon: Icon(
                     Icons.add_circle_rounded,
                     color: Colors.purple[700],
@@ -313,52 +379,90 @@ class _AddChapterPageState extends State<AddChapterPage> {
               ),
             )
           else
-            ListView.separated(
+            ReorderableListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _quizzes.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final quiz = _quizzes.removeAt(oldIndex);
+                  _quizzes.insert(newIndex, quiz);
+                });
+              },
               itemBuilder: (context, index) {
                 final quiz = _quizzes[index];
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: Colors.purple.withOpacity(0.1),
-                      child: Icon(
-                        Icons.quiz_outlined,
-                        color: Colors.purple[700],
-                      ),
-                    ),
-                    title: Text(
-                      quiz.title,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text(
-                      '${quiz.questions.length} questions • ${quiz.timeLimit.inMinutes} min',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red[400],
-                      ),
-                      onPressed: () => _removeQuiz(index),
-                    ),
-                  ),
+                return _buildQuizCard(
+                  quiz,
+                  index,
+                  colorScheme,
+                  key: ValueKey(quiz.id),
                 );
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildQuizCard(
+    QuizEntity quiz,
+    int index,
+    ColorScheme colorScheme, {
+    required Key key,
+  }) {
+    final t = AppLocalizations.of(context)!;
+
+    return Card(
+      key: key,
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outline.withOpacity(0.2)),
+      ),
+      child: ListTile(
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.drag_handle_rounded,
+              color: colorScheme.onSurface.withOpacity(0.5),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+              backgroundColor: Colors.purple.withOpacity(0.1),
+              child: Icon(Icons.quiz_outlined, color: Colors.purple[700]),
+            ),
+          ],
+        ),
+        title: Text(
+          quiz.title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${quiz.questions.length} questions • ${quiz.timeLimit.inMinutes} min',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit_outlined, color: Colors.purple[700]),
+              onPressed: () => _editQuiz(index),
+              tooltip: t.edit,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_outline_rounded, color: Colors.red[400]),
+              onPressed: () => _removeQuiz(index),
+              tooltip: t.delete,
+            ),
+          ],
+        ),
+        onTap: () => _editQuiz(index),
       ),
     );
   }
@@ -376,6 +480,21 @@ class _AddChapterPageState extends State<AddChapterPage> {
     }
   }
 
+  Future<void> _editVideo(int index) async {
+    final result = await Navigator.push<VideoEntity>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddVideoPage(existingVideo: _videos[index]),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _videos[index] = result;
+      });
+    }
+  }
+
   Future<void> _addQuiz() async {
     final result = await Navigator.push<QuizEntity>(
       context,
@@ -385,6 +504,21 @@ class _AddChapterPageState extends State<AddChapterPage> {
     if (result != null) {
       setState(() {
         _quizzes.add(result);
+      });
+    }
+  }
+
+  Future<void> _editQuiz(int index) async {
+    final result = await Navigator.push<QuizEntity>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddQuizPage(existingQuiz: _quizzes[index]),
+      ),
+    );
+
+    if (result != null) {
+      setState(() {
+        _quizzes[index] = result;
       });
     }
   }
@@ -443,10 +577,22 @@ class _AddChapterPageState extends State<AddChapterPage> {
 
   void _saveChapter() {
     if (_formKey.currentState?.validate() ?? false) {
+      // Update video order indices based on current position in list
+      final videosWithUpdatedOrder = _videos.asMap().entries.map((entry) {
+        return VideoEntity(
+          id: entry.value.id,
+          title: entry.value.title,
+          youtubeUrl: entry.value.youtubeUrl,
+          orderIndex: entry.key, // Use array index as order
+        );
+      }).toList();
+
       final chapter = ChapterEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: isEditMode
+            ? widget.existingChapter!.id
+            : DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
-        videosUrls: _videos,
+        videosUrls: videosWithUpdatedOrder,
         quizzes: _quizzes,
       );
 

@@ -4,7 +4,9 @@ import 'package:teach_flix/src/fatures/courses/domain/entities/question_entity.d
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class AddQuizPage extends StatefulWidget {
-  const AddQuizPage({super.key});
+  final QuizEntity? existingQuiz;
+
+  const AddQuizPage({super.key, this.existingQuiz});
 
   @override
   State<AddQuizPage> createState() => _AddQuizPageState();
@@ -17,7 +19,22 @@ class _AddQuizPageState extends State<AddQuizPage> {
   final _passingScoreController = TextEditingController();
   final _timeLimitController = TextEditingController();
 
-  final List<QuestionEntity> _questions = [];
+  List<QuestionEntity> _questions = [];
+
+  bool get isEditMode => widget.existingQuiz != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditMode) {
+      _titleController.text = widget.existingQuiz!.title;
+      _passingScoreController.text = widget.existingQuiz!.passingScore
+          .toString();
+      _timeLimitController.text = widget.existingQuiz!.timeLimit.inMinutes
+          .toString();
+      _questions = List.from(widget.existingQuiz!.questions);
+    }
+  }
 
   @override
   void dispose() {
@@ -35,7 +52,7 @@ class _AddQuizPageState extends State<AddQuizPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(t.add_quiz),
+        title: Text(isEditMode ? t.edit_quiz : t.add_quiz),
         elevation: 0,
         actions: [
           TextButton.icon(
@@ -195,7 +212,7 @@ class _AddQuizPageState extends State<AddQuizPage> {
                   ],
                 ),
                 IconButton(
-                  onPressed: _addQuestion,
+                  onPressed: () => _addQuestion(),
                   icon: Icon(
                     Icons.add_circle_rounded,
                     color: colorScheme.primary,
@@ -228,113 +245,146 @@ class _AddQuizPageState extends State<AddQuizPage> {
               ),
             )
           else
-            ListView.separated(
+            ReorderableListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: _questions.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) {
+                    newIndex -= 1;
+                  }
+                  final question = _questions.removeAt(oldIndex);
+                  _questions.insert(newIndex, question);
+                });
+              },
               itemBuilder: (context, index) {
                 final question = _questions[index];
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: ExpansionTile(
-                    leading: CircleAvatar(
-                      backgroundColor: colorScheme.primaryContainer,
-                      child: Text(
-                        '${index + 1}',
-                        style: TextStyle(
-                          color: colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      question.question,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text(
-                      '${question.options.length} options',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red[400],
-                      ),
-                      onPressed: () => _removeQuestion(index),
-                    ),
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ...question.options.asMap().entries.map((entry) {
-                              final isCorrect =
-                                  entry.key == question.correctAnswerIndex;
-                              return Padding(
-                                padding: const EdgeInsets.only(bottom: 8),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      isCorrect
-                                          ? Icons.check_circle
-                                          : Icons.circle_outlined,
-                                      color: isCorrect
-                                          ? Colors.green
-                                          : colorScheme.onSurface.withOpacity(
-                                              0.5,
-                                            ),
-                                      size: 20,
-                                    ),
-                                    const SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        entry.value,
-                                        style: TextStyle(
-                                          fontWeight: isCorrect
-                                              ? FontWeight.bold
-                                              : FontWeight.normal,
-                                          color: isCorrect
-                                              ? Colors.green
-                                              : null,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                            if (question.explanation.isNotEmpty) ...[
-                              const Divider(),
-                              Text(
-                                t.explanation,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(question.explanation),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                return _buildQuestionCard(
+                  question,
+                  index,
+                  colorScheme,
+                  key: ValueKey(question.id),
                 );
               },
             ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuestionCard(
+    QuestionEntity question,
+    int index,
+    ColorScheme colorScheme, {
+    required Key key,
+  }) {
+    final t = AppLocalizations.of(context)!;
+
+    return Card(
+      key: key,
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outline.withOpacity(0.2)),
+      ),
+      child: ExpansionTile(
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.drag_handle_rounded,
+              color: colorScheme.onSurface.withOpacity(0.5),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+              backgroundColor: colorScheme.primaryContainer,
+              child: Text(
+                '${index + 1}',
+                style: TextStyle(
+                  color: colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        title: Text(
+          question.question,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          '${question.options.length} options',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit_outlined, color: colorScheme.primary),
+              onPressed: () => _editQuestion(index),
+              tooltip: t.edit,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_outline_rounded, color: Colors.red[400]),
+              onPressed: () => _removeQuestion(index),
+              tooltip: t.delete,
+            ),
+          ],
+        ),
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...question.options.asMap().entries.map((entry) {
+                  final isCorrect = entry.key == question.correctAnswerIndex;
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Row(
+                      children: [
+                        Icon(
+                          isCorrect
+                              ? Icons.check_circle
+                              : Icons.circle_outlined,
+                          color: isCorrect
+                              ? Colors.green
+                              : colorScheme.onSurface.withOpacity(0.5),
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            entry.value,
+                            style: TextStyle(
+                              fontWeight: isCorrect
+                                  ? FontWeight.bold
+                                  : FontWeight.normal,
+                              color: isCorrect ? Colors.green : null,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+                if (question.explanation.isNotEmpty) ...[
+                  const Divider(),
+                  Text(
+                    t.explanation,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(question.explanation),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -347,6 +397,20 @@ class _AddQuizPageState extends State<AddQuizPage> {
         onAdd: (question) {
           setState(() {
             _questions.add(question);
+          });
+        },
+      ),
+    );
+  }
+
+  void _editQuestion(int index) {
+    showDialog(
+      context: context,
+      builder: (context) => _AddQuestionDialog(
+        existingQuestion: _questions[index],
+        onAdd: (question) {
+          setState(() {
+            _questions[index] = question;
           });
         },
       ),
@@ -396,7 +460,9 @@ class _AddQuizPageState extends State<AddQuizPage> {
       }
 
       final quiz = QuizEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: isEditMode
+            ? widget.existingQuiz!.id
+            : DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
         questions: _questions,
         passingScore: int.parse(_passingScoreController.text),
@@ -411,8 +477,9 @@ class _AddQuizPageState extends State<AddQuizPage> {
 // Add Question Dialog
 class _AddQuestionDialog extends StatefulWidget {
   final Function(QuestionEntity) onAdd;
+  final QuestionEntity? existingQuestion;
 
-  const _AddQuestionDialog({required this.onAdd});
+  const _AddQuestionDialog({required this.onAdd, this.existingQuestion});
 
   @override
   State<_AddQuestionDialog> createState() => _AddQuestionDialogState();
@@ -430,6 +497,25 @@ class _AddQuestionDialogState extends State<_AddQuestionDialog> {
   ];
   int _correctAnswerIndex = 0;
 
+  bool get isEditMode => widget.existingQuestion != null;
+
+  @override
+  void initState() {
+    super.initState();
+    if (isEditMode) {
+      _questionController.text = widget.existingQuestion!.question;
+      _explanationController.text = widget.existingQuestion!.explanation;
+      _correctAnswerIndex = widget.existingQuestion!.correctAnswerIndex;
+      for (
+        int i = 0;
+        i < widget.existingQuestion!.options.length && i < 4;
+        i++
+      ) {
+        _optionControllers[i].text = widget.existingQuestion!.options[i];
+      }
+    }
+  }
+
   @override
   void dispose() {
     _questionController.dispose();
@@ -443,10 +529,9 @@ class _AddQuestionDialogState extends State<_AddQuestionDialog> {
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
-    final colorScheme = Theme.of(context).colorScheme;
 
     return AlertDialog(
-      title: Text(t.add_question),
+      title: Text(isEditMode ? t.edit_question : t.add_question),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -545,15 +630,20 @@ class _AddQuestionDialogState extends State<_AddQuestionDialog> {
           onPressed: () => Navigator.pop(context),
           child: Text(t.cancel),
         ),
-        ElevatedButton(onPressed: _addQuestion, child: Text(t.add)),
+        ElevatedButton(
+          onPressed: _saveQuestion,
+          child: Text(isEditMode ? t.save : t.add),
+        ),
       ],
     );
   }
 
-  void _addQuestion() {
+  void _saveQuestion() {
     if (_formKey.currentState?.validate() ?? false) {
       final question = QuestionEntity(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: isEditMode
+            ? widget.existingQuestion!.id
+            : DateTime.now().millisecondsSinceEpoch.toString(),
         question: _questionController.text,
         options: _optionControllers.map((c) => c.text).toList(),
         correctAnswerIndex: _correctAnswerIndex,

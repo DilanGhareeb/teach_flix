@@ -25,6 +25,16 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   String _selectedCategory = CourseCategory.programming.englishName;
 
   final List<String> _categories = CourseCategory.allCategoryNames;
+
+  @override
+  void initState() {
+    super.initState();
+    // Clear any previous course creation state when page loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CoursesBloc>().add(const ClearCourseCreationStateEvent());
+    });
+  }
+
   @override
   void dispose() {
     _titleController.dispose();
@@ -176,7 +186,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
 
                         const SizedBox(height: 24),
 
-                        // Chapters Section
+                        // Chapters Section with Drag and Drop
                         _buildChaptersSection(context, state, colorScheme, t),
 
                         const SizedBox(height: 32),
@@ -478,55 +488,92 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
               ),
             )
           else
-            ListView.separated(
+            ReorderableListView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
               itemCount: chapters.length,
-              separatorBuilder: (context, index) => const SizedBox(height: 8),
+              onReorder: (oldIndex, newIndex) {
+                context.read<CoursesBloc>().add(
+                  ReorderChaptersEvent(oldIndex, newIndex),
+                );
+              },
               itemBuilder: (context, index) {
                 final chapter = chapters[index];
-                return Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    side: BorderSide(
-                      color: colorScheme.outline.withOpacity(0.2),
-                    ),
-                  ),
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      backgroundColor: colorScheme.primaryContainer,
-                      child: Text(
-                        '${index + 1}',
-                        style: TextStyle(
-                          color: colorScheme.onPrimaryContainer,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    title: Text(
-                      chapter.title,
-                      style: const TextStyle(fontWeight: FontWeight.w600),
-                    ),
-                    subtitle: Text(
-                      '${chapter.videosUrls.length} videos, ${chapter.quizzes.length} quizzes',
-                      style: TextStyle(
-                        color: colorScheme.onSurface.withOpacity(0.6),
-                      ),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(
-                        Icons.delete_outline_rounded,
-                        color: Colors.red[400],
-                      ),
-                      onPressed: () => _removeChapter(context, index),
-                    ),
-                  ),
+                return _buildChapterCard(
+                  context,
+                  chapter,
+                  index,
+                  colorScheme,
+                  key: ValueKey(chapter.id),
                 );
               },
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChapterCard(
+    BuildContext context,
+    ChapterEntity chapter,
+    int index,
+    ColorScheme colorScheme, {
+    required Key key,
+  }) {
+    return Card(
+      key: key,
+      elevation: 0,
+      margin: const EdgeInsets.only(bottom: 8),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outline.withOpacity(0.2)),
+      ),
+      child: ListTile(
+        leading: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.drag_handle_rounded,
+              color: colorScheme.onSurface.withOpacity(0.5),
+            ),
+            const SizedBox(width: 8),
+            CircleAvatar(
+              backgroundColor: colorScheme.primaryContainer,
+              child: Text(
+                '${index + 1}',
+                style: TextStyle(
+                  color: colorScheme.onPrimaryContainer,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+        title: Text(
+          chapter.title,
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
+        subtitle: Text(
+          '${chapter.videosUrls.length} videos, ${chapter.quizzes.length} quizzes',
+          style: TextStyle(color: colorScheme.onSurface.withOpacity(0.6)),
+        ),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              icon: Icon(Icons.edit_outlined, color: colorScheme.primary),
+              onPressed: () => _editChapter(context, index, chapter),
+              tooltip: AppLocalizations.of(context)!.edit,
+            ),
+            IconButton(
+              icon: Icon(Icons.delete_outline_rounded, color: Colors.red[400]),
+              onPressed: () => _removeChapter(context, index),
+              tooltip: AppLocalizations.of(context)!.delete,
+            ),
+          ],
+        ),
+        onTap: () => _editChapter(context, index, chapter),
       ),
     );
   }
@@ -564,6 +611,26 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
 
     if (result != null) {
       context.read<CoursesBloc>().add(AddChapterToNewCourseEvent(result));
+    }
+  }
+
+  Future<void> _editChapter(
+    BuildContext context,
+    int index,
+    ChapterEntity chapter,
+  ) async {
+    final result = await Navigator.push<ChapterEntity>(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            AddChapterPage(courseId: 'temp', existingChapter: chapter),
+      ),
+    );
+
+    if (result != null) {
+      context.read<CoursesBloc>().add(
+        UpdateChapterInNewCourseEvent(index, result),
+      );
     }
   }
 

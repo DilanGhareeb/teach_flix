@@ -640,4 +640,91 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get errImageUploadFailed => 'Failed to upload image';
+
+  @override
+  String get edit => 'Edit';
+
+  @override
+  String get edit_chapter => 'Edit Chapter';
+
+  @override
+  String get edit_video => 'Edit Video';
+
+  @override
+  String get edit_quiz => 'Edit Quiz';
+
+  @override
+  String get edit_question => 'Edit Question';
+
+  @override
+  String get video_order_info =>
+      'Videos will be played in ascending order based on this index.';
+
+  @override
+  String get my_learning => 'My Learning';
+
+  @override
+  String get no_courses_enrolled => 'No Courses Yet';
+
+  @override
+  String get browse_and_enroll_courses =>
+      'Browse and enroll in courses to start your learning journey!';
+
+  @override
+  String get browse_courses => 'Browse Courses';
+
+  @override
+  String get continue_learning => 'Continue';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get failed_to_load_courses => 'Failed to load courses';
+
+  @override
+  String get course => 'Course';
+
+  @override
+  String get video => 'Video';
+
+  @override
+  String get select_content_to_start => 'Select content to start learning';
+
+  @override
+  String get choose_video_or_quiz_from_sidebar =>
+      'Choose a video or quiz from the sidebar to begin';
+
+  @override
+  String get video_player_placeholder => 'Video Player (Coming Soon)';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get minutes => 'minutes';
+
+  @override
+  String get to_pass => 'to pass';
+
+  @override
+  String get quiz_functionality_coming_soon => 'Quiz functionality coming soon';
+
+  @override
+  String get start_quiz => 'Start Quiz';
+
+  @override
+  String get questions_preview => 'Questions Preview';
+
+  @override
+  String get owned => 'Owned';
+
+  @override
+  String get start_learning => 'Start Learning';
+
+  @override
+  String get preview => 'Preview';
 }

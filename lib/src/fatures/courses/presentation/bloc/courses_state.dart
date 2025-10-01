@@ -61,6 +61,8 @@ class CoursesState extends Equatable {
     String? uploadedImageUrl,
     double? imageUploadProgress,
     List<ChapterEntity>? chapters,
+    bool clearImage = false,
+    bool clearChapters = false,
   }) {
     return CoursesState(
       status: status ?? this.status,
@@ -70,10 +72,10 @@ class CoursesState extends Equatable {
       searchQuery: searchQuery ?? this.searchQuery,
       currentCategory: currentCategory ?? this.currentCategory,
       failure: failure,
-      selectedImage: selectedImage ?? this.selectedImage,
+      selectedImage: clearImage ? null : (selectedImage ?? this.selectedImage),
       uploadedImageUrl: uploadedImageUrl ?? this.uploadedImageUrl,
       imageUploadProgress: imageUploadProgress ?? this.imageUploadProgress,
-      chapters: chapters ?? this.chapters,
+      chapters: clearChapters ? [] : (chapters ?? this.chapters),
     );
   }
 

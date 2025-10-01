@@ -5,6 +5,7 @@ import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/pages/create_course_page.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/dashboard_page.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/my_course_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/pages/settings_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -29,7 +30,7 @@ class _MainPageState extends State<MainPage> {
     if (isTeacher) {
       return const [
         DashboardPage(),
-        _MyCoursesPage(),
+        MyCoursesPage(),
         _LivePage(),
         _TeacherDashboardPage(),
         SettingsPage(),
@@ -37,7 +38,7 @@ class _MainPageState extends State<MainPage> {
     } else {
       return const [
         DashboardPage(),
-        _MyCoursesPage(),
+        MyCoursesPage(),
         _LivePage(),
         SettingsPage(),
       ];
@@ -179,77 +180,6 @@ class _MainPageState extends State<MainPage> {
           ),
         );
       },
-    );
-  }
-}
-
-// My Courses Page
-class _MyCoursesPage extends StatelessWidget {
-  const _MyCoursesPage();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    final cs = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                t.courses,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: cs.onSurface,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          color: cs.primaryContainer.withOpacity(0.3),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.school_rounded,
-                          size: 64,
-                          color: cs.primary,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'Your enrolled courses will appear here',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: cs.onSurface.withOpacity(0.7),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Browse the dashboard to find courses to enroll in',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: cs.onSurface.withOpacity(0.5),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

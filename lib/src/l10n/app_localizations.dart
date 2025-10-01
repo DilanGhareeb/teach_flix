@@ -1333,6 +1333,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to upload image'**
   String get errImageUploadFailed;
+
+  /// Generic edit action button text
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get edit;
+
+  /// Button text for editing a chapter
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Chapter'**
+  String get edit_chapter;
+
+  /// Button text for editing a video
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Video'**
+  String get edit_video;
+
+  /// Button text for editing a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Quiz'**
+  String get edit_quiz;
+
+  /// Button text for editing a question
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Question'**
+  String get edit_question;
+
+  /// Information about how video order is determined
+  ///
+  /// In en, this message translates to:
+  /// **'Videos will be played in ascending order based on this index.'**
+  String get video_order_info;
+
+  /// Label for the user's learning section
+  ///
+  /// In en, this message translates to:
+  /// **'My Learning'**
+  String get my_learning;
+
+  /// Message indicating the user has not enrolled in any courses
+  ///
+  /// In en, this message translates to:
+  /// **'No Courses Yet'**
+  String get no_courses_enrolled;
+
+  /// Prompt encouraging users to browse and enroll in courses
+  ///
+  /// In en, this message translates to:
+  /// **'Browse and enroll in courses to start your learning journey!'**
+  String get browse_and_enroll_courses;
+
+  /// Button text for browsing available courses
+  ///
+  /// In en, this message translates to:
+  /// **'Browse Courses'**
+  String get browse_courses;
+
+  /// Button text for continuing a course
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continue_learning;
+
+  /// Label for displaying course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress;
+
+  /// Error message for failing to load courses
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load courses'**
+  String get failed_to_load_courses;
+
+  /// Generic label for a course
+  ///
+  /// In en, this message translates to:
+  /// **'Course'**
+  String get course;
+
+  /// Generic label for a video
+  ///
+  /// In en, this message translates to:
+  /// **'Video'**
+  String get video;
+
+  /// Prompt to select course content to begin learning
+  ///
+  /// In en, this message translates to:
+  /// **'Select content to start learning'**
+  String get select_content_to_start;
+
+  /// Instruction to select a video or quiz from the sidebar
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a video or quiz from the sidebar to begin'**
+  String get choose_video_or_quiz_from_sidebar;
+
+  /// Placeholder text indicating that the video player feature is coming soon
+  ///
+  /// In en, this message translates to:
+  /// **'Video Player (Coming Soon)'**
+  String get video_player_placeholder;
+
+  /// Button text for navigating to the previous item
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// Button text for navigating to the next item
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// Label for minutes unit of time
+  ///
+  /// In en, this message translates to:
+  /// **'minutes'**
+  String get minutes;
+
+  /// Label indicating the score needed to pass
+  ///
+  /// In en, this message translates to:
+  /// **'to pass'**
+  String get to_pass;
+
+  /// Message indicating that quiz functionality is coming soon
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz functionality coming soon'**
+  String get quiz_functionality_coming_soon;
+
+  /// Button text for starting a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Start Quiz'**
+  String get start_quiz;
+
+  /// Label for the questions preview section
+  ///
+  /// In en, this message translates to:
+  /// **'Questions Preview'**
+  String get questions_preview;
+
+  /// Label indicating the user owns the course
+  ///
+  /// In en, this message translates to:
+  /// **'Owned'**
+  String get owned;
+
+  /// Button text for starting to learn a course
+  ///
+  /// In en, this message translates to:
+  /// **'Start Learning'**
+  String get start_learning;
+
+  /// Button text for previewing content
+  ///
+  /// In en, this message translates to:
+  /// **'Preview'**
+  String get preview;
 }
 
 class _AppLocalizationsDelegate

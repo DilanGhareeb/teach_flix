@@ -2,6 +2,7 @@ part of 'courses_bloc.dart';
 
 abstract class CoursesEvent extends Equatable {
   const CoursesEvent();
+
   @override
   List<Object?> get props => [];
 }
@@ -12,35 +13,45 @@ class LoadCoursesEvent extends CoursesEvent {
 
 class LoadCourseDetailEvent extends CoursesEvent {
   final String courseId;
+
   const LoadCourseDetailEvent(this.courseId);
+
   @override
   List<Object> get props => [courseId];
 }
 
 class CreateCourseEvent extends CoursesEvent {
   final CourseEntity course;
+
   const CreateCourseEvent(this.course);
+
   @override
   List<Object> get props => [course];
 }
 
 class SearchCoursesEvent extends CoursesEvent {
   final String query;
+
   const SearchCoursesEvent(this.query);
+
   @override
   List<Object> get props => [query];
 }
 
 class LoadCoursesByCategoryEvent extends CoursesEvent {
   final String category;
+
   const LoadCoursesByCategoryEvent(this.category);
+
   @override
   List<Object> get props => [category];
 }
 
 class FilterCoursesByCategoryEvent extends CoursesEvent {
   final String category;
+
   const FilterCoursesByCategoryEvent(this.category);
+
   @override
   List<Object> get props => [category];
 }
@@ -48,14 +59,18 @@ class FilterCoursesByCategoryEvent extends CoursesEvent {
 class PurchaseCourseEvent extends CoursesEvent {
   final String userId;
   final String courseId;
+
   const PurchaseCourseEvent({required this.userId, required this.courseId});
+
   @override
   List<Object> get props => [userId, courseId];
 }
 
 class LoadEnrolledCoursesEvent extends CoursesEvent {
   final String userId;
+
   const LoadEnrolledCoursesEvent(this.userId);
+
   @override
   List<Object> get props => [userId];
 }
@@ -63,10 +78,12 @@ class LoadEnrolledCoursesEvent extends CoursesEvent {
 class AddChapterToCourseEvent extends CoursesEvent {
   final String courseId;
   final ChapterEntity chapter;
+
   const AddChapterToCourseEvent({
     required this.courseId,
     required this.chapter,
   });
+
   @override
   List<Object> get props => [courseId, chapter];
 }
@@ -75,11 +92,13 @@ class AddVideoToChapterEvent extends CoursesEvent {
   final String courseId;
   final String chapterId;
   final VideoEntity video;
+
   const AddVideoToChapterEvent({
     required this.courseId,
     required this.chapterId,
     required this.video,
   });
+
   @override
   List<Object> get props => [courseId, chapterId, video];
 }
@@ -88,7 +107,7 @@ class RefreshCoursesEvent extends CoursesEvent {
   const RefreshCoursesEvent();
 }
 
-// New events for image upload and course creation
+// Image upload and course creation events
 class PickImageFromGalleryEvent extends CoursesEvent {
   const PickImageFromGalleryEvent();
 }
@@ -99,7 +118,9 @@ class PickImageFromCameraEvent extends CoursesEvent {
 
 class UploadCourseImageEvent extends CoursesEvent {
   final File imageFile;
+
   const UploadCourseImageEvent(this.imageFile);
+
   @override
   List<Object> get props => [imageFile];
 }
@@ -110,16 +131,46 @@ class ClearSelectedImageEvent extends CoursesEvent {
 
 class AddChapterToNewCourseEvent extends CoursesEvent {
   final ChapterEntity chapter;
+
   const AddChapterToNewCourseEvent(this.chapter);
+
   @override
   List<Object> get props => [chapter];
 }
 
 class RemoveChapterFromNewCourseEvent extends CoursesEvent {
   final int index;
+
   const RemoveChapterFromNewCourseEvent(this.index);
+
   @override
   List<Object> get props => [index];
+}
+
+// NEW: Event to update an existing chapter at a specific index
+class UpdateChapterInNewCourseEvent extends CoursesEvent {
+  final int index;
+  final ChapterEntity updatedChapter;
+
+  const UpdateChapterInNewCourseEvent(this.index, this.updatedChapter);
+
+  @override
+  List<Object> get props => [index, updatedChapter];
+}
+
+// NEW: Event to reorder chapters in the new course being created
+class ReorderChaptersEvent extends CoursesEvent {
+  final int oldIndex;
+  final int newIndex;
+
+  const ReorderChaptersEvent(this.oldIndex, this.newIndex);
+
+  @override
+  List<Object> get props => [oldIndex, newIndex];
+}
+
+class ClearCourseCreationStateEvent extends CoursesEvent {
+  const ClearCourseCreationStateEvent();
 }
 
 class SubmitNewCourseEvent extends CoursesEvent {
