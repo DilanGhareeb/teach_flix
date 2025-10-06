@@ -57,6 +57,7 @@ dependencies:
   shared_preferences: ^2.5.3
   icons_launcher: ^3.0.3
   youtube_player_flutter: ^9.1.2
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/pages/course_learning_page.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/enrolled_course_card.dart';
-import 'package:teach_flix/src/fatures/courses/presentation/pages/course_detail_page.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -37,135 +36,126 @@ class _MyCoursesPageState extends State<MyCoursesPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(t.my_courses),
-        elevation: 0,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh_rounded),
-            onPressed: _loadEnrolledCourses,
-            tooltip: t.refresh,
-          ),
-        ],
-      ),
-      body: BlocBuilder<CoursesBloc, CoursesState>(
-        builder: (context, state) {
-          if (state.status == CoursesStatus.loading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: SafeArea(
+        child: BlocBuilder<CoursesBloc, CoursesState>(
+          builder: (context, state) {
+            if (state.status == CoursesStatus.loading) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (state.status == CoursesStatus.failure) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    t.failed_to_load_courses,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton.icon(
-                    onPressed: _loadEnrolledCourses,
-                    icon: const Icon(Icons.refresh),
-                    label: Text(t.retry),
-                  ),
-                ],
-              ),
-            );
-          }
-
-          final enrolledCourses = state.enrolledCourses ?? [];
-
-          if (enrolledCourses.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.school_outlined,
-                    size: 80,
-                    color: colorScheme.primary.withOpacity(0.3),
-                  ),
-                  const SizedBox(height: 24),
-                  Text(
-                    t.no_courses_enrolled,
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
+            if (state.status == CoursesStatus.failure) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 64, color: Colors.red[400]),
+                    const SizedBox(height: 16),
+                    Text(
+                      t.failed_to_load_courses,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    t.browse_and_enroll_courses,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: colorScheme.onSurface.withOpacity(0.6),
+                    const SizedBox(height: 16),
+                    ElevatedButton.icon(
+                      onPressed: _loadEnrolledCourses,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(t.retry),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 32),
-                  ElevatedButton.icon(
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.explore_rounded),
-                    label: Text(t.browse_courses),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 32,
-                        vertical: 16,
+                  ],
+                ),
+              );
+            }
+
+            final enrolledCourses = state.enrolledCourses ?? [];
+
+            if (enrolledCourses.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.school_outlined,
+                      size: 80,
+                      color: colorScheme.primary.withOpacity(0.3),
+                    ),
+                    const SizedBox(height: 24),
+                    Text(
+                      t.no_courses_enrolled,
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Text(
+                      t.browse_and_enroll_courses,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: colorScheme.onSurface.withOpacity(0.6),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 32),
+                    ElevatedButton.icon(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.explore_rounded),
+                      label: Text(t.browse_courses),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return RefreshIndicator(
+              onRefresh: () async => _loadEnrolledCourses(),
+              child: CustomScrollView(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            t.my_learning,
+                            style: Theme.of(context).textTheme.headlineSmall
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${enrolledCourses.length} ${enrolledCourses.length == 1 ? t.course : t.courses}',
+                            style: Theme.of(context).textTheme.bodyMedium
+                                ?.copyWith(
+                                  color: colorScheme.onSurface.withOpacity(0.6),
+                                ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+                    sliver: SliverList(
+                      delegate: SliverChildBuilderDelegate((context, index) {
+                        final course = enrolledCourses[index];
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: EnrolledCourseCard(
+                            course: course,
+                            onTap: () => _navigateToCourse(context, course.id),
+                          ),
+                        );
+                      }, childCount: enrolledCourses.length),
+                    ),
+                  ),
                 ],
               ),
             );
-          }
-
-          return RefreshIndicator(
-            onRefresh: () async => _loadEnrolledCourses(),
-            child: CustomScrollView(
-              slivers: [
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          t.my_learning,
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${enrolledCourses.length} ${enrolledCourses.length == 1 ? t.course : t.courses}',
-                          style: Theme.of(context).textTheme.bodyMedium
-                              ?.copyWith(
-                                color: colorScheme.onSurface.withOpacity(0.6),
-                              ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-                  sliver: SliverList(
-                    delegate: SliverChildBuilderDelegate((context, index) {
-                      final course = enrolledCourses[index];
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: EnrolledCourseCard(
-                          course: course,
-                          onTap: () => _navigateToCourse(context, course.id),
-                        ),
-                      );
-                    }, childCount: enrolledCourses.length),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

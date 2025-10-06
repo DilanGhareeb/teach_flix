@@ -941,5 +941,85 @@
   "preview": "Preview",
   "@preview": {
     "description": "Button text for previewing content"
+  },
+  "playback_settings": "Playback Settings",
+  "@playback_settings": {
+    "description": "Label for the playback settings section"
+  },
+  "captions": "Captions",
+  "@captions": {
+    "description": "Label for the captions option"
+  },
+  "show_subtitles": "Show video subtitles",
+  "@show_subtitles": {
+    "description": "Option to enable or disable video subtitles"
+  },
+  "toggle_captions": "Toggle Captions",
+  "@toggle_captions": {
+    "description": "Button text for toggling captions on or off"
+  },
+  "autoplay_next": "Autoplay Next",
+  "@autoplay_next": {
+    "description": "Label for the autoplay next option"
+  },
+  "automatically_play_next_video": "Automatically play next video",
+  "@automatically_play_next_video": {
+    "description": "Option to enable or disable automatic playback of the next video"
+  },
+  "playback_speed": "Playback Speed",
+  "@playback_speed": {
+    "description": "Label for the playback speed option"
+  },
+  "now_playing": "Now Playing",
+  "@now_playing": {
+    "description": "Label indicating the currently playing content"
+  },
+  "currently_playing": "Currently playing",
+  "@currently_playing": {
+    "description": "Label indicating the content that is currently being played"
+  },
+  "no_quizzes_available": "No quizzes available",
+  "@no_quizzes_available": {
+    "description": "Message indicating that there are no quizzes available"
+  },
+  "lessons": "lessons",
+  "@lessons": {
+    "description": "Label for the lessons section"
+  },
+  "course_price": "Course Price",
+  "@course_price": {
+    "description": "Label for the course price section"
+  },
+  "special_offer": "Special Offer",
+  "@special_offer": {
+    "description": "Label for special offer section"
+  },
+  "limited_time": "Limited Time",
+  "@limited_time": {
+    "description": "Label indicating a limited time offer"
+  },
+  "what_you_will_learn": "What You'll Learn",
+  "@what_you_will_learn": {
+    "description": "Section title for learning outcomes"
+  },
+  "reviews": "reviews",
+  "@reviews": {
+    "description": "Label for the reviews section"
+  },
+  "congratulations": "Congratulations!",
+  "@congratulations": {
+    "description": "Message displayed upon successful completion of a course"
+  },
+  "course_trailer": "Course Trailer",
+  "@course_trailer": {
+    "description": "Label for the course trailer video section"
+  },
+  "student_reviews": "Student Reviews",
+  "@student_reviews": {
+    "description": "Section title for student reviews"
+  },
+  "view_all": "View All",
+  "@view_all": {
+    "description": "Button text for viewing all items in a list"
   }
 }

@@ -727,4 +727,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get preview => 'Preview';
+
+  @override
+  String get playback_settings => 'Playback Settings';
+
+  @override
+  String get captions => 'Captions';
+
+  @override
+  String get show_subtitles => 'Show video subtitles';
+
+  @override
+  String get toggle_captions => 'Toggle Captions';
+
+  @override
+  String get autoplay_next => 'Autoplay Next';
+
+  @override
+  String get automatically_play_next_video => 'Automatically play next video';
+
+  @override
+  String get playback_speed => 'Playback Speed';
+
+  @override
+  String get now_playing => 'Now Playing';
+
+  @override
+  String get currently_playing => 'Currently playing';
+
+  @override
+  String get no_quizzes_available => 'No quizzes available';
+
+  @override
+  String get lessons => 'lessons';
+
+  @override
+  String get course_price => 'Course Price';
+
+  @override
+  String get special_offer => 'Special Offer';
+
+  @override
+  String get limited_time => 'Limited Time';
+
+  @override
+  String get what_you_will_learn => 'What You\'ll Learn';
+
+  @override
+  String get reviews => 'reviews';
+
+  @override
+  String get congratulations => 'Congratulations!';
+
+  @override
+  String get course_trailer => 'Course Trailer';
+
+  @override
+  String get student_reviews => 'Student Reviews';
+
+  @override
+  String get view_all => 'View All';
 }

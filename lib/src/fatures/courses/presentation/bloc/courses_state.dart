@@ -18,6 +18,7 @@ enum CoursesStatus {
   imageUploaded,
   chapterAdded,
   chapterRemoved,
+  loadingEnrolled,
 }
 
 class CoursesState extends Equatable {

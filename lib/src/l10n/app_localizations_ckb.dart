@@ -723,11 +723,71 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get questions_preview => 'پێشبینینی پرسیارەکان';
 
   @override
-  String get owned => 'خاوەندارەتیت';
+  String get owned => 'خاوەنکراو';
 
   @override
   String get start_learning => 'دەستپێکردنی فێربوون';
 
   @override
   String get preview => 'پێشبینین';
+
+  @override
+  String get playback_settings => 'ڕێکخستنەکانی لێدان';
+
+  @override
+  String get captions => 'ژێرنووس';
+
+  @override
+  String get show_subtitles => 'پیشاندانی ژێرنووس';
+
+  @override
+  String get toggle_captions => 'گۆڕینی ژێرنووس';
+
+  @override
+  String get autoplay_next => 'لێدانی خۆکارانەی دواتر';
+
+  @override
+  String get automatically_play_next_video => 'لێدانی خۆکارانەی ڤیدیۆی دواتر';
+
+  @override
+  String get playback_speed => 'خێرایی لێدان';
+
+  @override
+  String get now_playing => 'ئێستا لێدەدرێت';
+
+  @override
+  String get currently_playing => 'ئێستا لێدەدرێت';
+
+  @override
+  String get no_quizzes_available => 'هیچ تاقیکردنەوەیەک بەردەست نییە';
+
+  @override
+  String get lessons => 'وانەکان';
+
+  @override
+  String get course_price => 'نرخی کۆرس: ';
+
+  @override
+  String get special_offer => 'ئۆفەری تایبەت';
+
+  @override
+  String get limited_time => 'کاتی دیاریکراو';
+
+  @override
+  String get what_you_will_learn => 'ئەمەی دەتەوێت فێربیت';
+
+  @override
+  String get reviews => 'پيداچوونەکان';
+
+  @override
+  String get congratulations => 'پیرۆزە!';
+
+  @override
+  String get course_trailer => 'پێشبینینی کۆرس';
+
+  @override
+  String get student_reviews => 'پێداچوونەوەکانی قوتابیان';
+
+  @override
+  String get view_all => 'بینینی هەمووی';
 }

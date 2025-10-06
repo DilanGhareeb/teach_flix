@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/video_entity.dart';
@@ -470,7 +471,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
   Future<void> _addVideo() async {
     final result = await Navigator.push<VideoEntity>(
       context,
-      MaterialPageRoute(builder: (context) => const AddVideoPage()),
+      CupertinoPageRoute(builder: (context) => const AddVideoPage()),
     );
 
     if (result != null) {
@@ -483,7 +484,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
   Future<void> _editVideo(int index) async {
     final result = await Navigator.push<VideoEntity>(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => AddVideoPage(existingVideo: _videos[index]),
       ),
     );
@@ -498,7 +499,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
   Future<void> _addQuiz() async {
     final result = await Navigator.push<QuizEntity>(
       context,
-      MaterialPageRoute(builder: (context) => const AddQuizPage()),
+      CupertinoPageRoute(builder: (context) => const AddQuizPage()),
     );
 
     if (result != null) {
@@ -511,7 +512,7 @@ class _AddChapterPageState extends State<AddChapterPage> {
   Future<void> _editQuiz(int index) async {
     final result = await Navigator.push<QuizEntity>(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) => AddQuizPage(existingQuiz: _quizzes[index]),
       ),
     );

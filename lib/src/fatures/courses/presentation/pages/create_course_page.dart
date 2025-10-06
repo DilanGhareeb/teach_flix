@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
@@ -606,7 +607,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   Future<void> _addChapter(BuildContext context) async {
     final result = await Navigator.push<ChapterEntity>(
       context,
-      MaterialPageRoute(builder: (context) => AddChapterPage(courseId: 'temp')),
+      CupertinoPageRoute(
+        builder: (context) => AddChapterPage(courseId: 'temp'),
+      ),
     );
 
     if (result != null) {
@@ -621,7 +624,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   ) async {
     final result = await Navigator.push<ChapterEntity>(
       context,
-      MaterialPageRoute(
+      CupertinoPageRoute(
         builder: (context) =>
             AddChapterPage(courseId: 'temp', existingChapter: chapter),
       ),

@@ -1,11 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/category_selector.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/widgets/horizontal_course_list.dart';
+import 'package:teach_flix/src/fatures/courses/presentation/pages/course_detail_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -51,7 +53,6 @@ class _DashboardPageState extends State<DashboardPage>
     _fadeController.forward();
     _slideController.forward();
 
-    // Listen to search controller changes
     _searchController.addListener(_onSearchChanged);
   }
 
@@ -71,7 +72,6 @@ class _DashboardPageState extends State<DashboardPage>
     });
 
     if (query.isNotEmpty) {
-      // Search with case-insensitive query
       context.read<CoursesBloc>().add(SearchCoursesEvent(query));
     } else {
       if (_selectedCategory == null) {
@@ -96,11 +96,15 @@ class _DashboardPageState extends State<DashboardPage>
 
   void _clearSearch() {
     _searchController.clear();
-    // _onSearchChanged will be called automatically
   }
 
   void _onCourseTap(course) {
-    // Navigate to course details or preview
+    Navigator.push(
+      context,
+      CupertinoPageRoute(
+        builder: (context) => CourseDetailPage(course: course),
+      ),
+    );
   }
 
   @override
@@ -123,7 +127,6 @@ class _DashboardPageState extends State<DashboardPage>
               child: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: [
-                  // Header Section - Always visible
                   SliverToBoxAdapter(
                     child: Container(
                       margin: const EdgeInsets.all(20),
@@ -232,7 +235,6 @@ class _DashboardPageState extends State<DashboardPage>
                     ),
                   ),
 
-                  // Search Section - Always visible
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -289,7 +291,6 @@ class _DashboardPageState extends State<DashboardPage>
 
                   const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                  // Category Selector - Hide when searching
                   if (!_isSearching)
                     SliverToBoxAdapter(
                       child: CategorySelector(
@@ -301,7 +302,6 @@ class _DashboardPageState extends State<DashboardPage>
                   if (!_isSearching)
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                  // Courses Header - No refresh button
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -317,11 +317,11 @@ class _DashboardPageState extends State<DashboardPage>
 
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-                  // Courses Content
                   SliverToBoxAdapter(
                     child: BlocBuilder<CoursesBloc, CoursesState>(
                       builder: (context, state) {
-                        if (state.status == CoursesStatus.loading) {
+                        if (state.status == CoursesStatus.loading &&
+                            state.courses == null) {
                           return Container(
                             height: 200,
                             margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -350,61 +350,10 @@ class _DashboardPageState extends State<DashboardPage>
                               ),
                             ),
                           );
-                        } else if (state.status == CoursesStatus.loaded &&
-                            state.courses != null) {
-                          if (state.courses!.isEmpty) {
-                            return Container(
-                              height: 200,
-                              margin: const EdgeInsets.symmetric(
-                                horizontal: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: colorScheme.surfaceContainerHighest
-                                    .withOpacity(0.5),
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: colorScheme.outline.withOpacity(0.2),
-                                ),
-                              ),
-                              child: Center(
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      _isSearching
-                                          ? Icons.search_off_rounded
-                                          : Icons.school_outlined,
-                                      size: 48,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.4,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      _isSearching
-                                          ? t.no_results_found
-                                          : t.no_courses_found,
-                                      style: textTheme.titleMedium?.copyWith(
-                                        color: colorScheme.onSurface
-                                            .withOpacity(0.7),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      _isSearching
-                                          ? t.try_different_search
-                                          : t.try_different_search_or_category,
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onSurface
-                                            .withOpacity(0.5),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          }
+                        }
 
+                        if (state.courses != null &&
+                            state.courses!.isNotEmpty) {
                           return AnimatedSwitcher(
                             duration: const Duration(milliseconds: 300),
                             child: HorizontalCourseList(
@@ -413,7 +362,62 @@ class _DashboardPageState extends State<DashboardPage>
                               onCourseTap: _onCourseTap,
                             ),
                           );
-                        } else if (state.status == CoursesStatus.failure &&
+                        }
+
+                        if (state.courses != null && state.courses!.isEmpty) {
+                          return Container(
+                            height: 200,
+                            margin: const EdgeInsets.symmetric(horizontal: 20),
+                            decoration: BoxDecoration(
+                              color: colorScheme.surfaceContainerHighest
+                                  .withOpacity(0.5),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: colorScheme.outline.withOpacity(0.2),
+                              ),
+                            ),
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    _isSearching
+                                        ? Icons.search_off_rounded
+                                        : Icons.school_outlined,
+                                    size: 48,
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.4,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    _isSearching
+                                        ? t.no_results_found
+                                        : t.no_courses_found,
+                                    style: textTheme.titleMedium?.copyWith(
+                                      color: colorScheme.onSurface.withOpacity(
+                                        0.7,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    _isSearching
+                                        ? t.try_different_search
+                                        : t.try_different_search_or_category,
+                                    style: textTheme.bodySmall?.copyWith(
+                                      color: colorScheme.onSurface.withOpacity(
+                                        0.5,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        }
+
+                        if (state.status == CoursesStatus.failure &&
                             state.failure != null) {
                           return Container(
                             height: 200,

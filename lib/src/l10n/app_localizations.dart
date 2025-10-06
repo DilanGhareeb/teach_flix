@@ -1501,6 +1501,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Preview'**
   String get preview;
+
+  /// Label for the playback settings section
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Settings'**
+  String get playback_settings;
+
+  /// Label for the captions option
+  ///
+  /// In en, this message translates to:
+  /// **'Captions'**
+  String get captions;
+
+  /// Option to enable or disable video subtitles
+  ///
+  /// In en, this message translates to:
+  /// **'Show video subtitles'**
+  String get show_subtitles;
+
+  /// Button text for toggling captions on or off
+  ///
+  /// In en, this message translates to:
+  /// **'Toggle Captions'**
+  String get toggle_captions;
+
+  /// Label for the autoplay next option
+  ///
+  /// In en, this message translates to:
+  /// **'Autoplay Next'**
+  String get autoplay_next;
+
+  /// Option to enable or disable automatic playback of the next video
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically play next video'**
+  String get automatically_play_next_video;
+
+  /// Label for the playback speed option
+  ///
+  /// In en, this message translates to:
+  /// **'Playback Speed'**
+  String get playback_speed;
+
+  /// Label indicating the currently playing content
+  ///
+  /// In en, this message translates to:
+  /// **'Now Playing'**
+  String get now_playing;
+
+  /// Label indicating the content that is currently being played
+  ///
+  /// In en, this message translates to:
+  /// **'Currently playing'**
+  String get currently_playing;
+
+  /// Message indicating that there are no quizzes available
+  ///
+  /// In en, this message translates to:
+  /// **'No quizzes available'**
+  String get no_quizzes_available;
+
+  /// Label for the lessons section
+  ///
+  /// In en, this message translates to:
+  /// **'lessons'**
+  String get lessons;
+
+  /// Label for the course price section
+  ///
+  /// In en, this message translates to:
+  /// **'Course Price'**
+  String get course_price;
+
+  /// Label for special offer section
+  ///
+  /// In en, this message translates to:
+  /// **'Special Offer'**
+  String get special_offer;
+
+  /// Label indicating a limited time offer
+  ///
+  /// In en, this message translates to:
+  /// **'Limited Time'**
+  String get limited_time;
+
+  /// Section title for learning outcomes
+  ///
+  /// In en, this message translates to:
+  /// **'What You\'ll Learn'**
+  String get what_you_will_learn;
+
+  /// Label for the reviews section
+  ///
+  /// In en, this message translates to:
+  /// **'reviews'**
+  String get reviews;
+
+  /// Message displayed upon successful completion of a course
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations!'**
+  String get congratulations;
+
+  /// Label for the course trailer video section
+  ///
+  /// In en, this message translates to:
+  /// **'Course Trailer'**
+  String get course_trailer;
+
+  /// Section title for student reviews
+  ///
+  /// In en, this message translates to:
+  /// **'Student Reviews'**
+  String get student_reviews;
+
+  /// Button text for viewing all items in a list
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get view_all;
 }
 
 class _AppLocalizationsDelegate

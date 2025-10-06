@@ -229,7 +229,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     LoadEnrolledCoursesEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    emit(state.copyWith(status: CoursesStatus.loading, failure: null));
+    // Don't emit loading state - just fetch silently
     final result = await _getEnrolledCourses(
       params: GetEnrolledCoursesParams(userId: event.userId),
     );
