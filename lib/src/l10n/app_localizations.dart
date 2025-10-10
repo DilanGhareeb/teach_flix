@@ -1621,6 +1621,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View All'**
   String get view_all;
+
+  /// Success message displayed after enrolling in a course
+  ///
+  /// In en, this message translates to:
+  /// **'Enrolled successfully!'**
+  String get enrolled_successfully;
+
+  /// Button text for enrolling in a free course
+  ///
+  /// In en, this message translates to:
+  /// **'Enroll for Free'**
+  String get enroll_free;
+
+  /// Status message indicating that an action is being processed
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get processing;
+
+  /// Button text for dismissing a message or dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismiss;
+
+  /// Prompt asking the user to log in before enrolling in a course
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to enroll in this course'**
+  String get please_login;
+
+  /// Label indicating that the course is free
+  ///
+  /// In en, this message translates to:
+  /// **'Free Course'**
+  String get free_course;
 }
 
 class _AppLocalizationsDelegate

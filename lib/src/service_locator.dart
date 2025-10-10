@@ -16,6 +16,7 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/enroll_in_course.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/upload_course_image.dart';
 
 // Settings
@@ -134,6 +135,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => UploadCourseImage(sl()));
   sl.registerFactory(() => GetEnrolledCourses(sl()));
   sl.registerFactory(() => PurchaseCourse(sl()));
+  sl.registerFactory(() => EnrollInCourse(sl()));
   sl.registerFactory(() => SearchCourses(sl()));
 
   // Courses feature - Bloc
@@ -143,6 +145,7 @@ Future<void> setupServiceLocator() async {
       getCoursesByCategory: sl(),
       searchCourses: sl(),
       getCourseById: sl(),
+      enrollInCourse: sl(),
       getEnrolledCourses: sl(),
       createCourse: sl(),
       addChapterToCourse: sl(),

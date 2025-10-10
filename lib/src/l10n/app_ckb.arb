@@ -253,5 +253,11 @@
   "congratulations": "پیرۆزە!",
   "course_trailer": "پێشبینینی کۆرس",
   "student_reviews": "پێداچوونەوەکانی قوتابیان",
-  "view_all": "بینینی هەمووی"
+  "view_all": "بینینی هەمووی",
+  "enrolled_successfully": "تۆمارکرا بە سەرکەوتووی",
+  "enroll_free": "بەخۆڕایی تۆماربە",
+  "processing": "لە پڕۆسەدا...",
+  "dismiss": "داخستن",
+  "please_login": "تکایە بچۆ ژوورەوە بۆ بەردەوامبوون",
+  "free_course": "کۆرسی بەخۆڕایی"
 }

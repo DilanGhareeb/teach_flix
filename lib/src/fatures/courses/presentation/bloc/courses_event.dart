@@ -200,3 +200,13 @@ class SubmitNewCourseEvent extends CoursesEvent {
     instructorId,
   ];
 }
+
+class EnrollInCourseEvent extends CoursesEvent {
+  final String userId;
+  final String courseId;
+
+  const EnrollInCourseEvent({required this.userId, required this.courseId});
+
+  @override
+  List<Object> get props => [userId, courseId];
+}

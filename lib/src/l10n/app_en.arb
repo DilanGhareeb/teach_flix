@@ -1021,5 +1021,29 @@
   "view_all": "View All",
   "@view_all": {
     "description": "Button text for viewing all items in a list"
+  },
+  "enrolled_successfully": "Enrolled successfully!",
+  "@enrolled_successfully": {
+    "description": "Success message displayed after enrolling in a course"
+  },
+  "enroll_free": "Enroll for Free",
+  "@enroll_free": {
+    "description": "Button text for enrolling in a free course"
+  },
+  "processing": "Processing...",
+  "@processing": {
+    "description": "Status message indicating that an action is being processed"
+  },
+  "dismiss": "Dismiss",
+  "@dismiss": {
+    "description": "Button text for dismissing a message or dialog"
+  },
+  "please_login": "Please log in to enroll in this course",
+  "@please_login": {
+    "description": "Prompt asking the user to log in before enrolling in a course"
+  },
+  "free_course": "Free Course",
+  "@free_course": {
+    "description": "Label indicating that the course is free"
   }
 }

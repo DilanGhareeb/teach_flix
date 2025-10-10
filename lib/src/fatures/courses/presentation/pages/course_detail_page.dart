@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/fatures/common/error_localizer.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
@@ -40,7 +41,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
         _trailerController = YoutubePlayerController(
           initialVideoId: videoId,
           flags: const YoutubePlayerFlags(
-            autoPlay: true,
+            autoPlay: false,
             mute: false,
             enableCaption: false,
             showLiveFullscreenButton: true,
@@ -74,20 +75,50 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
           if (state.status == CoursesStatus.coursePurchased) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(t.course_purchased_successfully),
+                content: Text(
+                  widget.course.price == 0
+                      ? (t.enrolled_successfully ?? 'Enrolled successfully!')
+                      : (t.course_purchased_successfully ??
+                            'Course purchased successfully!'),
+                ),
                 backgroundColor: Colors.green,
                 behavior: SnackBarBehavior.floating,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
+                duration: const Duration(seconds: 2),
               ),
             );
+
             final authState = context.read<AuthBloc>().state;
             if (authState.user != null) {
               context.read<CoursesBloc>().add(
                 LoadEnrolledCoursesEvent(authState.user!.id),
               );
             }
+          }
+
+          if (state.status == CoursesStatus.failure && state.failure != null) {
+            String errorMessage = ErrorLocalizer.of(state.failure!, t);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                duration: const Duration(seconds: 4),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                action: SnackBarAction(
+                  label: t.dismiss ?? 'Dismiss',
+                  textColor: Colors.white,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  },
+                ),
+              ),
+            );
           }
         },
         builder: (context, state) {
@@ -96,6 +127,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
             context,
             widget.course,
             isOwned,
+            state,
             t,
             colorScheme,
           );
@@ -108,6 +140,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     BuildContext context,
     CourseEntity course,
     bool isOwned,
+    CoursesState state,
     AppLocalizations t,
     ColorScheme colorScheme,
   ) {
@@ -128,6 +161,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
       children: [
         CustomScrollView(
           slivers: [
+            // App Bar with Course Image
             SliverAppBar(
               expandedHeight: 280,
               pinned: true,
@@ -237,10 +271,13 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 ),
               ),
             ),
+
+            // Course Content
             SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Course Header Section
                   Container(
                     padding: const EdgeInsets.all(24),
                     decoration: BoxDecoration(
@@ -353,9 +390,11 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     ),
                   ),
 
+                  // Trailer Section
                   if (_trailerController != null)
                     _buildTrailerSection(t, colorScheme),
 
+                  // Price Section (only for paid courses that user doesn't own)
                   if (!isOwned && course.price > 0)
                     Container(
                       margin: const EdgeInsets.all(20),
@@ -419,6 +458,68 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                       ),
                     ),
 
+                  // Free Badge (for free courses that user doesn't own)
+                  if (!isOwned && course.price == 0)
+                    Container(
+                      margin: const EdgeInsets.all(20),
+                      padding: const EdgeInsets.all(24),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [Colors.green, Colors.green.withOpacity(0.8)],
+                        ),
+                        borderRadius: BorderRadius.circular(20),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.4),
+                            blurRadius: 20,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: const Icon(
+                              Icons.card_giftcard,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  t.free_course ?? 'Free Course',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  t.enroll_free ?? 'Enroll for Free',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  // Description Section
                   if (course.description.isNotEmpty)
                     Padding(
                       padding: const EdgeInsets.all(20),
@@ -451,6 +552,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                       ),
                     ),
 
+                  // Course Content/Chapters Section
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: Column(
@@ -587,6 +689,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                     ),
                   ),
 
+                  // Reviews Section
                   if (course.ratings.isNotEmpty)
                     _buildReviewsSection(course, t, colorScheme),
 
@@ -596,6 +699,8 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
             ),
           ],
         ),
+
+        // Bottom Action Button
         Positioned(
           left: 0,
           right: 0,
@@ -617,9 +722,11 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                 width: double.infinity,
                 height: 56,
                 child: ElevatedButton(
-                  onPressed: isOwned
-                      ? () => _startLearning(context, course)
-                      : () => _purchaseCourse(context, course.id),
+                  onPressed: state.status == CoursesStatus.purchasing
+                      ? null
+                      : (isOwned
+                            ? () => _startLearning(context, course)
+                            : () => _purchaseCourse(context, course.id, t)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: isOwned
                         ? Colors.green
@@ -629,26 +736,59 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     elevation: 8,
+                    disabledBackgroundColor: colorScheme.primary.withOpacity(
+                      0.6,
+                    ),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        isOwned ? Icons.play_circle_filled : Icons.shopping_bag,
-                        size: 24,
-                      ),
-                      const SizedBox(width: 12),
-                      Text(
-                        isOwned
-                            ? (t.start_learning ?? 'Start Learning')
-                            : (t.enroll_now ?? 'Enroll Now'),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
+                  child: state.status == CoursesStatus.purchasing
+                      ? Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              t.processing ?? 'Processing...',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              isOwned
+                                  ? Icons.play_circle_filled
+                                  : (course.price == 0
+                                        ? Icons.download_rounded
+                                        : Icons.shopping_bag),
+                              size: 24,
+                            ),
+                            const SizedBox(width: 12),
+                            Text(
+                              isOwned
+                                  ? (t.start_learning ?? 'Start Learning')
+                                  : (course.price == 0
+                                        ? (t.enroll_free ?? 'Enroll for Free')
+                                        : (t.enroll_now ?? 'Buy Now')),
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),
@@ -872,9 +1012,35 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
-  void _purchaseCourse(BuildContext context, String courseId) {
+  void _purchaseCourse(
+    BuildContext context,
+    String courseId,
+    AppLocalizations t,
+  ) {
     final authState = context.read<AuthBloc>().state;
-    if (authState.user != null) {
+
+    if (authState.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(t.please_login ?? 'Please log in to enroll'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // Check if course is free
+    if (widget.course.price == 0) {
+      // For FREE courses, use enrollInCourse (no payment)
+      context.read<CoursesBloc>().add(
+        EnrollInCourseEvent(userId: authState.user!.id, courseId: courseId),
+      );
+    } else {
+      // For PAID courses, use purchaseCourse (with payment)
       context.read<CoursesBloc>().add(
         PurchaseCourseEvent(userId: authState.user!.id, courseId: courseId),
       );

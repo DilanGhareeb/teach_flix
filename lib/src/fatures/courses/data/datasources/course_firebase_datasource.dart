@@ -186,6 +186,7 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           'userId': course.instructorId,
           'courseId': docRef.id,
           'enrolledAt': Timestamp.now(),
+          'instructorProfit': 0.0, // No profit since it's their own course
           'isInstructor': true, // Mark as instructor enrollment
         });
 
@@ -244,18 +245,30 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
   @override
   Future<Either<Failure, List<CourseModel>>> searchCourses(String query) async {
     try {
-      // Convert query to lowercase for case-insensitive search
-      final lowerQuery = query.toLowerCase();
+      if (query.trim().isEmpty) {
+        return const Right([]);
+      }
 
-      final querySnapshot = await _firestore
-          .collection('courses')
-          .where('titleLowercase', isGreaterThanOrEqualTo: lowerQuery)
-          .where('titleLowercase', isLessThanOrEqualTo: '$lowerQuery\uf8ff')
-          .get();
+      final lowerQuery = query.toLowerCase().trim();
+
+      final querySnapshot = await _firestore.collection('courses').get();
 
       final courses = querySnapshot.docs
           .map((doc) => CourseModel.fromFirestore(doc))
+          .where((course) {
+            final titleMatch = course.title.toLowerCase().contains(lowerQuery);
+
+            final descriptionMatch =
+                course.description.toLowerCase().contains(lowerQuery) ?? false;
+
+            final categoryMatch = course.category.toLowerCase().contains(
+              lowerQuery,
+            );
+
+            return titleMatch || descriptionMatch || categoryMatch;
+          })
           .toList();
+
       return Right(courses);
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
@@ -270,24 +283,57 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
     String courseId,
   ) async {
     try {
-      // Check if already enrolled
-      final existingEnrollment = await _firestore
-          .collection('enrollments')
-          .where('userId', isEqualTo: userId)
-          .where('courseId', isEqualTo: courseId)
-          .get();
+      return await _firestore.runTransaction<Either<Failure, void>>((
+        transaction,
+      ) async {
+        // Check if already enrolled
+        final existingEnrollment = await _firestore
+            .collection('enrollments')
+            .where('userId', isEqualTo: userId)
+            .where('courseId', isEqualTo: courseId)
+            .get();
 
-      if (existingEnrollment.docs.isNotEmpty) {
-        return const Left(AlreadyEnrolledFailure());
-      }
+        if (existingEnrollment.docs.isNotEmpty) {
+          return const Left(AlreadyEnrolledFailure());
+        }
 
-      await _firestore.collection('enrollments').add({
-        'userId': userId,
-        'courseId': courseId,
-        'enrolledAt': Timestamp.now(),
-        'isInstructor': false,
+        final courseDoc = await transaction.get(
+          _firestore.collection('courses').doc(courseId),
+        );
+
+        if (!courseDoc.exists) {
+          return const Left(NotFoundFailure());
+        }
+
+        final courseData = courseDoc.data()!;
+        final coursePrice = (courseData['price'] as num).toDouble();
+        final instructorId = courseData['instructorId'] as String;
+
+        final isInstructor = userId == instructorId;
+
+        final enrollmentRef = _firestore.collection('enrollments').doc();
+        transaction.set(enrollmentRef, {
+          'userId': userId,
+          'courseId': courseId,
+          'enrolledAt': Timestamp.now(),
+          'isInstructor': isInstructor,
+          'instructorProfit': 0.0, // No profit for free enrollment
+          'coursePriceAtEnrollment': coursePrice,
+        });
+
+        transaction.set(_firestore.collection('transactions').doc(), {
+          'userId': userId,
+          'courseId': courseId,
+          'instructorId': instructorId,
+          'amount': 0.0,
+          'instructorProfit': 0.0,
+          'platformProfit': 0.0,
+          'type': 'free_enrollment',
+          'createdAt': Timestamp.now(),
+        });
+
+        return const Right(null);
       });
-      return const Right(null);
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
@@ -333,12 +379,23 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
         }
 
         final courseData = courseDoc.data()!;
-        final coursePrice = courseData['price'] as double;
+        final coursePrice = (courseData['price'] as num).toDouble();
         final instructorId = courseData['instructorId'] as String;
 
-        // Check if user is the instructor (instructors don't pay for their own courses)
+        // Check if user is the instructor
         if (userId == instructorId) {
           return const Left(InstructorCannotPurchaseOwnCourseFailure());
+        }
+
+        // Check if already enrolled
+        final enrollmentQuery = await _firestore
+            .collection('enrollments')
+            .where('userId', isEqualTo: userId)
+            .where('courseId', isEqualTo: courseId)
+            .get();
+
+        if (enrollmentQuery.docs.isNotEmpty) {
+          return const Left(AlreadyEnrolledFailure());
         }
 
         // Get user balance
@@ -356,28 +413,38 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           return const Left(InsufficientBalanceFailure());
         }
 
-        // Check if already enrolled
-        final enrollmentQuery = await _firestore
-            .collection('enrollments')
-            .where('userId', isEqualTo: userId)
-            .where('courseId', isEqualTo: courseId)
-            .get();
-
-        if (enrollmentQuery.docs.isNotEmpty) {
-          return const Left(AlreadyEnrolledFailure());
+        // Get instructor's current balance
+        final instructorDoc = await transaction.get(
+          _firestore.collection('users').doc(instructorId),
+        );
+        if (!instructorDoc.exists) {
+          return const Left(NotFoundFailure());
         }
+
+        final currentInstructorBalance =
+            (instructorDoc.data()!['balance'] as num).toDouble();
+
+        // Calculate instructor's share (50% of course price)
+        final instructorProfit = coursePrice * 0.5;
 
         // Deduct balance from user
         transaction.update(_firestore.collection('users').doc(userId), {
           'balance': currentBalance - coursePrice,
         });
 
-        // Add enrollment
+        // Add profit to instructor's balance
+        transaction.update(_firestore.collection('users').doc(instructorId), {
+          'balance': currentInstructorBalance + instructorProfit,
+        });
+
+        // Add enrollment with profit information
         transaction.set(_firestore.collection('enrollments').doc(), {
           'userId': userId,
           'courseId': courseId,
           'enrolledAt': Timestamp.now(),
           'isInstructor': false,
+          'instructorProfit': instructorProfit,
+          'coursePriceAtEnrollment': coursePrice,
         });
 
         // Add transaction record
@@ -386,6 +453,8 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           'courseId': courseId,
           'instructorId': instructorId,
           'amount': coursePrice,
+          'instructorProfit': instructorProfit,
+          'platformProfit': coursePrice - instructorProfit,
           'type': 'course_purchase',
           'createdAt': Timestamp.now(),
         });

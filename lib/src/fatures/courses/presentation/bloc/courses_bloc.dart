@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/fatures/courses/domain/entities/video_entity.dart';
+import 'package:teach_flix/src/fatures/courses/domain/usecases/enroll_in_course.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_all_courses.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/get_course_by_id.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/create_course.dart';
@@ -29,6 +30,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final GetCoursesByCategory _getCoursesByCategory;
   final PurchaseCourse _purchaseCourse;
   final GetEnrolledCourses _getEnrolledCourses;
+  final EnrollInCourse _enrollInCourse;
   final AddChapterToCourse _addChapterToCourse;
   final AddVideoToChapter _addVideoToChapter;
 
@@ -40,6 +42,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required SearchCourses searchCourses,
     required GetCoursesByCategory getCoursesByCategory,
     required PurchaseCourse purchaseCourse,
+    required EnrollInCourse enrollInCourse,
     required GetEnrolledCourses getEnrolledCourses,
     required AddChapterToCourse addChapterToCourse,
     required AddVideoToChapter addVideoToChapter,
@@ -50,6 +53,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
        _searchCourses = searchCourses,
        _getCoursesByCategory = getCoursesByCategory,
        _purchaseCourse = purchaseCourse,
+       _enrollInCourse = enrollInCourse,
        _getEnrolledCourses = getEnrolledCourses,
        _addChapterToCourse = addChapterToCourse,
        _addVideoToChapter = addVideoToChapter,
@@ -61,11 +65,11 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<LoadCoursesByCategoryEvent>(_onLoadCoursesByCategory);
     on<FilterCoursesByCategoryEvent>(_onFilterCoursesByCategory);
     on<PurchaseCourseEvent>(_onPurchaseCourse);
+    on<EnrollInCourseEvent>(_onEnrollInCourse);
     on<LoadEnrolledCoursesEvent>(_onLoadEnrolledCourses);
     on<AddChapterToCourseEvent>(_onAddChapterToCourse);
     on<AddVideoToChapterEvent>(_onAddVideoToChapter);
     on<RefreshCoursesEvent>(_onRefreshCourses);
-
     on<PickImageFromGalleryEvent>(_onPickImageFromGallery);
     on<PickImageFromCameraEvent>(_onPickImageFromCamera);
     on<UploadCourseImageEvent>(_onUploadCourseImage);
@@ -242,6 +246,26 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
           enrolledCourses: courses,
           failure: null,
         ),
+      ),
+    );
+  }
+
+  Future<void> _onEnrollInCourse(
+    EnrollInCourseEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    emit(state.copyWith(status: CoursesStatus.purchasing, failure: null));
+    final result = await _enrollInCourse(
+      params: EnrollInCourseParams(
+        userId: event.userId,
+        courseId: event.courseId,
+      ),
+    );
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (_) => emit(
+        state.copyWith(status: CoursesStatus.coursePurchased, failure: null),
       ),
     );
   }

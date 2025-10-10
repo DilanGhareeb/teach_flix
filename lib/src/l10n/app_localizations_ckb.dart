@@ -790,4 +790,22 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get view_all => 'بینینی هەمووی';
+
+  @override
+  String get enrolled_successfully => 'تۆمارکرا بە سەرکەوتووی';
+
+  @override
+  String get enroll_free => 'بەخۆڕایی تۆماربە';
+
+  @override
+  String get processing => 'لە پڕۆسەدا...';
+
+  @override
+  String get dismiss => 'داخستن';
+
+  @override
+  String get please_login => 'تکایە بچۆ ژوورەوە بۆ بەردەوامبوون';
+
+  @override
+  String get free_course => 'کۆرسی بەخۆڕایی';
 }

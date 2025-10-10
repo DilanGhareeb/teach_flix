@@ -787,4 +787,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get view_all => 'View All';
+
+  @override
+  String get enrolled_successfully => 'Enrolled successfully!';
+
+  @override
+  String get enroll_free => 'Enroll for Free';
+
+  @override
+  String get processing => 'Processing...';
+
+  @override
+  String get dismiss => 'Dismiss';
+
+  @override
+  String get please_login => 'Please log in to enroll in this course';
+
+  @override
+  String get free_course => 'Free Course';
 }
