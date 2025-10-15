@@ -124,371 +124,382 @@ class _DashboardPageState extends State<DashboardPage>
               onRefresh: () async {
                 context.read<CoursesBloc>().add(RefreshCoursesEvent());
               },
-              child: CustomScrollView(
-                physics: const BouncingScrollPhysics(),
-                slivers: [
-                  SliverToBoxAdapter(
-                    child: Container(
-                      margin: const EdgeInsets.all(20),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            colorScheme.primaryContainer,
-                            colorScheme.secondaryContainer,
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(24),
-                        boxShadow: [
-                          BoxShadow(
-                            color: colorScheme.primary.withOpacity(0.1),
-                            blurRadius: 20,
-                            offset: const Offset(0, 8),
+              child: GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: CustomScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  slivers: [
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              colorScheme.primaryContainer,
+                              colorScheme.secondaryContainer,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                        ],
-                      ),
-                      child: BlocBuilder<AuthBloc, AuthState>(
-                        builder: (context, authState) {
-                          final user = authState.user;
-                          return Row(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: colorScheme.primary.withOpacity(0.3),
-                                    width: 2,
-                                  ),
-                                  boxShadow: [
-                                    BoxShadow(
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: colorScheme.primary.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: BlocBuilder<AuthBloc, AuthState>(
+                          builder: (context, authState) {
+                            final user = authState.user;
+                            return Row(
+                              children: [
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
                                       color: colorScheme.primary.withOpacity(
-                                        0.2,
+                                        0.3,
                                       ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 4),
+                                      width: 2,
                                     ),
-                                  ],
-                                ),
-                                child: CircleAvatar(
-                                  radius: 30,
-                                  backgroundImage:
-                                      user?.profilePictureUrl != null
-                                      ? CachedNetworkImageProvider(
-                                          user!.profilePictureUrl!,
-                                        )
-                                      : const AssetImage(
-                                              'assets/images/profile.png',
-                                            )
-                                            as ImageProvider,
-                                ),
-                              ),
-                              const SizedBox(width: 16),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      '${t.welcome_back ?? 'Welcome back'},',
-                                      style: textTheme.bodyMedium?.copyWith(
-                                        color: colorScheme.onPrimaryContainer
-                                            .withOpacity(0.8),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      user?.name ?? t.anonymous,
-                                      style: textTheme.headlineSmall?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: colorScheme.onPrimaryContainer,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 2),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 2,
-                                      ),
-                                      decoration: BoxDecoration(
+                                    boxShadow: [
+                                      BoxShadow(
                                         color: colorScheme.primary.withOpacity(
                                           0.2,
                                         ),
-                                        borderRadius: BorderRadius.circular(12),
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
                                       ),
-                                      child: Text(
-                                        user?.role.name ?? "student",
-                                        style: textTheme.bodySmall?.copyWith(
-                                          color: colorScheme.primary,
-                                          fontWeight: FontWeight.w600,
+                                    ],
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 30,
+                                    backgroundImage:
+                                        user?.profilePictureUrl != null
+                                        ? CachedNetworkImageProvider(
+                                            user!.profilePictureUrl!,
+                                          )
+                                        : const AssetImage(
+                                                'assets/images/profile.png',
+                                              )
+                                              as ImageProvider,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '${t.welcome_back ?? 'Welcome back'},',
+                                        style: textTheme.bodyMedium?.copyWith(
+                                          color: colorScheme.onPrimaryContainer
+                                              .withOpacity(0.8),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        user?.name ?? t.anonymous,
+                                        style: textTheme.headlineSmall
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: colorScheme
+                                                  .onPrimaryContainer,
+                                            ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      const SizedBox(height: 2),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                          vertical: 2,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.primary
+                                              .withOpacity(0.2),
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          user?.role.name ?? "student",
+                                          style: textTheme.bodySmall?.copyWith(
+                                            color: colorScheme.primary,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          );
-                        },
+                              ],
+                            );
+                          },
+                        ),
                       ),
                     ),
-                  ),
 
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: colorScheme.surfaceContainerHighest,
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: colorScheme.shadow.withOpacity(0.1),
-                              blurRadius: 10,
-                              offset: const Offset(0, 4),
-                            ),
-                          ],
-                        ),
-                        child: TextField(
-                          controller: _searchController,
-                          decoration: InputDecoration(
-                            hintText: t.search_courses,
-                            hintStyle: TextStyle(
-                              color: colorScheme.onSurface.withOpacity(0.6),
-                            ),
-                            prefixIcon: Icon(
-                              Icons.search_rounded,
-                              color: colorScheme.primary,
-                              size: 24,
-                            ),
-                            suffixIcon: _searchController.text.isNotEmpty
-                                ? IconButton(
-                                    icon: Icon(
-                                      Icons.clear_rounded,
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.6,
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: colorScheme.surfaceContainerHighest,
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colorScheme.shadow.withOpacity(0.1),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
+                              ),
+                            ],
+                          ),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: t.search_courses,
+                              hintStyle: TextStyle(
+                                color: colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search_rounded,
+                                color: colorScheme.primary,
+                                size: 24,
+                              ),
+                              suffixIcon: _searchController.text.isNotEmpty
+                                  ? IconButton(
+                                      icon: Icon(
+                                        Icons.clear_rounded,
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.6),
                                       ),
-                                    ),
-                                    onPressed: _clearSearch,
-                                  )
-                                : null,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.transparent,
-                            contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20,
-                              vertical: 16,
+                                      onPressed: _clearSearch,
+                                    )
+                                  : null,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Colors.transparent,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                                vertical: 16,
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 24)),
-
-                  if (!_isSearching)
-                    SliverToBoxAdapter(
-                      child: CategorySelector(
-                        selectedCategory: _selectedCategory,
-                        onCategorySelected: _onCategorySelected,
-                      ),
-                    ),
-
-                  if (!_isSearching)
                     const SliverToBoxAdapter(child: SizedBox(height: 24)),
 
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      child: Text(
-                        _isSearching ? t.search_results : t.courses,
-                        style: textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: colorScheme.onSurface,
+                    if (!_isSearching)
+                      SliverToBoxAdapter(
+                        child: CategorySelector(
+                          selectedCategory: _selectedCategory,
+                          onCategorySelected: _onCategorySelected,
+                        ),
+                      ),
+
+                    if (!_isSearching)
+                      const SliverToBoxAdapter(child: SizedBox(height: 24)),
+
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Text(
+                          _isSearching ? t.search_results : t.courses,
+                          style: textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
                         ),
                       ),
                     ),
-                  ),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                    const SliverToBoxAdapter(child: SizedBox(height: 16)),
 
-                  SliverToBoxAdapter(
-                    child: BlocBuilder<CoursesBloc, CoursesState>(
-                      builder: (context, state) {
-                        if (state.status == CoursesStatus.loading &&
-                            state.courses == null) {
-                          return Container(
-                            height: 200,
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainerHighest
-                                  .withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CircularProgressIndicator(
-                                    color: colorScheme.primary,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    _isSearching ? t.searching : t.loading,
-                                    style: textTheme.bodyMedium?.copyWith(
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.7,
+                    SliverToBoxAdapter(
+                      child: BlocBuilder<CoursesBloc, CoursesState>(
+                        builder: (context, state) {
+                          if (state.status == CoursesStatus.loading &&
+                              state.courses == null) {
+                            return Container(
+                              height: 200,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest
+                                    .withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      color: colorScheme.primary,
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      _isSearching ? t.searching : t.loading,
+                                      style: textTheme.bodyMedium?.copyWith(
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.7),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
+                            );
+                          }
 
-                        if (state.courses != null &&
-                            state.courses!.isNotEmpty) {
-                          return AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 300),
-                            child: HorizontalCourseList(
-                              key: ValueKey(state.courses!.length),
-                              courses: state.courses!,
-                              onCourseTap: _onCourseTap,
-                            ),
-                          );
-                        }
-
-                        if (state.courses != null && state.courses!.isEmpty) {
-                          return Container(
-                            height: 200,
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: colorScheme.surfaceContainerHighest
-                                  .withOpacity(0.5),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: colorScheme.outline.withOpacity(0.2),
+                          if (state.courses != null &&
+                              state.courses!.isNotEmpty) {
+                            return AnimatedSwitcher(
+                              duration: const Duration(milliseconds: 300),
+                              child: HorizontalCourseList(
+                                key: ValueKey(state.courses!.length),
+                                courses: state.courses!,
+                                onCourseTap: _onCourseTap,
                               ),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    _isSearching
-                                        ? Icons.search_off_rounded
-                                        : Icons.school_outlined,
-                                    size: 48,
-                                    color: colorScheme.onSurface.withOpacity(
-                                      0.4,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    _isSearching
-                                        ? t.no_results_found
-                                        : t.no_courses_found,
-                                    style: textTheme.titleMedium?.copyWith(
+                            );
+                          }
+
+                          if (state.courses != null && state.courses!.isEmpty) {
+                            return Container(
+                              height: 200,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 20,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest
+                                    .withOpacity(0.5),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: colorScheme.outline.withOpacity(0.2),
+                                ),
+                              ),
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      _isSearching
+                                          ? Icons.search_off_rounded
+                                          : Icons.school_outlined,
+                                      size: 48,
                                       color: colorScheme.onSurface.withOpacity(
-                                        0.7,
+                                        0.4,
                                       ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    _isSearching
-                                        ? t.try_different_search
-                                        : t.try_different_search_or_category,
-                                    style: textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurface.withOpacity(
-                                        0.5,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      _isSearching
+                                          ? t.no_results_found
+                                          : t.no_courses_found,
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.7),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      _isSearching
+                                          ? t.try_different_search
+                                          : t.try_different_search_or_category,
+                                      style: textTheme.bodySmall?.copyWith(
+                                        color: colorScheme.onSurface
+                                            .withOpacity(0.5),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
+                            );
+                          }
 
-                        if (state.status == CoursesStatus.failure &&
-                            state.failure != null) {
-                          return Container(
-                            height: 200,
-                            margin: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: colorScheme.errorContainer.withOpacity(
-                                0.1,
+                          if (state.status == CoursesStatus.failure &&
+                              state.failure != null) {
+                            return Container(
+                              height: 200,
+                              margin: const EdgeInsets.symmetric(
+                                horizontal: 20,
                               ),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: colorScheme.error.withOpacity(0.3),
+                              decoration: BoxDecoration(
+                                color: colorScheme.errorContainer.withOpacity(
+                                  0.1,
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: colorScheme.error.withOpacity(0.3),
+                                ),
                               ),
-                            ),
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.error_outline,
-                                    size: 48,
-                                    color: colorScheme.error,
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Text(
-                                    'Oops! Something went wrong',
-                                    style: textTheme.titleMedium?.copyWith(
+                              child: Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(
+                                      Icons.error_outline,
+                                      size: 48,
                                       color: colorScheme.error,
                                     ),
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 40,
-                                    ),
-                                    child: Text(
-                                      ErrorLocalizer.of(state.failure!, t),
-                                      style: textTheme.bodySmall?.copyWith(
-                                        color: colorScheme.onErrorContainer,
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'Oops! Something went wrong',
+                                      style: textTheme.titleMedium?.copyWith(
+                                        color: colorScheme.error,
                                       ),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 3,
-                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      context.read<CoursesBloc>().add(
-                                        RefreshCoursesEvent(),
-                                      );
-                                    },
-                                    icon: const Icon(Icons.refresh),
-                                    label: const Text('Try Again'),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: colorScheme.error,
-                                      foregroundColor: colorScheme.onError,
+                                    const SizedBox(height: 8),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 40,
+                                      ),
+                                      child: Text(
+                                        ErrorLocalizer.of(state.failure!, t),
+                                        style: textTheme.bodySmall?.copyWith(
+                                          color: colorScheme.onErrorContainer,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 3,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 16),
+                                    ElevatedButton.icon(
+                                      onPressed: () {
+                                        context.read<CoursesBloc>().add(
+                                          RefreshCoursesEvent(),
+                                        );
+                                      },
+                                      icon: const Icon(Icons.refresh),
+                                      label: const Text('Try Again'),
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: colorScheme.error,
+                                        foregroundColor: colorScheme.onError,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        }
+                            );
+                          }
 
-                        return const SizedBox.shrink();
-                      },
+                          return const SizedBox.shrink();
+                        },
+                      ),
                     ),
-                  ),
 
-                  const SliverToBoxAdapter(child: SizedBox(height: 20)),
-                ],
+                    const SliverToBoxAdapter(child: SizedBox(height: 20)),
+                  ],
+                ),
               ),
             ),
           ),
