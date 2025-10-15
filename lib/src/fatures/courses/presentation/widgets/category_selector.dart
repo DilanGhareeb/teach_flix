@@ -21,25 +21,32 @@ class CategorySelector extends StatelessWidget {
 
     return SizedBox(
       height: 40,
-      child: ListView(
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
-        children: [
-          if (showAllOption)
-            _buildCategoryChip(
+        padding: const EdgeInsets.symmetric(horizontal: 20), // Add padding here
+        itemCount: (showAllOption ? 1 : 0) + CourseCategory.values.length,
+        separatorBuilder: (context, index) =>
+            const SizedBox(width: 8), // Add spacing between chips
+        itemBuilder: (context, index) {
+          if (showAllOption && index == 0) {
+            return _buildCategoryChip(
               context,
               t.all_categories,
               'all',
               selectedCategory == null || selectedCategory == 'all',
-            ),
-          ...CourseCategory.values.map((category) {
-            return _buildCategoryChip(
-              context,
-              category.getLocalizedName(locale.languageCode),
-              category.englishName,
-              selectedCategory == category.englishName,
             );
-          }),
-        ],
+          }
+
+          final categoryIndex = showAllOption ? index - 1 : index;
+          final category = CourseCategory.values[categoryIndex];
+
+          return _buildCategoryChip(
+            context,
+            category.getLocalizedName(locale.languageCode),
+            category.englishName,
+            selectedCategory == category.englishName,
+          );
+        },
       ),
     );
   }
