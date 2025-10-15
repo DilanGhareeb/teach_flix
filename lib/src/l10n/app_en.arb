@@ -1113,5 +1113,25 @@
   "max": "Max",
   "@max": {
     "description": "Button text for selecting the maximum amount"
+  },
+  "change_photo": "Change Photo",
+  "@change_photo": {
+    "description": "Label for changing the profile photo"
+  },
+  "select_gender": "Select Gender",
+  "@select_gender": {
+    "description": "Prompt to select gender"
+  },
+  "personal_information": "Personal Information",
+  "@personal_information": {
+    "description": "Section title for personal information"
+  },
+  "photo_changed": "Photo changed",
+  "@photo_changed": {
+    "description": "Success message for changing the profile photo"
+  },
+  "unsaved_changes": "You have unsaved changes",
+  "@unsaved_changes": {
+    "description": "Warning message for unsaved changes"
   }
 }

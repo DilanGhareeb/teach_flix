@@ -1759,6 +1759,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Max'**
   String get max;
+
+  /// Label for changing the profile photo
+  ///
+  /// In en, this message translates to:
+  /// **'Change Photo'**
+  String get change_photo;
+
+  /// Prompt to select gender
+  ///
+  /// In en, this message translates to:
+  /// **'Select Gender'**
+  String get select_gender;
+
+  /// Section title for personal information
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personal_information;
+
+  /// Success message for changing the profile photo
+  ///
+  /// In en, this message translates to:
+  /// **'Photo changed'**
+  String get photo_changed;
+
+  /// Warning message for unsaved changes
+  ///
+  /// In en, this message translates to:
+  /// **'You have unsaved changes'**
+  String get unsaved_changes;
 }
 
 class _AppLocalizationsDelegate

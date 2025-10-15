@@ -856,4 +856,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get max => 'Max';
+
+  @override
+  String get change_photo => 'Change Photo';
+
+  @override
+  String get select_gender => 'Select Gender';
+
+  @override
+  String get personal_information => 'Personal Information';
+
+  @override
+  String get photo_changed => 'Photo changed';
+
+  @override
+  String get unsaved_changes => 'You have unsaved changes';
 }

@@ -176,7 +176,21 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
 
       final updateMap = params.toMap();
 
-      if (params.imageProfile != null) {
+      // Handle photo removal
+      if (params.removePhoto) {
+        // Delete the old photo from storage if it exists
+        try {
+          final ref = storage.ref().child('user_avatars').child('$uid.jpg');
+          await ref.delete();
+        } catch (e) {
+          // Photo might not exist, ignore the error
+          print('Photo deletion skipped: $e');
+        }
+        // Set avatarUrl to null in Firestore
+        updateMap['avatarUrl'] = null;
+      }
+      // Handle new photo upload
+      else if (params.imageProfile != null) {
         final ref = storage.ref().child('user_avatars').child('$uid.jpg');
         await ref.putData(
           params.imageProfile!,
@@ -186,6 +200,9 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
         updateMap['avatarUrl'] = avatarUrl;
       }
 
+      // Always update the updatedAt timestamp
+      updateMap['updatedAt'] = FieldValue.serverTimestamp();
+
       if (updateMap.isEmpty) {
         return left(UnknownFailure());
       }
@@ -193,15 +210,21 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       await userRef.update(updateMap);
 
       final updatedSnap = await userRef.get();
-      final updatedModel = UserModel.fromMap(
-        updatedSnap.data()!..['uid'] = uid,
-      );
+      final data = updatedSnap.data();
+
+      if (data == null) {
+        return left(UnknownFailure());
+      }
+
+      final updatedModel = UserModel.fromMap({...data, 'id': uid});
 
       return right(updatedModel);
     } on FirebaseAuthException catch (e) {
       return left(AuthFailure.fromFirebaseAuthCode(e.code));
     } on FirebaseException catch (e) {
-      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+      return left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return left(UnknownFailure());
     }
   }
 

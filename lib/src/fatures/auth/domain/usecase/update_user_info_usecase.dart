@@ -23,12 +23,14 @@ class UpdateUserParams extends Equatable {
   final String? gender;
   final Role? role;
   final Uint8List? imageProfile;
+  final bool removePhoto;
 
   const UpdateUserParams(
     this.name,
     this.gender,
     this.imageProfile, {
     this.role,
+    this.removePhoto = false,
   });
 
   UpdateUserParams copyWith({
@@ -36,12 +38,14 @@ class UpdateUserParams extends Equatable {
     String? gender,
     Uint8List? imageProfile,
     Role? role,
+    bool? removePhoto,
   }) {
     return UpdateUserParams(
       name ?? this.name,
       gender ?? this.gender,
       imageProfile ?? this.imageProfile,
       role: role ?? this.role,
+      removePhoto: removePhoto ?? this.removePhoto,
     );
   }
 
@@ -52,5 +56,5 @@ class UpdateUserParams extends Equatable {
   };
 
   @override
-  List<Object?> get props => [name, gender, imageProfile];
+  List<Object?> get props => [name, gender, imageProfile, role, removePhoto];
 }

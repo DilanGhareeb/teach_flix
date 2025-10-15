@@ -859,4 +859,19 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get max => 'زۆرترین';
+
+  @override
+  String get change_photo => 'گۆڕینی وێنە';
+
+  @override
+  String get select_gender => 'هەڵبژاردنی ڕەگەز';
+
+  @override
+  String get personal_information => 'زانیاری کەسی';
+
+  @override
+  String get photo_changed => 'وێنە گۆڕدرا';
+
+  @override
+  String get unsaved_changes => 'گۆڕانکاری پاشەکەوت نەکراوت هەیە';
 }

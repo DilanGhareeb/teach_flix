@@ -276,5 +276,10 @@
   "enter_amount_to_deposit": "بڕێک بنووسە بۆ دانان",
   "amount_too_large": "بڕەکە زۆر گەورەیە",
   "quick_amounts": "بڕە خێراکان",
-  "max": "زۆرترین"
+  "max": "زۆرترین",
+  "change_photo": "گۆڕینی وێنە",
+  "select_gender": "هەڵبژاردنی ڕەگەز",
+  "personal_information": "زانیاری کەسی",
+  "photo_changed": "وێنە گۆڕدرا",
+  "unsaved_changes": "گۆڕانکاری پاشەکەوت نەکراوت هەیە"
 }

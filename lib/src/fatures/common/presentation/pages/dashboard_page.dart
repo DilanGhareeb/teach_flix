@@ -178,14 +178,20 @@ class _DashboardPageState extends State<DashboardPage>
                                   child: CircleAvatar(
                                     radius: 30,
                                     backgroundImage:
-                                        user?.profilePictureUrl != null
+                                        (user?.profilePictureUrl != null &&
+                                            user!.profilePictureUrl!.isNotEmpty)
                                         ? CachedNetworkImageProvider(
-                                            user!.profilePictureUrl!,
+                                            user.profilePictureUrl!,
                                           )
-                                        : const AssetImage(
-                                                'assets/images/profile.png',
-                                              )
-                                              as ImageProvider,
+                                        : null,
+                                    child:
+                                        (user?.profilePictureUrl == null ||
+                                            user!.profilePictureUrl!.isEmpty)
+                                        ? Image.asset(
+                                            'assets/images/profile.png',
+                                            fit: BoxFit.cover,
+                                          )
+                                        : null,
                                   ),
                                 ),
                                 const SizedBox(width: 16),
