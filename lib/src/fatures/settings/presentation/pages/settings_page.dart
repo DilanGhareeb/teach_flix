@@ -5,7 +5,7 @@ import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dar
 import 'package:teach_flix/src/fatures/auth/presentation/pages/edit_profile_page.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/pages/teacher_application_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
-import 'package:teach_flix/src/fatures/settings/presentation/widgets/action_header_card.dart';
+import 'package:teach_flix/src/fatures/auth/presentation/widgets/action_header_card.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/widgets/section_card.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -48,7 +48,6 @@ class _SettingsPageState extends State<SettingsPage> {
                     height: 20,
                     width: 35,
                   ),
-
                   title: Text(labels[code]!),
                   onTap: () => Navigator.of(ctx).pop(code),
                 ),
@@ -173,22 +172,11 @@ class _SettingsPageState extends State<SettingsPage> {
 
                     const SizedBox(height: 16),
 
+                    /// ACCOUNT
                     Text(t.account, style: theme.textTheme.titleMedium),
                     const SizedBox(height: 8),
                     SectionCard(
                       children: [
-                        ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                          ),
-                          leading: const Icon(Icons.lock),
-                          title: Text(t.change_password),
-                          onTap: () {
-                            // TODO: navigate to your Profile page
-                            // context.push('/profile');
-                          },
-                        ),
-                        Divider(),
                         ListTile(
                           contentPadding: const EdgeInsets.symmetric(
                             horizontal: 12,

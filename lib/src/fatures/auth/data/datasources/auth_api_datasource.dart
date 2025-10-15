@@ -10,6 +10,8 @@ import 'package:teach_flix/src/fatures/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/deposit_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/withdraw_usecase.dart';
 
 abstract class AuthApiDatasource {
   Stream<AuthSession> watchSession();
@@ -21,11 +23,13 @@ abstract class AuthApiDatasource {
   Future<Either<Failure, UserModel>> registerAccount({
     required RegisterParams params,
   });
-
   Future<Either<Failure, UserEntity>> updateUserInfo({
     required UpdateUserParams params,
   });
-
+  Future<Either<Failure, UserEntity>> deposit({required DepositParams params});
+  Future<Either<Failure, UserEntity>> withdraw({
+    required WithdrawParams params,
+  });
   Future<Either<Failure, void>> signOut();
 }
 
@@ -198,6 +202,103 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       return left(AuthFailure.fromFirebaseAuthCode(e.code));
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> deposit({
+    required DepositParams params,
+  }) async {
+    try {
+      final user = _fireAuth.currentUser;
+      if (user == null) {
+        return left(AuthFailure.fromFirebaseAuthCode("user-not-found"));
+      }
+
+      final uid = user.uid;
+      final userRef = _fireStore.collection(_users).doc(uid);
+
+      // Use a transaction to safely update the balance
+      await _fireStore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(userRef);
+        if (!snapshot.exists) {
+          throw Exception("User does not exist!");
+        }
+
+        final currentBalance =
+            (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
+        final newBalance = currentBalance + params.amount;
+
+        transaction.update(userRef, {
+          'balance': newBalance,
+          'updatedAt': DateTime.now().toUtc(),
+        });
+      });
+
+      final updatedSnap = await userRef.get();
+      final updatedModel = UserModel.fromMap(updatedSnap.data()!..['id'] = uid);
+
+      return right(updatedModel);
+    } on FirebaseAuthException catch (e) {
+      return left(AuthFailure.fromFirebaseAuthCode(e.code));
+    } on FirebaseException catch (e) {
+      return left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> withdraw({
+    required WithdrawParams params,
+  }) async {
+    try {
+      final user = _fireAuth.currentUser;
+      if (user == null) {
+        return left(AuthFailure.fromFirebaseAuthCode("user-not-found"));
+      }
+
+      final uid = user.uid;
+      final userRef = _fireStore.collection(_users).doc(uid);
+
+      // Use a transaction to safely update the balance
+      await _fireStore.runTransaction((transaction) async {
+        final snapshot = await transaction.get(userRef);
+        if (!snapshot.exists) {
+          throw Exception("User does not exist!");
+        }
+
+        final currentBalance =
+            (snapshot.data()?['balance'] as num?)?.toDouble() ?? 0.0;
+
+        // Check if user has sufficient balance
+        if (currentBalance < params.amount) {
+          throw Exception("Insufficient balance");
+        }
+
+        final newBalance = currentBalance - params.amount;
+
+        transaction.update(userRef, {
+          'balance': newBalance,
+          'updatedAt': DateTime.now().toUtc(),
+        });
+      });
+
+      final updatedSnap = await userRef.get();
+      final updatedModel = UserModel.fromMap(updatedSnap.data()!..['id'] = uid);
+
+      return right(updatedModel);
+    } on FirebaseAuthException catch (e) {
+      return left(AuthFailure.fromFirebaseAuthCode(e.code));
+    } on FirebaseException catch (e) {
+      return left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      if (e.toString().contains("Insufficient balance")) {
+        return left(
+          UnknownFailure(),
+        ); // You can create a custom InsufficientBalanceFailure
+      }
+      return left(UnknownFailure());
     }
   }
 

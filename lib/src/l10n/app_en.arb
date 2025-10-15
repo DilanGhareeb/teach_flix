@@ -1045,5 +1045,73 @@
   "free_course": "Free Course",
   "@free_course": {
     "description": "Label indicating that the course is free"
+  },
+  "deposit": "Deposit",
+  "@deposit": {
+    "description": "Label for the deposit action"
+  },
+  "withdraw": "Withdraw",
+  "@withdraw": {
+    "description": "Label for the withdraw action"
+  },
+  "amount": "Amount",
+  "@amount": {
+    "description": "Label for the amount input field"
+  },
+  "add_funds_to_account": "Add funds to your account",
+  "@add_funds_to_account": {
+    "description": "Label for adding funds to the user's account"
+  },
+  "withdraw_funds_from_account": "Withdraw funds from your account",
+  "@withdraw_funds_from_account": {
+    "description": "Label for withdrawing funds from the user's account"
+  },
+  "deposit_successful": "Deposit successful",
+  "@deposit_successful": {
+    "description": "Success message for a successful deposit"
+  },
+  "deposit_failed": "Deposit failed",
+  "@deposit_failed": {
+    "description": "Error message for a failed deposit"
+  },
+  "withdraw_successful": "Withdraw successful",
+  "@withdraw_successful": {
+    "description": "Success message for a successful withdrawal"
+  },
+  "withdraw_failed": "Withdraw failed",
+  "@withdraw_failed": {
+    "description": "Error message for a failed withdrawal"
+  },
+  "invalid_amount": "Please enter a valid amount",
+  "@invalid_amount": {
+    "description": "Error message for invalid amount input"
+  },
+  "insufficient_balance": "Insufficient balance",
+  "@insufficient_balance": {
+    "description": "Error message for insufficient balance"
+  },
+  "available_balance": "Available Balance",
+  "@available_balance": {
+    "description": "Label displaying the user's available balance"
+  },
+  "max_withdraw_amount": "Maximum withdraw amount",
+  "@max_withdraw_amount": {
+    "description": "Label displaying the maximum amount that can be withdrawn"
+  },
+  "enter_amount_to_deposit": "Enter amount to deposit",
+  "@enter_amount_to_deposit": {
+    "description": "Placeholder text for entering deposit amount"
+  },
+  "amount_too_large": "Amount is too large",
+  "@amount_too_large": {
+    "description": "Error message for amount exceeding available balance"
+  },
+  "quick_amounts": "Quick Amounts",
+  "@quick_amounts": {
+    "description": "Label for quick amount selection"
+  },
+  "max": "Max",
+  "@max": {
+    "description": "Button text for selecting the maximum amount"
   }
 }

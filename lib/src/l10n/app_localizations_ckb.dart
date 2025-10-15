@@ -808,4 +808,55 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get free_course => 'کۆرسی بەخۆڕایی';
+
+  @override
+  String get deposit => 'دانان';
+
+  @override
+  String get withdraw => 'دەرهێنان';
+
+  @override
+  String get amount => 'بڕ';
+
+  @override
+  String get add_funds_to_account => 'زیادکردنی پارە بۆ هەژمارەکەت';
+
+  @override
+  String get withdraw_funds_from_account => 'دەرهێنانی پارە لە هەژمارەکەت';
+
+  @override
+  String get deposit_successful => 'دانان سەرکەوتوو بوو';
+
+  @override
+  String get deposit_failed => 'دانان سەرکەوتوو نەبوو';
+
+  @override
+  String get withdraw_successful => 'دەرهێنان سەرکەوتوو بوو';
+
+  @override
+  String get withdraw_failed => 'دەرهێنان سەرکەوتوو نەبوو';
+
+  @override
+  String get invalid_amount => 'تکایە بڕێکی دروست بنووسە';
+
+  @override
+  String get insufficient_balance => 'بالانسەکە بەشی نییە';
+
+  @override
+  String get available_balance => 'بالانسی بەردەست';
+
+  @override
+  String get max_withdraw_amount => 'زۆرترین بڕی دەرهێنان';
+
+  @override
+  String get enter_amount_to_deposit => 'بڕێک بنووسە بۆ دانان';
+
+  @override
+  String get amount_too_large => 'بڕەکە زۆر گەورەیە';
+
+  @override
+  String get quick_amounts => 'بڕە خێراکان';
+
+  @override
+  String get max => 'زۆرترین';
 }

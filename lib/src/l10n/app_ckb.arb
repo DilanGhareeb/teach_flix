@@ -259,5 +259,22 @@
   "processing": "لە پڕۆسەدا...",
   "dismiss": "داخستن",
   "please_login": "تکایە بچۆ ژوورەوە بۆ بەردەوامبوون",
-  "free_course": "کۆرسی بەخۆڕایی"
+  "free_course": "کۆرسی بەخۆڕایی",
+  "deposit": "دانان",
+  "withdraw": "دەرهێنان",
+  "amount": "بڕ",
+  "add_funds_to_account": "زیادکردنی پارە بۆ هەژمارەکەت",
+  "withdraw_funds_from_account": "دەرهێنانی پارە لە هەژمارەکەت",
+  "deposit_successful": "دانان سەرکەوتوو بوو",
+  "deposit_failed": "دانان سەرکەوتوو نەبوو",
+  "withdraw_successful": "دەرهێنان سەرکەوتوو بوو",
+  "withdraw_failed": "دەرهێنان سەرکەوتوو نەبوو",
+  "invalid_amount": "تکایە بڕێکی دروست بنووسە",
+  "insufficient_balance": "بالانسەکە بەشی نییە",
+  "available_balance": "بالانسی بەردەست",
+  "max_withdraw_amount": "زۆرترین بڕی دەرهێنان",
+  "enter_amount_to_deposit": "بڕێک بنووسە بۆ دانان",
+  "amount_too_large": "بڕەکە زۆر گەورەیە",
+  "quick_amounts": "بڕە خێراکان",
+  "max": "زۆرترین"
 }

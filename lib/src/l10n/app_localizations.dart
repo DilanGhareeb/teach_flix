@@ -1657,6 +1657,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Free Course'**
   String get free_course;
+
+  /// Label for the deposit action
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit'**
+  String get deposit;
+
+  /// Label for the withdraw action
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw'**
+  String get withdraw;
+
+  /// Label for the amount input field
+  ///
+  /// In en, this message translates to:
+  /// **'Amount'**
+  String get amount;
+
+  /// Label for adding funds to the user's account
+  ///
+  /// In en, this message translates to:
+  /// **'Add funds to your account'**
+  String get add_funds_to_account;
+
+  /// Label for withdrawing funds from the user's account
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw funds from your account'**
+  String get withdraw_funds_from_account;
+
+  /// Success message for a successful deposit
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit successful'**
+  String get deposit_successful;
+
+  /// Error message for a failed deposit
+  ///
+  /// In en, this message translates to:
+  /// **'Deposit failed'**
+  String get deposit_failed;
+
+  /// Success message for a successful withdrawal
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw successful'**
+  String get withdraw_successful;
+
+  /// Error message for a failed withdrawal
+  ///
+  /// In en, this message translates to:
+  /// **'Withdraw failed'**
+  String get withdraw_failed;
+
+  /// Error message for invalid amount input
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid amount'**
+  String get invalid_amount;
+
+  /// Error message for insufficient balance
+  ///
+  /// In en, this message translates to:
+  /// **'Insufficient balance'**
+  String get insufficient_balance;
+
+  /// Label displaying the user's available balance
+  ///
+  /// In en, this message translates to:
+  /// **'Available Balance'**
+  String get available_balance;
+
+  /// Label displaying the maximum amount that can be withdrawn
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum withdraw amount'**
+  String get max_withdraw_amount;
+
+  /// Placeholder text for entering deposit amount
+  ///
+  /// In en, this message translates to:
+  /// **'Enter amount to deposit'**
+  String get enter_amount_to_deposit;
+
+  /// Error message for amount exceeding available balance
+  ///
+  /// In en, this message translates to:
+  /// **'Amount is too large'**
+  String get amount_too_large;
+
+  /// Label for quick amount selection
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Amounts'**
+  String get quick_amounts;
+
+  /// Button text for selecting the maximum amount
+  ///
+  /// In en, this message translates to:
+  /// **'Max'**
+  String get max;
 }
 
 class _AppLocalizationsDelegate

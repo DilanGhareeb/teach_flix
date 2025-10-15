@@ -30,6 +30,7 @@ class UserEntity extends Equatable {
     name,
     gender,
     profilePictureUrl,
+    balance,
     isEmailVerified,
     role,
   ];

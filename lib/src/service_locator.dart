@@ -9,12 +9,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/fatures/auth/data/datasources/auth_api_datasource.dart';
 import 'package:teach_flix/src/fatures/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/deposit_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/logout_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/withdraw_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/enroll_in_course.dart';
 import 'package:teach_flix/src/fatures/courses/domain/usecases/upload_course_image.dart';
@@ -72,6 +74,8 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => Register(repository: sl()));
   sl.registerFactory(() => UpdateUserInfo(sl()));
   sl.registerFactory(() => Logout(repository: sl()));
+  sl.registerFactory(() => Deposit(repository: sl()));
+  sl.registerFactory(() => Withdraw(repository: sl()));
   sl.registerFactory(
     () => AuthBloc(
       loginUsecase: sl(),
@@ -80,6 +84,8 @@ Future<void> setupServiceLocator() async {
       getUserProfile: sl(),
       updateUserInfo: sl(),
       logoutUsecase: sl(),
+      depositUsecase: sl(),
+      withdrawUsecase: sl(),
     ),
   );
 

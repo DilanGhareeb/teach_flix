@@ -46,6 +46,20 @@ final class AuthUpdateUserRequested extends AuthEvent {
   List<Object?> get props => [params];
 }
 
+final class AuthDepositRequested extends AuthEvent {
+  final double amount;
+  const AuthDepositRequested(this.amount);
+  @override
+  List<Object?> get props => [amount];
+}
+
+final class AuthWithdrawRequested extends AuthEvent {
+  final double amount;
+  const AuthWithdrawRequested(this.amount);
+  @override
+  List<Object?> get props => [amount];
+}
+
 final class AuthRegisterRequested extends AuthEvent {
   final String name;
   final String email;
@@ -53,6 +67,7 @@ final class AuthRegisterRequested extends AuthEvent {
   final String gender;
   final Uint8List? avatarBytes;
   final String? avatarFileName;
+
   const AuthRegisterRequested({
     required this.name,
     required this.email,
@@ -61,6 +76,7 @@ final class AuthRegisterRequested extends AuthEvent {
     this.avatarBytes,
     this.avatarFileName,
   });
+
   @override
   List<Object?> get props => [
     name,

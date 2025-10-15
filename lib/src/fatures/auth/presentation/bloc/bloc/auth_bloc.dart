@@ -12,6 +12,8 @@ import 'package:teach_flix/src/fatures/auth/domain/usecase/login_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/watch_auth_session.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/logout_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/deposit_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/withdraw_usecase.dart';
 
 part 'auth_event.dart';
 part 'auth_state.dart';
@@ -22,6 +24,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final WatchAuthSession watchAuthSession;
   final WatchUserProfile getUserProfile;
   final UpdateUserInfo updateUserInfo;
+  final Deposit depositUsecase;
+  final Withdraw withdrawUsecase;
   final Logout logoutUsecase;
 
   StreamSubscription<AuthSession>? _authSub;
@@ -33,16 +37,17 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.watchAuthSession,
     required this.getUserProfile,
     required this.updateUserInfo,
+    required this.depositUsecase,
+    required this.withdrawUsecase,
     required this.logoutUsecase,
   }) : super(const AuthState()) {
     on<AuthBootstrapRequested>(_onBootstrap);
     on<_AuthSessionChanged>(_onSessionChanged);
-
     on<_AuthProfileChanged>(_onProfileChanged);
     on<_AuthProfileFailed>(_onProfileFailed);
-
     on<AuthUpdateUserRequested>(_onUpdateUserRequested);
-
+    on<AuthDepositRequested>(_onDepositRequested);
+    on<AuthWithdrawRequested>(_onWithdrawRequested);
     on<AuthLoginRequested>(_onLogin);
     on<AuthRegisterRequested>(_onRegister);
     on<AuthLogoutRequested>(_onLogout);
@@ -133,6 +138,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
       (_) {},
     );
+  }
+
+  Future<void> _onDepositRequested(
+    AuthDepositRequested e,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, failure: null));
+    final r = await depositUsecase(params: DepositParams(amount: e.amount));
+    r.fold((f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)), (
+      _,
+    ) {
+      // Success - the profile will be updated automatically through the stream
+    });
+  }
+
+  Future<void> _onWithdrawRequested(
+    AuthWithdrawRequested e,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, failure: null));
+    final r = await withdrawUsecase(params: WithdrawParams(amount: e.amount));
+    r.fold((f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)), (
+      _,
+    ) {
+      // Success - the profile will be updated automatically through the stream
+    });
   }
 
   Future<void> _onLogout(AuthLogoutRequested e, Emitter<AuthState> emit) async {

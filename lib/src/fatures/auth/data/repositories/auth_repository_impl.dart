@@ -7,9 +7,12 @@ import 'package:teach_flix/src/fatures/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/fatures/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/register_usecase.dart';
 import 'package:teach_flix/src/fatures/auth/domain/usecase/update_user_info_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/deposit_usecase.dart';
+import 'package:teach_flix/src/fatures/auth/domain/usecase/withdraw_usecase.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthApiDatasource authApiDatasource;
+
   AuthRepositoryImpl({required this.authApiDatasource});
 
   @override
@@ -50,6 +53,22 @@ class AuthRepositoryImpl implements AuthRepository {
     required UpdateUserParams params,
   }) async {
     final either = await authApiDatasource.updateUserInfo(params: params);
+    return either.fold(Left.new, (UserEntity m) => Right(m));
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> deposit({
+    required DepositParams params,
+  }) async {
+    final either = await authApiDatasource.deposit(params: params);
+    return either.fold(Left.new, (UserEntity m) => Right(m));
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> withdraw({
+    required WithdrawParams params,
+  }) async {
+    final either = await authApiDatasource.withdraw(params: params);
     return either.fold(Left.new, (UserEntity m) => Right(m));
   }
 }

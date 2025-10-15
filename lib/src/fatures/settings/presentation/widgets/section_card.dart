@@ -22,6 +22,7 @@ class SectionCard extends StatelessWidget {
         ],
         border: Border.all(color: theme.dividerColor.withAlpha(60)),
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(children: children),
     );
   }

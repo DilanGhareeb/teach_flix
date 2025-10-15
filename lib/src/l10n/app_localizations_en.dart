@@ -805,4 +805,55 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get free_course => 'Free Course';
+
+  @override
+  String get deposit => 'Deposit';
+
+  @override
+  String get withdraw => 'Withdraw';
+
+  @override
+  String get amount => 'Amount';
+
+  @override
+  String get add_funds_to_account => 'Add funds to your account';
+
+  @override
+  String get withdraw_funds_from_account => 'Withdraw funds from your account';
+
+  @override
+  String get deposit_successful => 'Deposit successful';
+
+  @override
+  String get deposit_failed => 'Deposit failed';
+
+  @override
+  String get withdraw_successful => 'Withdraw successful';
+
+  @override
+  String get withdraw_failed => 'Withdraw failed';
+
+  @override
+  String get invalid_amount => 'Please enter a valid amount';
+
+  @override
+  String get insufficient_balance => 'Insufficient balance';
+
+  @override
+  String get available_balance => 'Available Balance';
+
+  @override
+  String get max_withdraw_amount => 'Maximum withdraw amount';
+
+  @override
+  String get enter_amount_to_deposit => 'Enter amount to deposit';
+
+  @override
+  String get amount_too_large => 'Amount is too large';
+
+  @override
+  String get quick_amounts => 'Quick Amounts';
+
+  @override
+  String get max => 'Max';
 }
