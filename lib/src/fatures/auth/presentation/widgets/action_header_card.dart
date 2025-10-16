@@ -606,7 +606,7 @@ class AccountHeaderCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      role,
+                      role == 'student' ? t.student : t.instructor,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onPrimary.withAlpha(220),
                         fontWeight: FontWeight.w500,

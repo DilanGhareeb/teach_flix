@@ -7,6 +7,7 @@ import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dar
 import 'package:teach_flix/src/fatures/courses/presentation/pages/create_course_page.dart';
 import 'package:teach_flix/src/fatures/common/presentation/pages/dashboard_page.dart';
 import 'package:teach_flix/src/fatures/courses/presentation/pages/my_course_page.dart';
+import 'package:teach_flix/src/fatures/instructor_stats/presentation/pages/teacher_dashboard_page.dart';
 import 'package:teach_flix/src/fatures/settings/presentation/pages/settings_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -33,7 +34,7 @@ class _MainPageState extends State<MainPage> {
         DashboardPage(),
         MyCoursesPage(),
         _LivePage(),
-        _TeacherDashboardPage(),
+        TeacherDashboardPage(),
         SettingsPage(),
       ];
     } else {
@@ -281,89 +282,6 @@ class _LivePage extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-// Teacher Dashboard Page (Only visible to teachers)
-class _TeacherDashboardPage extends StatelessWidget {
-  const _TeacherDashboardPage();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    final cs = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                t.instructor_dashboard,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: cs.onSurface,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  children: [
-                    _DashboardCard(
-                      icon: Icons.add_circle_rounded,
-                      title: t.create_course,
-                      subtitle: t.add_new_course,
-                      color: Colors.green,
-                      onTap: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const CreateCoursePage(),
-                          ),
-                        );
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.edit_rounded,
-                      title: t.my_courses,
-                      subtitle: t.manage_courses,
-                      color: Colors.blue,
-                      onTap: () {
-                        // Navigate to instructor courses
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.analytics_rounded,
-                      title: t.analytics,
-                      subtitle: t.view_statistics,
-                      color: Colors.purple,
-                      onTap: () {
-                        // Navigate to analytics
-                      },
-                    ),
-                    _DashboardCard(
-                      icon: Icons.people_rounded,
-                      title: t.students,
-                      subtitle: t.manage_students,
-                      color: Colors.orange,
-                      onTap: () {
-                        // Navigate to students
-                      },
-                    ),
-                  ],
                 ),
               ),
             ],

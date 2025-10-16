@@ -871,4 +871,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get unsaved_changes => 'You have unsaved changes';
+
+  @override
+  String get student => 'Student';
+
+  @override
+  String get manage_your_courses => 'Manage your courses and students';
+
+  @override
+  String get total_courses => 'Total Courses';
+
+  @override
+  String get total_students => 'Total Students';
+
+  @override
+  String get quick_actions => 'Quick Actions';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get this_month => 'This Month';
+
+  @override
+  String get this_year => 'This Year';
+
+  @override
+  String get all_time => 'All Time';
+
+  @override
+  String get total_earnings => 'Total Earnings';
+
+  @override
+  String get no_courses_yet => 'No courses yet';
+
+  @override
+  String get create_your_first_course =>
+      'Create your first course to get started';
 }

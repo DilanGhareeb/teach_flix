@@ -281,5 +281,17 @@
   "select_gender": "هەڵبژاردنی ڕەگەز",
   "personal_information": "زانیاری کەسی",
   "photo_changed": "وێنە گۆڕدرا",
-  "unsaved_changes": "گۆڕانکاری پاشەکەوت نەکراوت هەیە"
+  "unsaved_changes": "گۆڕانکاری پاشەکەوت نەکراوت هەیە",
+  "student": "خوێندکار",
+  "manage_your_courses": "بەڕێوەبردنی کۆرسەکان و خوێندکارەکانت",
+  "total_courses": "کۆی گشتی کۆرسەکان",
+  "total_students": "کۆی گشتی خوێندکاران",
+  "quick_actions": "کردارە خێراکان",
+  "today": "ئەمڕۆ",
+  "this_month": "ئەم مانگە",
+  "this_year": "ئەمساڵ",
+  "all_time": "هەموو کات",
+  "total_earnings": "کۆی گشتی داهات",
+  "no_courses_yet": "هێشتا هیچ کۆرسێک نییە",
+  "create_your_first_course": "یەکەم کۆرسەکەت دروست بکە بۆ دەستپێکردن"
 }

@@ -874,4 +874,41 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get unsaved_changes => 'گۆڕانکاری پاشەکەوت نەکراوت هەیە';
+
+  @override
+  String get student => 'خوێندکار';
+
+  @override
+  String get manage_your_courses => 'بەڕێوەبردنی کۆرسەکان و خوێندکارەکانت';
+
+  @override
+  String get total_courses => 'کۆی گشتی کۆرسەکان';
+
+  @override
+  String get total_students => 'کۆی گشتی خوێندکاران';
+
+  @override
+  String get quick_actions => 'کردارە خێراکان';
+
+  @override
+  String get today => 'ئەمڕۆ';
+
+  @override
+  String get this_month => 'ئەم مانگە';
+
+  @override
+  String get this_year => 'ئەمساڵ';
+
+  @override
+  String get all_time => 'هەموو کات';
+
+  @override
+  String get total_earnings => 'کۆی گشتی داهات';
+
+  @override
+  String get no_courses_yet => 'هێشتا هیچ کۆرسێک نییە';
+
+  @override
+  String get create_your_first_course =>
+      'یەکەم کۆرسەکەت دروست بکە بۆ دەستپێکردن';
 }

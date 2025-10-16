@@ -153,6 +153,48 @@ class CourseCard extends StatelessWidget {
                         ),
                       ),
                     ),
+                    // Students Enrolled Badge
+                    if (course.studentsEnrolled != null &&
+                        course.studentsEnrolled! > 0)
+                      Positioned(
+                        top: 12,
+                        right: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.15),
+                                blurRadius: 8,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.people_rounded,
+                                size: 14,
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                '${course.studentsEnrolled}',
+                                style: textTheme.labelSmall?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -261,7 +303,7 @@ class CourseCard extends StatelessWidget {
                                 child: Text(
                                   course.price > 0
                                       ? formatter.formatIqd(course.price)
-                                      : 'Free',
+                                      : t.free_course,
                                   style: textTheme.titleMedium?.copyWith(
                                     color: colorScheme.onPrimary,
                                     fontWeight: FontWeight.bold,

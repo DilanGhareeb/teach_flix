@@ -1133,5 +1133,53 @@
   "unsaved_changes": "You have unsaved changes",
   "@unsaved_changes": {
     "description": "Warning message for unsaved changes"
+  },
+  "student": "Student",
+  "@student": {
+    "description": "Label for the student role"
+  },
+  "manage_your_courses": "Manage your courses and students",
+  "@manage_your_courses": {
+    "description": "Prompt for instructors to manage their courses and students"
+  },
+  "total_courses": "Total Courses",
+  "@total_courses": {
+    "description": "Label displaying the total number of courses"
+  },
+  "total_students": "Total Students",
+  "@total_students": {
+    "description": "Label displaying the total number of students"
+  },
+  "quick_actions": "Quick Actions",
+  "@quick_actions": {
+    "description": "Label for quick actions section"
+  },
+  "today": "Today",
+  "@today": {
+    "description": "Label for today's date"
+  },
+  "this_month": "This Month",
+  "@this_month": {
+    "description": "Label for the current month"
+  },
+  "this_year": "This Year",
+  "@this_year": {
+    "description": "Label for the current year"
+  },
+  "all_time": "All Time",
+  "@all_time": {
+    "description": "Label for all time period"
+  },
+  "total_earnings": "Total Earnings",
+  "@total_earnings": {
+    "description": "Label displaying the total earnings"
+  },
+  "no_courses_yet": "No courses yet",
+  "@no_courses_yet": {
+    "description": "Message indicating that there are no courses created yet"
+  },
+  "create_your_first_course": "Create your first course to get started",
+  "@create_your_first_course": {
+    "description": "Prompt encouraging instructors to create their first course"
   }
 }

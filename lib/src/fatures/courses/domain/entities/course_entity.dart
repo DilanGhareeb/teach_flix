@@ -10,6 +10,7 @@ class CourseEntity extends Equatable {
   final String previewVideoUrl;
   final String category;
   final double price;
+  final int? studentsEnrolled;
   final String instructorId;
   final DateTime createAt;
   final List<CourseRatingEntity> ratings;
@@ -23,6 +24,7 @@ class CourseEntity extends Equatable {
     required this.previewVideoUrl,
     required this.category,
     required this.price,
+    this.studentsEnrolled,
     required this.instructorId,
     required this.createAt,
     required this.ratings,
@@ -46,6 +48,7 @@ class CourseEntity extends Equatable {
     previewVideoUrl,
     category,
     price,
+    studentsEnrolled,
     instructorId,
     createAt,
     ratings,

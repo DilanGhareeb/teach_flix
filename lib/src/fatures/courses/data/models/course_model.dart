@@ -12,6 +12,7 @@ class CourseModel extends CourseEntity {
     required super.previewVideoUrl,
     required super.category,
     required super.price,
+    required super.studentsEnrolled,
     required super.instructorId,
     required super.createAt,
     required super.ratings,
@@ -28,6 +29,7 @@ class CourseModel extends CourseEntity {
       previewVideoUrl: entity.previewVideoUrl,
       category: entity.category,
       price: entity.price,
+      studentsEnrolled: entity.studentsEnrolled,
       instructorId: entity.instructorId,
       createAt: entity.createAt,
       ratings: entity.ratings,
@@ -45,6 +47,7 @@ class CourseModel extends CourseEntity {
       previewVideoUrl: data['previewVideoUrl'] as String,
       category: data['category'] as String,
       price: (data['price'] as num).toDouble(),
+      studentsEnrolled: data['studentsEnrolled'] as int?,
       instructorId: data['instructorId'] as String,
       createAt: (data['createAt'] as Timestamp).toDate(),
       ratings:
@@ -75,6 +78,7 @@ class CourseModel extends CourseEntity {
       'previewVideoUrl': previewVideoUrl,
       'category': category,
       'price': price,
+      'studentsEnrolled': studentsEnrolled,
       'instructorId': instructorId,
       'createAt': Timestamp.fromDate(createAt),
       'ratings': ratings

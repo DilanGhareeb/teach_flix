@@ -173,6 +173,7 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           price: course.price,
           instructorId: course.instructorId,
           createAt: DateTime.now(),
+          studentsEnrolled: 1, // Start with 1 (the instructor)
           ratings: course.ratings,
           chapters: course.chapters,
         );
@@ -186,8 +187,8 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           'userId': course.instructorId,
           'courseId': docRef.id,
           'enrolledAt': Timestamp.now(),
-          'instructorProfit': 0.0, // No profit since it's their own course
-          'isInstructor': true, // Mark as instructor enrollment
+          'instructorProfit': 0.0,
+          'isInstructor': true,
         });
 
         return Right(courseWithId);
@@ -258,8 +259,9 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           .where((course) {
             final titleMatch = course.title.toLowerCase().contains(lowerQuery);
 
-            final descriptionMatch =
-                course.description.toLowerCase().contains(lowerQuery) ?? false;
+            final descriptionMatch = course.description.toLowerCase().contains(
+              lowerQuery,
+            );
 
             final categoryMatch = course.category.toLowerCase().contains(
               lowerQuery,
@@ -308,8 +310,15 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
         final courseData = courseDoc.data()!;
         final coursePrice = (courseData['price'] as num).toDouble();
         final instructorId = courseData['instructorId'] as String;
+        final currentStudentsEnrolled =
+            (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0;
 
         final isInstructor = userId == instructorId;
+
+        // Increment students enrolled count
+        transaction.update(_firestore.collection('courses').doc(courseId), {
+          'studentsEnrolled': currentStudentsEnrolled + 1,
+        });
 
         final enrollmentRef = _firestore.collection('enrollments').doc();
         transaction.set(enrollmentRef, {
@@ -317,7 +326,7 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
           'courseId': courseId,
           'enrolledAt': Timestamp.now(),
           'isInstructor': isInstructor,
-          'instructorProfit': 0.0, // No profit for free enrollment
+          'instructorProfit': 0.0,
           'coursePriceAtEnrollment': coursePrice,
         });
 
@@ -381,6 +390,8 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
         final courseData = courseDoc.data()!;
         final coursePrice = (courseData['price'] as num).toDouble();
         final instructorId = courseData['instructorId'] as String;
+        final currentStudentsEnrolled =
+            (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0;
 
         // Check if user is the instructor
         if (userId == instructorId) {
@@ -435,6 +446,11 @@ class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
         // Add profit to instructor's balance
         transaction.update(_firestore.collection('users').doc(instructorId), {
           'balance': currentInstructorBalance + instructorProfit,
+        });
+
+        // Increment students enrolled count
+        transaction.update(_firestore.collection('courses').doc(courseId), {
+          'studentsEnrolled': currentStudentsEnrolled + 1,
         });
 
         // Add enrollment with profit information

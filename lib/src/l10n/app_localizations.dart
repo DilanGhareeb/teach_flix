@@ -1789,6 +1789,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You have unsaved changes'**
   String get unsaved_changes;
+
+  /// Label for the student role
+  ///
+  /// In en, this message translates to:
+  /// **'Student'**
+  String get student;
+
+  /// Prompt for instructors to manage their courses and students
+  ///
+  /// In en, this message translates to:
+  /// **'Manage your courses and students'**
+  String get manage_your_courses;
+
+  /// Label displaying the total number of courses
+  ///
+  /// In en, this message translates to:
+  /// **'Total Courses'**
+  String get total_courses;
+
+  /// Label displaying the total number of students
+  ///
+  /// In en, this message translates to:
+  /// **'Total Students'**
+  String get total_students;
+
+  /// Label for quick actions section
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Actions'**
+  String get quick_actions;
+
+  /// Label for today's date
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// Label for the current month
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get this_month;
+
+  /// Label for the current year
+  ///
+  /// In en, this message translates to:
+  /// **'This Year'**
+  String get this_year;
+
+  /// Label for all time period
+  ///
+  /// In en, this message translates to:
+  /// **'All Time'**
+  String get all_time;
+
+  /// Label displaying the total earnings
+  ///
+  /// In en, this message translates to:
+  /// **'Total Earnings'**
+  String get total_earnings;
+
+  /// Message indicating that there are no courses created yet
+  ///
+  /// In en, this message translates to:
+  /// **'No courses yet'**
+  String get no_courses_yet;
+
+  /// Prompt encouraging instructors to create their first course
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first course to get started'**
+  String get create_your_first_course;
 }
 
 class _AppLocalizationsDelegate

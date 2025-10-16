@@ -232,9 +232,12 @@ class _DashboardPageState extends State<DashboardPage>
                                           ),
                                         ),
                                         child: Text(
-                                          user?.role.name ?? "student",
+                                          user?.role.name == 'student'
+                                              ? t.student
+                                              : t.instructor,
                                           style: textTheme.bodySmall?.copyWith(
-                                            color: colorScheme.primary,
+                                            color:
+                                                colorScheme.onPrimaryContainer,
                                             fontWeight: FontWeight.w600,
                                           ),
                                         ),
