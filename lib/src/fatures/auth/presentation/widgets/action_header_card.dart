@@ -61,7 +61,7 @@ class AccountHeaderCard extends StatelessWidget {
           },
           child: Container(
             padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).viewInsets.bottom,
+              bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
             ),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
@@ -118,6 +118,7 @@ class AccountHeaderCard extends StatelessWidget {
                     TextFormField(
                       controller: amountController,
                       keyboardType: TextInputType.number,
+                      autofocus: true,
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
                           RegExp(r'^\d+\.?\d{0,2}'),
