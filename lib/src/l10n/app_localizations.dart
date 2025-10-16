@@ -1861,6 +1861,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create your first course to get started'**
   String get create_your_first_course;
+
+  /// Message indicating that there are no ratings yet
+  ///
+  /// In en, this message translates to:
+  /// **'No ratings'**
+  String get no_ratings;
+
+  /// Message indicating that there are no statistics available yet
+  ///
+  /// In en, this message translates to:
+  /// **'No stats available'**
+  String get no_stats_yet;
+
+  /// Button text for retrying an action
+  ///
+  /// In en, this message translates to:
+  /// **'Try Again'**
+  String get try_again;
+
+  /// Generic error message for an unknown error
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown error occurred'**
+  String get unknown_error;
+
+  /// Error message for failing to load statistics
+  ///
+  /// In en, this message translates to:
+  /// **'Error Loading Stats'**
+  String get error_loading_stats;
+
+  /// Label for yesterday's date
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// Label for a number of days ago
+  ///
+  /// In en, this message translates to:
+  /// **'days ago'**
+  String get days_ago;
+
+  /// Label for one day ago
+  ///
+  /// In en, this message translates to:
+  /// **'day ago'**
+  String get day_ago;
+
+  /// Label for one week ago
+  ///
+  /// In en, this message translates to:
+  /// **'week ago'**
+  String get week_ago;
+
+  /// Label for a number of weeks ago
+  ///
+  /// In en, this message translates to:
+  /// **'weeks ago'**
+  String get weeks_ago;
+
+  /// Label for one month ago
+  ///
+  /// In en, this message translates to:
+  /// **'month ago'**
+  String get month_ago;
+
+  /// Label for a number of months ago
+  ///
+  /// In en, this message translates to:
+  /// **'months ago'**
+  String get months_ago;
+
+  /// Label for one year ago
+  ///
+  /// In en, this message translates to:
+  /// **'year ago'**
+  String get year_ago;
+
+  /// Label for a number of years ago
+  ///
+  /// In en, this message translates to:
+  /// **'years ago'**
+  String get years_ago;
+
+  /// Label for the ratings section
+  ///
+  /// In en, this message translates to:
+  /// **'Ratings'**
+  String get ratings;
+
+  /// Label for the revenue section
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue'**
+  String get revenue;
 }
 
 class _AppLocalizationsDelegate

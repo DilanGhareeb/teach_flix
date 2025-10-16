@@ -1,0 +1,574 @@
+import 'dart:async';
+import 'dart:io';
+import 'package:dartz/dartz.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:teach_flix/src/core/errors/failures.dart';
+import 'package:teach_flix/src/features/courses/data/models/course_model.dart';
+
+abstract class CourseFirebaseDataSource {
+  Future<Either<Failure, List<CourseModel>>> getAllCourses();
+  Future<Either<Failure, CourseModel>> getCourseById(String id);
+  Future<Either<Failure, List<CourseModel>>> getCoursesByCategory(
+    String category,
+  );
+  Future<Either<Failure, List<CourseModel>>> getCoursesByInstructor(
+    String instructorId,
+  );
+  Future<Either<Failure, List<CourseModel>>> getEnrolledCourses(String userId);
+  Future<Either<Failure, CourseModel>> createCourse(CourseModel course);
+  Future<Either<Failure, CourseModel>> updateCourse(CourseModel course);
+  Future<Either<Failure, void>> deleteCourse(String id);
+  Future<Either<Failure, List<CourseModel>>> searchCourses(String query);
+  Future<Either<Failure, void>> enrollInCourse(String userId, String courseId);
+  Future<Either<Failure, bool>> isEnrolledInCourse(
+    String userId,
+    String courseId,
+  );
+  Future<Either<Failure, void>> purchaseCourse(String userId, String courseId);
+  Stream<Either<Failure, List<CourseModel>>> watchCoursesByInstructor(
+    String instructorId,
+  );
+  Future<Either<Failure, String>> uploadImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  });
+  Future<Either<Failure, void>> deleteImage(String imageUrl);
+}
+
+class CourseFirebaseDataSourceImpl implements CourseFirebaseDataSource {
+  final FirebaseFirestore _firestore;
+  final FirebaseStorage _storage;
+
+  CourseFirebaseDataSourceImpl({
+    FirebaseFirestore? firestore,
+    FirebaseStorage? storage,
+  }) : _firestore = firestore ?? FirebaseFirestore.instance,
+       _storage = storage ?? FirebaseStorage.instance;
+
+  @override
+  Future<Either<Failure, List<CourseModel>>> getAllCourses() async {
+    try {
+      final querySnapshot = await _firestore.collection('courses').get();
+      final courses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc))
+          .toList();
+      return Right(courses);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, CourseModel>> getCourseById(String id) async {
+    try {
+      final docSnapshot = await _firestore.collection('courses').doc(id).get();
+
+      if (!docSnapshot.exists) {
+        return const Left(NotFoundFailure());
+      }
+
+      final course = CourseModel.fromFirestore(docSnapshot);
+      return Right(course);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CourseModel>>> getCoursesByCategory(
+    String category,
+  ) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('courses')
+          .where('category', isEqualTo: category)
+          .get();
+
+      final courses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc))
+          .toList();
+      return Right(courses);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CourseModel>>> getCoursesByInstructor(
+    String instructorId,
+  ) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('courses')
+          .where('instructorId', isEqualTo: instructorId)
+          .get();
+
+      final courses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc))
+          .toList();
+      return Right(courses);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CourseModel>>> getEnrolledCourses(
+    String userId,
+  ) async {
+    try {
+      final enrollmentsSnapshot = await _firestore
+          .collection('enrollments')
+          .where('userId', isEqualTo: userId)
+          .get();
+
+      final courseIds = enrollmentsSnapshot.docs
+          .map((doc) => doc.data()['courseId'] as String)
+          .toList();
+
+      if (courseIds.isEmpty) {
+        return const Right([]);
+      }
+
+      final coursesSnapshot = await _firestore
+          .collection('courses')
+          .where(FieldPath.documentId, whereIn: courseIds)
+          .get();
+
+      final courses = coursesSnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc))
+          .toList();
+
+      return Right(courses);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, CourseModel>> createCourse(CourseModel course) async {
+    try {
+      return await _firestore.runTransaction<Either<Failure, CourseModel>>((
+        transaction,
+      ) async {
+        final docRef = _firestore.collection('courses').doc();
+        final courseWithId = CourseModel(
+          id: docRef.id,
+          title: course.title,
+          description: course.description,
+          imageUrl: course.imageUrl,
+          previewVideoUrl: course.previewVideoUrl,
+          category: course.category,
+          price: course.price,
+          instructorId: course.instructorId,
+          createAt: DateTime.now(),
+          studentsEnrolled: 1, // Start with 1 (the instructor)
+          ratings: course.ratings,
+          chapters: course.chapters,
+        );
+
+        // Create the course
+        transaction.set(docRef, courseWithId.toFirestore());
+
+        // Automatically enroll the instructor in their own course
+        final enrollmentRef = _firestore.collection('enrollments').doc();
+        transaction.set(enrollmentRef, {
+          'userId': course.instructorId,
+          'courseId': docRef.id,
+          'enrolledAt': Timestamp.now(),
+          'instructorProfit': 0.0,
+          'isInstructor': true,
+        });
+
+        return Right(courseWithId);
+      });
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, CourseModel>> updateCourse(CourseModel course) async {
+    try {
+      await _firestore
+          .collection('courses')
+          .doc(course.id)
+          .update(course.toFirestore());
+
+      return Right(course);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteCourse(String id) async {
+    try {
+      // Delete the course and all related enrollments
+      await _firestore.runTransaction((transaction) async {
+        // Delete the course
+        transaction.delete(_firestore.collection('courses').doc(id));
+
+        // Get and delete all enrollments for this course
+        final enrollmentsSnapshot = await _firestore
+            .collection('enrollments')
+            .where('courseId', isEqualTo: id)
+            .get();
+
+        for (final doc in enrollmentsSnapshot.docs) {
+          transaction.delete(doc.reference);
+        }
+      });
+
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<CourseModel>>> searchCourses(String query) async {
+    try {
+      if (query.trim().isEmpty) {
+        return const Right([]);
+      }
+
+      final lowerQuery = query.toLowerCase().trim();
+
+      final querySnapshot = await _firestore.collection('courses').get();
+
+      final courses = querySnapshot.docs
+          .map((doc) => CourseModel.fromFirestore(doc))
+          .where((course) {
+            final titleMatch = course.title.toLowerCase().contains(lowerQuery);
+
+            final descriptionMatch = course.description.toLowerCase().contains(
+              lowerQuery,
+            );
+
+            final categoryMatch = course.category.toLowerCase().contains(
+              lowerQuery,
+            );
+
+            return titleMatch || descriptionMatch || categoryMatch;
+          })
+          .toList();
+
+      return Right(courses);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> enrollInCourse(
+    String userId,
+    String courseId,
+  ) async {
+    try {
+      return await _firestore.runTransaction<Either<Failure, void>>((
+        transaction,
+      ) async {
+        // Check if already enrolled
+        final existingEnrollment = await _firestore
+            .collection('enrollments')
+            .where('userId', isEqualTo: userId)
+            .where('courseId', isEqualTo: courseId)
+            .get();
+
+        if (existingEnrollment.docs.isNotEmpty) {
+          return const Left(AlreadyEnrolledFailure());
+        }
+
+        final courseDoc = await transaction.get(
+          _firestore.collection('courses').doc(courseId),
+        );
+
+        if (!courseDoc.exists) {
+          return const Left(NotFoundFailure());
+        }
+
+        final courseData = courseDoc.data()!;
+        final coursePrice = (courseData['price'] as num).toDouble();
+        final instructorId = courseData['instructorId'] as String;
+        final currentStudentsEnrolled =
+            (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0;
+
+        final isInstructor = userId == instructorId;
+
+        // Increment students enrolled count
+        transaction.update(_firestore.collection('courses').doc(courseId), {
+          'studentsEnrolled': currentStudentsEnrolled + 1,
+        });
+
+        final enrollmentRef = _firestore.collection('enrollments').doc();
+        transaction.set(enrollmentRef, {
+          'userId': userId,
+          'courseId': courseId,
+          'enrolledAt': Timestamp.now(),
+          'isInstructor': isInstructor,
+          'instructorProfit': 0.0,
+          'coursePriceAtEnrollment': coursePrice,
+        });
+
+        transaction.set(_firestore.collection('transactions').doc(), {
+          'userId': userId,
+          'courseId': courseId,
+          'instructorId': instructorId,
+          'amount': 0.0,
+          'instructorProfit': 0.0,
+          'platformProfit': 0.0,
+          'type': 'free_enrollment',
+          'createdAt': Timestamp.now(),
+        });
+
+        return const Right(null);
+      });
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, bool>> isEnrolledInCourse(
+    String userId,
+    String courseId,
+  ) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('enrollments')
+          .where('userId', isEqualTo: userId)
+          .where('courseId', isEqualTo: courseId)
+          .get();
+
+      return Right(querySnapshot.docs.isNotEmpty);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> purchaseCourse(
+    String userId,
+    String courseId,
+  ) async {
+    try {
+      return await _firestore.runTransaction<Either<Failure, void>>((
+        transaction,
+      ) async {
+        // Get course
+        final courseDoc = await transaction.get(
+          _firestore.collection('courses').doc(courseId),
+        );
+        if (!courseDoc.exists) {
+          return const Left(NotFoundFailure());
+        }
+
+        final courseData = courseDoc.data()!;
+        final coursePrice = (courseData['price'] as num).toDouble();
+        final instructorId = courseData['instructorId'] as String;
+        final currentStudentsEnrolled =
+            (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0;
+
+        // Check if user is the instructor
+        if (userId == instructorId) {
+          return const Left(InstructorCannotPurchaseOwnCourseFailure());
+        }
+
+        // Check if already enrolled
+        final enrollmentQuery = await _firestore
+            .collection('enrollments')
+            .where('userId', isEqualTo: userId)
+            .where('courseId', isEqualTo: courseId)
+            .get();
+
+        if (enrollmentQuery.docs.isNotEmpty) {
+          return const Left(AlreadyEnrolledFailure());
+        }
+
+        // Get user balance
+        final userDoc = await transaction.get(
+          _firestore.collection('users').doc(userId),
+        );
+        if (!userDoc.exists) {
+          return const Left(NotFoundFailure());
+        }
+
+        final currentBalance = (userDoc.data()!['balance'] as num).toDouble();
+
+        // Check if user has enough balance
+        if (currentBalance < coursePrice) {
+          return const Left(InsufficientBalanceFailure());
+        }
+
+        // Get instructor's current balance
+        final instructorDoc = await transaction.get(
+          _firestore.collection('users').doc(instructorId),
+        );
+        if (!instructorDoc.exists) {
+          return const Left(NotFoundFailure());
+        }
+
+        final currentInstructorBalance =
+            (instructorDoc.data()!['balance'] as num).toDouble();
+
+        // Calculate instructor's share (50% of course price)
+        final instructorProfit = coursePrice * 0.5;
+
+        // Deduct balance from user
+        transaction.update(_firestore.collection('users').doc(userId), {
+          'balance': currentBalance - coursePrice,
+        });
+
+        // Add profit to instructor's balance
+        transaction.update(_firestore.collection('users').doc(instructorId), {
+          'balance': currentInstructorBalance + instructorProfit,
+        });
+
+        // Increment students enrolled count
+        transaction.update(_firestore.collection('courses').doc(courseId), {
+          'studentsEnrolled': currentStudentsEnrolled + 1,
+        });
+
+        // Add enrollment with profit information
+        transaction.set(_firestore.collection('enrollments').doc(), {
+          'userId': userId,
+          'courseId': courseId,
+          'enrolledAt': Timestamp.now(),
+          'isInstructor': false,
+          'instructorProfit': instructorProfit,
+          'coursePriceAtEnrollment': coursePrice,
+        });
+
+        // Add transaction record
+        transaction.set(_firestore.collection('transactions').doc(), {
+          'userId': userId,
+          'courseId': courseId,
+          'instructorId': instructorId,
+          'amount': coursePrice,
+          'instructorProfit': instructorProfit,
+          'platformProfit': coursePrice - instructorProfit,
+          'type': 'course_purchase',
+          'createdAt': Timestamp.now(),
+        });
+
+        return const Right(null);
+      });
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Stream<Either<Failure, List<CourseModel>>> watchCoursesByInstructor(
+    String instructorId,
+  ) {
+    return _firestore
+        .collection('courses')
+        .where('instructorId', isEqualTo: instructorId)
+        .snapshots()
+        .transform(
+          StreamTransformer.fromHandlers(
+            handleData:
+                (
+                  QuerySnapshot<Map<String, dynamic>> snapshot,
+                  EventSink<Either<Failure, List<CourseModel>>> sink,
+                ) {
+                  try {
+                    final courses = snapshot.docs
+                        .map((doc) => CourseModel.fromFirestore(doc))
+                        .toList();
+                    sink.add(Right(courses));
+                  } catch (e) {
+                    sink.add(const Left(UnknownFailure()));
+                  }
+                },
+            handleError:
+                (
+                  error,
+                  stackTrace,
+                  EventSink<Either<Failure, List<CourseModel>>> sink,
+                ) {
+                  if (error is FirebaseException) {
+                    sink.add(
+                      Left(FirestoreFailure.fromFirebaseCode(error.code)),
+                    );
+                  } else {
+                    sink.add(const Left(UnknownFailure()));
+                  }
+                },
+          ),
+        );
+  }
+
+  @override
+  Future<Either<Failure, String>> uploadImage(
+    File imageFile, {
+    void Function(double progress)? onProgress,
+  }) async {
+    try {
+      final fileName = 'course_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final storageRef = _storage
+          .ref()
+          .child('course_thumbnails')
+          .child(fileName);
+
+      final uploadTask = storageRef.putFile(imageFile);
+
+      // Listen to upload progress
+      if (onProgress != null) {
+        uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
+          final progress = snapshot.bytesTransferred / snapshot.totalBytes;
+          onProgress(progress);
+        });
+      }
+
+      await uploadTask;
+      final downloadUrl = await storageRef.getDownloadURL();
+
+      return Right(downloadUrl);
+    } on FirebaseException catch (e) {
+      return Left(StorageFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteImage(String imageUrl) async {
+    try {
+      final ref = _storage.refFromURL(imageUrl);
+      await ref.delete();
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(StorageFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+}

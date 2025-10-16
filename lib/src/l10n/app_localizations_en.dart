@@ -908,4 +908,52 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get create_your_first_course =>
       'Create your first course to get started';
+
+  @override
+  String get no_ratings => 'No ratings';
+
+  @override
+  String get no_stats_yet => 'No stats available';
+
+  @override
+  String get try_again => 'Try Again';
+
+  @override
+  String get unknown_error => 'Unknown error occurred';
+
+  @override
+  String get error_loading_stats => 'Error Loading Stats';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String get days_ago => 'days ago';
+
+  @override
+  String get day_ago => 'day ago';
+
+  @override
+  String get week_ago => 'week ago';
+
+  @override
+  String get weeks_ago => 'weeks ago';
+
+  @override
+  String get month_ago => 'month ago';
+
+  @override
+  String get months_ago => 'months ago';
+
+  @override
+  String get year_ago => 'year ago';
+
+  @override
+  String get years_ago => 'years ago';
+
+  @override
+  String get ratings => 'Ratings';
+
+  @override
+  String get revenue => 'Revenue';
 }

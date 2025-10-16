@@ -1181,5 +1181,69 @@
   "create_your_first_course": "Create your first course to get started",
   "@create_your_first_course": {
     "description": "Prompt encouraging instructors to create their first course"
+  },
+  "no_ratings": "No ratings",
+  "@no_ratings": {
+    "description": "Message indicating that there are no ratings yet"
+  },
+  "no_stats_yet": "No stats available",
+  "@no_stats_yet": {
+    "description": "Message indicating that there are no statistics available yet"
+  },
+  "try_again": "Try Again",
+  "@try_again": {
+    "description": "Button text for retrying an action"
+  },
+  "unknown_error": "Unknown error occurred",
+  "@unknown_error": {
+    "description": "Generic error message for an unknown error"
+  },
+  "error_loading_stats": "Error Loading Stats",
+  "@error_loading_stats": {
+    "description": "Error message for failing to load statistics"
+  },
+  "yesterday": "Yesterday",
+  "@yesterday": {
+    "description": "Label for yesterday's date"
+  },
+  "days_ago": "days ago",
+  "@days_ago": {
+    "description": "Label for a number of days ago"
+  },
+  "day_ago": "day ago",
+  "@day_ago": {
+    "description": "Label for one day ago"
+  },
+  "week_ago": "week ago",
+  "@week_ago": {
+    "description": "Label for one week ago"
+  },
+  "weeks_ago": "weeks ago",
+  "@weeks_ago": {
+    "description": "Label for a number of weeks ago"
+  },
+  "month_ago": "month ago",
+  "@month_ago": {
+    "description": "Label for one month ago"
+  },
+  "months_ago": "months ago",
+  "@months_ago": {
+    "description": "Label for a number of months ago"
+  },
+  "year_ago": "year ago",
+  "@year_ago": {
+    "description": "Label for one year ago"
+  },
+  "years_ago": "years ago",
+  "@years_ago": {
+    "description": "Label for a number of years ago"
+  },
+  "ratings": "Ratings",
+  "@ratings": {
+    "description": "Label for the ratings section"
+  },
+  "revenue": "Revenue",
+  "@revenue": {
+    "description": "Label for the revenue section"
   }
 }

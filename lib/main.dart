@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,11 +9,12 @@ import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegat
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
-import 'package:teach_flix/src/fatures/auth/presentation/bloc/bloc/auth_bloc.dart';
-import 'package:teach_flix/src/fatures/auth/presentation/pages/login_page.dart';
-import 'package:teach_flix/src/fatures/common/presentation/pages/main_page.dart';
-import 'package:teach_flix/src/fatures/settings/presentation/bloc/settings_bloc.dart';
-import 'package:teach_flix/src/fatures/courses/presentation/bloc/courses_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart';
+import 'package:teach_flix/src/features/common/presentation/pages/main_page.dart';
+import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/settings/presentation/bloc/settings_bloc.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 import 'package:teach_flix/src/service_locator.dart';
 
@@ -40,6 +42,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<CoursesBloc>(
           create: (_) => sl<CoursesBloc>()..add(LoadCoursesEvent()),
+        ),
+        BlocProvider<InstructorStatsBloc>(
+          create: (_) => sl<InstructorStatsBloc>(),
         ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
@@ -77,7 +82,9 @@ class _AuthGate extends StatelessWidget {
     return BlocConsumer<AuthBloc, AuthState>(
       listenWhen: (p, c) => p.status != c.status,
       listener: (context, state) {
-        if (state.status == AuthStatus.failure && state.failure != null) {}
+        if (state.status == AuthStatus.failure && state.failure != null) {
+          // Handle authentication failure if needed
+        }
       },
       builder: (context, state) {
         switch (state.status) {
