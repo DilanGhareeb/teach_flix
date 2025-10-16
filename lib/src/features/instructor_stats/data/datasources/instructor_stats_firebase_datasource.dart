@@ -5,6 +5,7 @@ import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/models/course_stats_model.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/models/instructor_stats_model.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/models/transaction_model.dart';
+import 'package:teach_flix/src/features/instructor_stats/domain/entities/instructor_stats_entity.dart';
 
 abstract class InstructorStatsFirebaseDataSource {
   Future<Either<Failure, InstructorStatsModel>> getInstructorStats(
@@ -56,6 +57,7 @@ class InstructorStatsFirebaseDataSourceImpl
       final courseIds = coursesSnapshot.docs.map((doc) => doc.id).toList();
 
       // Get all transactions for this instructor
+      // REMOVED orderBy to avoid composite index requirement
       final transactionsSnapshot = await _firestore
           .collection('transactions')
           .where('instructorId', isEqualTo: instructorId)
@@ -66,8 +68,14 @@ class InstructorStatsFirebaseDataSourceImpl
           .map((doc) => TransactionModel.fromFirestore(doc))
           .toList();
 
+      // Sort transactions in memory by date (ascending)
+      transactions.sort((a, b) => a.createdAt.compareTo(b.createdAt));
+
       // Calculate time-based profits
       final profitData = _calculateProfits(transactions);
+
+      // Calculate detailed profit data for charts
+      final detailedProfitData = _calculateDetailedProfits(transactions);
 
       // Calculate total unique students
       final enrollmentsSnapshot = await _firestore
@@ -98,13 +106,130 @@ class InstructorStatsFirebaseDataSourceImpl
           totalProfit: profitData['total']!,
           courseStats: courseStatsList,
           lastUpdated: DateTime.now(),
+          last30DaysProfits: detailedProfitData['last30Days']!,
+          last12MonthsProfits: detailedProfitData['last12Months']!,
+          allTimeProfits: detailedProfitData['allTime']!,
         ),
       );
     } on FirebaseException catch (e) {
+      print('Firebase Error: ${e.code} - ${e.message}');
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
+      print('Unknown Error: $e');
       return const Left(UnknownFailure());
     }
+  }
+
+  // ADD this new helper method to the PRIVATE HELPER METHODS section:
+  Map<String, List<PeriodProfitData>> _calculateDetailedProfits(
+    List<TransactionModel> transactions,
+  ) {
+    final now = DateTime.now();
+
+    // Calculate last 30 days profits
+    final last30Days = <PeriodProfitData>[];
+    for (int i = 29; i >= 0; i--) {
+      final date = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: i));
+      final nextDay = date.add(const Duration(days: 1));
+
+      final dayProfit = transactions
+          .where(
+            (t) =>
+                t.createdAt.isAfter(
+                  date.subtract(const Duration(seconds: 1)),
+                ) &&
+                t.createdAt.isBefore(nextDay),
+          )
+          .fold<double>(0.0, (sum, t) => sum + t.instructorProfit);
+
+      last30Days.add(PeriodProfitData(date: date, profit: dayProfit));
+    }
+
+    // Calculate last 12 months profits
+    final last12Months = <PeriodProfitData>[];
+    for (int i = 11; i >= 0; i--) {
+      final monthDate = DateTime(now.year, now.month - i, 1);
+      final nextMonth = DateTime(monthDate.year, monthDate.month + 1, 1);
+
+      final monthProfit = transactions
+          .where(
+            (t) =>
+                t.createdAt.isAfter(
+                  monthDate.subtract(const Duration(seconds: 1)),
+                ) &&
+                t.createdAt.isBefore(nextMonth),
+          )
+          .fold<double>(0.0, (sum, t) => sum + t.instructorProfit);
+
+      last12Months.add(PeriodProfitData(date: monthDate, profit: monthProfit));
+    }
+
+    // Calculate all-time profits (monthly aggregation)
+    final allTimeProfits = <PeriodProfitData>[];
+    if (transactions.isNotEmpty) {
+      final firstTransaction = transactions.first;
+      final firstDate = DateTime(
+        firstTransaction.createdAt.year,
+        firstTransaction.createdAt.month,
+        1,
+      );
+
+      DateTime currentMonth = firstDate;
+      while (currentMonth.isBefore(now) || currentMonth.month == now.month) {
+        final nextMonth = DateTime(
+          currentMonth.year,
+          currentMonth.month + 1,
+          1,
+        );
+
+        final monthProfit = transactions
+            .where(
+              (t) =>
+                  t.createdAt.isAfter(
+                    currentMonth.subtract(const Duration(seconds: 1)),
+                  ) &&
+                  t.createdAt.isBefore(nextMonth),
+            )
+            .fold<double>(0.0, (sum, t) => sum + t.instructorProfit);
+
+        allTimeProfits.add(
+          PeriodProfitData(date: currentMonth, profit: monthProfit),
+        );
+
+        currentMonth = nextMonth;
+
+        // Prevent infinite loop - max 10 years
+        if (allTimeProfits.length > 120) break;
+      }
+    }
+
+    return {
+      'last30Days': last30Days,
+      'last12Months': last12Months,
+      'allTime': allTimeProfits,
+    };
+  }
+
+  // UPDATE the _createEmptyStats method:
+  InstructorStatsModel _createEmptyStats(String instructorId) {
+    return InstructorStatsModel(
+      instructorId: instructorId,
+      totalCourses: 0,
+      totalStudents: 0,
+      todayProfit: 0.0,
+      monthProfit: 0.0,
+      yearProfit: 0.0,
+      totalProfit: 0.0,
+      courseStats: const [],
+      lastUpdated: DateTime.now(),
+      last30DaysProfits: const [],
+      last12MonthsProfits: const [],
+      allTimeProfits: const [],
+    );
   }
 
   @override
@@ -315,22 +440,6 @@ class InstructorStatsFirebaseDataSourceImpl
     );
 
     return controller.stream;
-  }
-
-  // ========== PRIVATE HELPER METHODS ==========
-
-  InstructorStatsModel _createEmptyStats(String instructorId) {
-    return InstructorStatsModel(
-      instructorId: instructorId,
-      totalCourses: 0,
-      totalStudents: 0,
-      todayProfit: 0.0,
-      monthProfit: 0.0,
-      yearProfit: 0.0,
-      totalProfit: 0.0,
-      courseStats: const [],
-      lastUpdated: DateTime.now(),
-    );
   }
 
   Map<String, double> _calculateProfits(List<TransactionModel> transactions) {

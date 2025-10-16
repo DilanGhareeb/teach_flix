@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
+import 'package:teach_flix/src/features/instructor_stats/domain/entities/instructor_stats_entity.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class ProfitCard extends StatefulWidget {
@@ -8,6 +9,9 @@ class ProfitCard extends StatefulWidget {
   final double monthProfit;
   final double yearProfit;
   final double totalProfit;
+  final List<PeriodProfitData> last30DaysProfits;
+  final List<PeriodProfitData> last12MonthsProfits;
+  final List<PeriodProfitData> allTimeProfits;
 
   const ProfitCard({
     super.key,
@@ -15,6 +19,9 @@ class ProfitCard extends StatefulWidget {
     required this.monthProfit,
     required this.yearProfit,
     required this.totalProfit,
+    this.last30DaysProfits = const [],
+    this.last12MonthsProfits = const [],
+    this.allTimeProfits = const [],
   });
 
   @override
@@ -70,8 +77,7 @@ class _ProfitCardState extends State<ProfitCard>
     ];
 
     final selectedProfit = periods[_selectedIndex].$2;
-    final shouldShowChart =
-        _selectedIndex > 0; // Show chart for all except "Today"
+    final shouldShowChart = _selectedIndex > 0;
 
     return Container(
       decoration: BoxDecoration(
@@ -171,9 +177,9 @@ class _ProfitCardState extends State<ProfitCard>
                   height: 120,
                   child: ProfitChart(
                     selectedIndex: _selectedIndex,
-                    monthProfit: widget.monthProfit,
-                    yearProfit: widget.yearProfit,
-                    totalProfit: widget.totalProfit,
+                    last30DaysProfits: widget.last30DaysProfits,
+                    last12MonthsProfits: widget.last12MonthsProfits,
+                    allTimeProfits: widget.allTimeProfits,
                   ),
                 ),
               ),
@@ -278,74 +284,62 @@ class _ProfitCardState extends State<ProfitCard>
 
 class ProfitChart extends StatelessWidget {
   final int selectedIndex;
-  final double monthProfit;
-  final double yearProfit;
-  final double totalProfit;
+  final List<PeriodProfitData> last30DaysProfits;
+  final List<PeriodProfitData> last12MonthsProfits;
+  final List<PeriodProfitData> allTimeProfits;
 
   const ProfitChart({
     super.key,
     required this.selectedIndex,
-    required this.monthProfit,
-    required this.yearProfit,
-    required this.totalProfit,
+    required this.last30DaysProfits,
+    required this.last12MonthsProfits,
+    required this.allTimeProfits,
   });
 
-  List<FlSpot> _getChartData() {
+  List<BarChartGroupData> _getChartData() {
+    List<PeriodProfitData> data;
+
     switch (selectedIndex) {
       case 1: // This Month
-        return _generateMonthData();
+        data = last30DaysProfits;
+        break;
       case 2: // This Year
-        return _generateYearData();
+        data = last12MonthsProfits;
+        break;
       case 3: // All Time
-        return _generateAllTimeData();
+        data = allTimeProfits;
+        break;
       default:
         return [];
     }
-  }
 
-  List<FlSpot> _generateMonthData() {
-    // Generate realistic monthly data (last 30 days)
-    final data = <FlSpot>[];
-    final random = monthProfit / 30;
+    if (data.isEmpty) return [];
 
-    for (int i = 0; i < 30; i++) {
-      // Create a growth pattern with some variation
-      final baseValue = (i / 30) * monthProfit;
-      final variation = (i % 3 == 0 ? 0.9 : 1.1) * random;
-      data.add(FlSpot(i.toDouble(), baseValue + variation));
-    }
+    final maxProfit = data.map((e) => e.profit).reduce((a, b) => a > b ? a : b);
+    final backgroundMax = maxProfit > 0 ? maxProfit * 1.2 : 1000;
 
-    return data;
-  }
-
-  List<FlSpot> _generateYearData() {
-    // Generate yearly data (12 months)
-    final data = <FlSpot>[];
-    final avgPerMonth = yearProfit / 12;
-
-    for (int i = 0; i < 12; i++) {
-      // Create seasonal variation
-      final seasonalMultiplier = 0.7 + (i % 4) * 0.15;
-      final value = avgPerMonth * seasonalMultiplier * (1 + i * 0.05);
-      data.add(FlSpot(i.toDouble(), value));
-    }
-
-    return data;
-  }
-
-  List<FlSpot> _generateAllTimeData() {
-    // Generate all-time data (example: last 24 months)
-    final data = <FlSpot>[];
-    final avgPerMonth = totalProfit / 24;
-
-    for (int i = 0; i < 24; i++) {
-      // Create exponential growth pattern
-      final growth = 1 + (i / 24) * 0.8;
-      final value = avgPerMonth * growth;
-      data.add(FlSpot(i.toDouble(), value));
-    }
-
-    return data;
+    return List.generate(data.length, (index) {
+      return BarChartGroupData(
+        x: index,
+        barRods: [
+          BarChartRodData(
+            toY: data[index].profit,
+            color: Colors.white.withOpacity(0.85),
+            width: selectedIndex == 1 ? 4 : (selectedIndex == 2 ? 12 : 6),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(
+                selectedIndex == 1 ? 2 : (selectedIndex == 2 ? 4 : 3),
+              ),
+            ),
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: backgroundMax.toDouble(),
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ),
+        ],
+      );
+    });
   }
 
   String _getBottomTitle(double value, int selectedIndex) {
@@ -353,7 +347,11 @@ class ProfitChart extends StatelessWidget {
 
     switch (selectedIndex) {
       case 1: // Month - show days
-        if (index % 5 == 0) return '${index + 1}';
+        if (last30DaysProfits.isEmpty) return '';
+        if (index >= last30DaysProfits.length) return '';
+        if (index % 5 == 0) {
+          return '${last30DaysProfits[index].date.day}';
+        }
         return '';
       case 2: // Year - show months
         const months = [
@@ -370,10 +368,48 @@ class ProfitChart extends StatelessWidget {
           'N',
           'D',
         ];
-        return index < months.length ? months[index] : '';
+        if (index >= last12MonthsProfits.length) return '';
+        return months[last12MonthsProfits[index].date.month - 1];
       case 3: // All time - show quarters
-        if (index % 6 == 0) return 'Q${(index ~/ 6) + 1}';
+        if (allTimeProfits.isEmpty) return '';
+        if (index >= allTimeProfits.length) return '';
+        if (index % 6 == 0) {
+          final monthIndex = index ~/ 6;
+          return 'Q${monthIndex + 1}';
+        }
         return '';
+      default:
+        return '';
+    }
+  }
+
+  String _getTooltipLabel(int index) {
+    switch (selectedIndex) {
+      case 1: // Month
+        if (index >= last30DaysProfits.length) return '';
+        final date = last30DaysProfits[index].date;
+        return '${date.day}/${date.month}';
+      case 2: // Year
+        if (index >= last12MonthsProfits.length) return '';
+        const months = [
+          'Jan',
+          'Feb',
+          'Mar',
+          'Apr',
+          'May',
+          'Jun',
+          'Jul',
+          'Aug',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dec',
+        ];
+        return months[last12MonthsProfits[index].date.month - 1];
+      case 3: // All time
+        if (index >= allTimeProfits.length) return '';
+        final date = allTimeProfits[index].date;
+        return '${date.month}/${date.year}';
       default:
         return '';
     }
@@ -382,17 +418,36 @@ class ProfitChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final data = _getChartData();
-    if (data.isEmpty) return const SizedBox.shrink();
+    if (data.isEmpty) {
+      return Center(
+        child: Text(
+          'No data available',
+          style: TextStyle(color: Colors.white.withOpacity(0.7), fontSize: 12),
+        ),
+      );
+    }
 
-    final maxY = data.map((e) => e.y).reduce((a, b) => a > b ? a : b);
-    final minY = data.map((e) => e.y).reduce((a, b) => a < b ? a : b);
+    // CRITICAL FIX: Handle zero profit case
+    final maxY = data
+        .map((group) => group.barRods.first.toY)
+        .reduce((a, b) => a > b ? a : b);
 
-    return LineChart(
-      LineChartData(
+    // If maxY is 0 or very small, use a default value
+    final chartMaxY = maxY > 0 ? maxY * 1.2 : 1000;
+    final interval = maxY > 0 ? maxY / 3 : 300;
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: chartMaxY.toDouble(),
+        minY: 0,
+        groupsSpace: selectedIndex == 1 ? 2 : (selectedIndex == 2 ? 8 : 4),
+        barGroups: data,
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
-          horizontalInterval: maxY / 3,
+          horizontalInterval: interval
+              .toDouble(), // FIXED: This can never be 0 now
           getDrawingHorizontalLine: (value) {
             return FlLine(
               color: Colors.white.withOpacity(0.1),
@@ -416,7 +471,6 @@ class ProfitChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 22,
-              interval: 1,
               getTitlesWidget: (value, meta) {
                 final text = _getBottomTitle(value, selectedIndex);
                 if (text.isEmpty) return const SizedBox.shrink();
@@ -437,93 +491,34 @@ class ProfitChart extends StatelessWidget {
           ),
         ),
         borderData: FlBorderData(show: false),
-        minX: 0,
-        maxX: data.length.toDouble() - 1,
-        minY: minY * 0.9,
-        maxY: maxY * 1.1,
-        lineBarsData: [
-          LineChartBarData(
-            spots: data,
-            isCurved: true,
-            gradient: LinearGradient(
-              colors: [
-                Colors.white.withOpacity(0.8),
-                Colors.white.withOpacity(0.4),
-              ],
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-            ),
-            barWidth: 3,
-            isStrokeCapRound: true,
-            dotData: const FlDotData(show: false),
-            belowBarData: BarAreaData(
-              show: true,
-              gradient: LinearGradient(
-                colors: [
-                  Colors.white.withOpacity(0.3),
-                  Colors.white.withOpacity(0.05),
-                ],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-            ),
-            shadow: Shadow(
-              color: Colors.white.withOpacity(0.3),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ),
-        ],
-        lineTouchData: LineTouchData(
+        barTouchData: BarTouchData(
           enabled: true,
-          touchTooltipData: LineTouchTooltipData(
-            getTooltipColor: (touchedSpot) => Colors.white.withOpacity(0.9),
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipColor: (group) => Colors.white.withOpacity(0.95),
             tooltipBorderRadius: BorderRadius.circular(8),
             tooltipPadding: const EdgeInsets.symmetric(
               horizontal: 12,
               vertical: 8,
             ),
-            getTooltipItems: (List<LineBarSpot> touchedSpots) {
-              return touchedSpots.map((spot) {
-                final formatter = Formatter();
-                return LineTooltipItem(
-                  formatter.formatIqd(spot.y),
-                  TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  ),
-                );
-              }).toList();
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              final formatter = Formatter();
+              final label = _getTooltipLabel(group.x.toInt());
+
+              return BarTooltipItem(
+                '$label\n${formatter.formatIqd(rod.toY)}',
+                TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              );
             },
           ),
           handleBuiltInTouches: true,
-          getTouchedSpotIndicator: (barData, spotIndexes) {
-            return spotIndexes.map((index) {
-              return TouchedSpotIndicatorData(
-                FlLine(
-                  color: Colors.white.withOpacity(0.5),
-                  strokeWidth: 2,
-                  dashArray: [3, 3],
-                ),
-                FlDotData(
-                  show: true,
-                  getDotPainter: (spot, percent, barData, index) {
-                    return FlDotCirclePainter(
-                      radius: 6,
-                      color: Colors.white,
-                      strokeWidth: 3,
-                      strokeColor: Colors.white.withOpacity(0.5),
-                    );
-                  },
-                ),
-              );
-            }).toList();
-          },
         ),
       ),
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOutCubic,
+      swapAnimationDuration: const Duration(milliseconds: 300),
+      swapAnimationCurve: Curves.easeInOutCubic,
     );
   }
 }

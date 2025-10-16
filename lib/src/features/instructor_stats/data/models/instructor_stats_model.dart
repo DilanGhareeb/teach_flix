@@ -13,6 +13,9 @@ class InstructorStatsModel extends InstructorStatsEntity {
     required super.totalProfit,
     required super.courseStats,
     required super.lastUpdated,
+    super.last30DaysProfits,
+    super.last12MonthsProfits,
+    super.allTimeProfits,
   });
 
   factory InstructorStatsModel.fromEntity(InstructorStatsEntity entity) {
@@ -26,6 +29,9 @@ class InstructorStatsModel extends InstructorStatsEntity {
       totalProfit: entity.totalProfit,
       courseStats: entity.courseStats,
       lastUpdated: entity.lastUpdated,
+      last30DaysProfits: entity.last30DaysProfits,
+      last12MonthsProfits: entity.last12MonthsProfits,
+      allTimeProfits: entity.allTimeProfits,
     );
   }
 
@@ -42,6 +48,7 @@ class InstructorStatsModel extends InstructorStatsEntity {
     };
   }
 
+  @override
   InstructorStatsModel copyWith({
     String? instructorId,
     int? totalCourses,
@@ -52,6 +59,9 @@ class InstructorStatsModel extends InstructorStatsEntity {
     double? totalProfit,
     List<CourseStatsEntity>? courseStats,
     DateTime? lastUpdated,
+    List<PeriodProfitData>? last30DaysProfits,
+    List<PeriodProfitData>? last12MonthsProfits,
+    List<PeriodProfitData>? allTimeProfits,
   }) {
     return InstructorStatsModel(
       instructorId: instructorId ?? this.instructorId,
@@ -63,6 +73,9 @@ class InstructorStatsModel extends InstructorStatsEntity {
       totalProfit: totalProfit ?? this.totalProfit,
       courseStats: courseStats ?? this.courseStats,
       lastUpdated: lastUpdated ?? this.lastUpdated,
+      last30DaysProfits: last30DaysProfits ?? this.last30DaysProfits,
+      last12MonthsProfits: last12MonthsProfits ?? this.last12MonthsProfits,
+      allTimeProfits: allTimeProfits ?? this.allTimeProfits,
     );
   }
 }
