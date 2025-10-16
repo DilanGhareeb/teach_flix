@@ -1245,5 +1245,29 @@
   "revenue": "Revenue",
   "@revenue": {
     "description": "Label for the revenue section"
+  },
+  "edit_course": "Edit Course",
+  "@edit_course": {
+    "description": "Title for the edit course page"
+  },
+  "course_updated_successfully": "Course updated successfully!",
+  "@course_updated_successfully": {
+    "description": "Success message for updating a course"
+  },
+  "course_deleted_successfully": "Course deleted successfully!",
+  "@course_deleted_successfully": {
+    "description": "Success message for deleting a course"
+  },
+  "update_course": "Update Course",
+  "@update_course": {
+    "description": "Button text for updating a course"
+  },
+  "delete_course": "Delete Course",
+  "@delete_course": {
+    "description": "Button text for deleting a course"
+  },
+  "delete_course_confirmation": "Are you sure you want to delete this course? This action cannot be undone.",
+  "@delete_course_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm course deletion"
   }
 }

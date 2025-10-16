@@ -309,5 +309,11 @@
   "year_ago": "ساڵێک لەمەوبەر",
   "years_ago": "ساڵ لەمەوبەر",
   "ratings": "هەڵسەنگاندنەکان",
-  "revenue": "داهات"
+  "revenue": "داهات",
+  "edit_course": "دەستکاریکردنی خول",
+  "course_updated_successfully": "خولەکە بە سەرکەوتوویی نوێکرایەوە!",
+  "course_deleted_successfully": "خولەکە بە سەرکەوتوویی سڕایەوە!",
+  "update_course": "نوێکردنەوەی خول",
+  "delete_course": "سڕینەوەی خول",
+  "delete_course_confirmation": "دڵنیایت کە دەتەوێت ئەم خولە بسڕیتەوە؟ ئەم کردارە ناتوانرێت هەڵبوەشێنرێتەوە."
 }

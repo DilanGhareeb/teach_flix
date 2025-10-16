@@ -19,6 +19,9 @@ enum CoursesStatus {
   chapterAdded,
   chapterRemoved,
   loadingEnrolled,
+  deleting,
+  courseDeleted,
+  loadingForEdit,
 }
 
 class CoursesState extends Equatable {
@@ -29,12 +32,11 @@ class CoursesState extends Equatable {
   final String? searchQuery;
   final String? currentCategory;
   final Failure? failure;
-
-  // Course creation fields
   final File? selectedImage;
   final String? uploadedImageUrl;
   final double? imageUploadProgress;
   final List<ChapterEntity>? chapters;
+  final String? initialImageUrl;
 
   const CoursesState({
     this.status = CoursesStatus.initial,
@@ -48,6 +50,7 @@ class CoursesState extends Equatable {
     this.uploadedImageUrl,
     this.imageUploadProgress,
     this.chapters,
+    this.initialImageUrl,
   });
 
   CoursesState copyWith({
@@ -64,6 +67,7 @@ class CoursesState extends Equatable {
     List<ChapterEntity>? chapters,
     bool clearImage = false,
     bool clearChapters = false,
+    String? initialImageUrl,
   }) {
     return CoursesState(
       status: status ?? this.status,
@@ -77,6 +81,7 @@ class CoursesState extends Equatable {
       uploadedImageUrl: uploadedImageUrl ?? this.uploadedImageUrl,
       imageUploadProgress: imageUploadProgress ?? this.imageUploadProgress,
       chapters: clearChapters ? [] : (chapters ?? this.chapters),
+      initialImageUrl: initialImageUrl ?? this.initialImageUrl,
     );
   }
 
@@ -93,5 +98,6 @@ class CoursesState extends Equatable {
     uploadedImageUrl,
     imageUploadProgress,
     chapters,
+    initialImageUrl,
   ];
 }

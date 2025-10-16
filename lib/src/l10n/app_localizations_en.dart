@@ -956,4 +956,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get revenue => 'Revenue';
+
+  @override
+  String get edit_course => 'Edit Course';
+
+  @override
+  String get course_updated_successfully => 'Course updated successfully!';
+
+  @override
+  String get course_deleted_successfully => 'Course deleted successfully!';
+
+  @override
+  String get update_course => 'Update Course';
+
+  @override
+  String get delete_course => 'Delete Course';
+
+  @override
+  String get delete_course_confirmation =>
+      'Are you sure you want to delete this course? This action cannot be undone.';
 }

@@ -210,3 +210,53 @@ class EnrollInCourseEvent extends CoursesEvent {
   @override
   List<Object> get props => [userId, courseId];
 }
+
+class LoadExistingCourseForEditEvent extends CoursesEvent {
+  final CourseEntity course;
+  const LoadExistingCourseForEditEvent(this.course);
+
+  @override
+  List<Object> get props => [course];
+}
+
+class UpdateCourseEvent extends CoursesEvent {
+  final String courseId;
+  final String title;
+  final String description;
+  final String category;
+  final double price;
+  final String previewVideoUrl;
+  final String instructorId;
+  final File? newImageFile;
+
+  const UpdateCourseEvent({
+    required this.courseId,
+    required this.title,
+    required this.description,
+    required this.category,
+    required this.price,
+    required this.previewVideoUrl,
+    required this.instructorId,
+    this.newImageFile,
+  });
+
+  @override
+  List<Object?> get props => [
+    courseId,
+    title,
+    description,
+    category,
+    price,
+    previewVideoUrl,
+    instructorId,
+    newImageFile,
+  ];
+}
+
+class DeleteCourseEvent extends CoursesEvent {
+  final String courseId;
+  const DeleteCourseEvent({required this.courseId});
+
+  @override
+  List<Object> get props => [courseId];
+}

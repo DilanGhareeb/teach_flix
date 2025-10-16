@@ -1957,6 +1957,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Revenue'**
   String get revenue;
+
+  /// Title for the edit course page
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Course'**
+  String get edit_course;
+
+  /// Success message for updating a course
+  ///
+  /// In en, this message translates to:
+  /// **'Course updated successfully!'**
+  String get course_updated_successfully;
+
+  /// Success message for deleting a course
+  ///
+  /// In en, this message translates to:
+  /// **'Course deleted successfully!'**
+  String get course_deleted_successfully;
+
+  /// Button text for updating a course
+  ///
+  /// In en, this message translates to:
+  /// **'Update Course'**
+  String get update_course;
+
+  /// Button text for deleting a course
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Course'**
+  String get delete_course;
+
+  /// Confirmation dialog message asking user to confirm course deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this course? This action cannot be undone.'**
+  String get delete_course_confirmation;
 }
 
 class _AppLocalizationsDelegate

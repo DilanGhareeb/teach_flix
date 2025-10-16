@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_category.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/add_chapter_page.dart';
@@ -10,7 +11,12 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.da
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class CreateCoursePage extends StatefulWidget {
-  const CreateCoursePage({super.key});
+  final CourseEntity? existingCourse; // NEW: Optional course for editing
+
+  const CreateCoursePage({super.key, this.existingCourse});
+
+  // Helper getter to check if in edit mode
+  bool get isEditMode => existingCourse != null;
 
   @override
   State<CreateCoursePage> createState() => _CreateCoursePageState();
@@ -30,9 +36,26 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   @override
   void initState() {
     super.initState();
-    // Clear any previous course creation state when page loads
+
+    // NEW: Pre-fill form if editing
+    if (widget.existingCourse != null) {
+      _titleController.text = widget.existingCourse!.title;
+      _descriptionController.text = widget.existingCourse!.description;
+      _priceController.text = widget.existingCourse!.price.toString();
+      _previewVideoUrlController.text =
+          widget.existingCourse!.previewVideoUrl ?? '';
+      _selectedCategory = widget.existingCourse!.category;
+    }
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CoursesBloc>().add(const ClearCourseCreationStateEvent());
+      if (widget.isEditMode) {
+        // NEW: Load existing course data into state
+        context.read<CoursesBloc>().add(
+          LoadExistingCourseForEditEvent(widget.existingCourse!),
+        );
+      } else {
+        context.read<CoursesBloc>().add(const ClearCourseCreationStateEvent());
+      }
     });
   }
 
@@ -51,13 +74,22 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.create_course), elevation: 0),
+      appBar: AppBar(
+        title: Text(widget.isEditMode ? t.edit_course : t.create_course),
+        elevation: 0,
+      ),
       body: BlocConsumer<CoursesBloc, CoursesState>(
         listener: (context, state) {
-          if (state.status == CoursesStatus.courseCreated) {
+          // NEW: Handle both create and update success
+          if (state.status == CoursesStatus.courseCreated ||
+              state.status == CoursesStatus.courseUpdated) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(t.course_created_successfully),
+                content: Text(
+                  widget.isEditMode
+                      ? t.course_updated_successfully
+                      : t.course_created_successfully,
+                ),
                 backgroundColor: Colors.green,
               ),
             );
@@ -70,6 +102,16 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 backgroundColor: Colors.red,
               ),
             );
+          }
+          // NEW: Handle course deletion
+          else if (state.status == CoursesStatus.courseDeleted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(t.course_deleted_successfully),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context);
           }
         },
         builder: (context, state) {
@@ -187,21 +229,22 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
 
                         const SizedBox(height: 24),
 
-                        // Chapters Section with Drag and Drop
+                        // Chapters Section
                         _buildChaptersSection(context, state, colorScheme, t),
 
                         const SizedBox(height: 32),
 
-                        // Create Course Button
+                        // NEW: Submit Button (Create or Update)
                         SizedBox(
                           width: double.infinity,
                           height: 56,
                           child: ElevatedButton(
                             onPressed:
                                 state.status == CoursesStatus.creating ||
+                                    state.status == CoursesStatus.updating ||
                                     state.status == CoursesStatus.imageUploading
                                 ? null
-                                : _createCourse,
+                                : _submitCourse,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: colorScheme.primary,
                               foregroundColor: colorScheme.onPrimary,
@@ -209,17 +252,25 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                                 borderRadius: BorderRadius.circular(16),
                               ),
                             ),
-                            child: state.status == CoursesStatus.creating
+                            child:
+                                state.status == CoursesStatus.creating ||
+                                    state.status == CoursesStatus.updating
                                 ? const CircularProgressIndicator(
                                     color: Colors.white,
                                   )
                                 : Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const Icon(Icons.check_circle_rounded),
+                                      Icon(
+                                        widget.isEditMode
+                                            ? Icons.save_rounded
+                                            : Icons.check_circle_rounded,
+                                      ),
                                       const SizedBox(width: 8),
                                       Text(
-                                        t.create_course,
+                                        widget.isEditMode
+                                            ? t.update_course
+                                            : t.create_course,
                                         style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -229,6 +280,44 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                                   ),
                           ),
                         ),
+
+                        // NEW: Delete Button (only in edit mode)
+                        if (widget.isEditMode) ...[
+                          const SizedBox(height: 12),
+                          SizedBox(
+                            width: double.infinity,
+                            height: 56,
+                            child: OutlinedButton.icon(
+                              onPressed: state.status == CoursesStatus.deleting
+                                  ? null
+                                  : _showDeleteConfirmation,
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: Colors.red,
+                                side: const BorderSide(color: Colors.red),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                              ),
+                              icon: state.status == CoursesStatus.deleting
+                                  ? const SizedBox(
+                                      width: 20,
+                                      height: 20,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: Colors.red,
+                                      ),
+                                    )
+                                  : const Icon(Icons.delete_outline),
+                              label: Text(
+                                t.delete_course,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
 
                         const SizedBox(height: 20),
                       ],
@@ -249,6 +338,12 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     ColorScheme colorScheme,
     AppLocalizations t,
   ) {
+    // NEW: Show existing image URL if in edit mode and no new image selected
+    final showExistingImage =
+        widget.isEditMode &&
+        state.selectedImage == null &&
+        widget.existingCourse?.imageUrl != null;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
@@ -285,6 +380,20 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                 borderRadius: BorderRadius.circular(16),
                 image: DecorationImage(
                   image: FileImage(state.selectedImage!),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            )
+          else if (showExistingImage)
+            // NEW: Show existing network image
+            Container(
+              width: double.infinity,
+              height: 200,
+              margin: const EdgeInsets.symmetric(horizontal: 16),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: DecorationImage(
+                  image: NetworkImage(widget.existingCourse!.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -368,12 +477,13 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     );
   }
 
-  void _createCourse() {
+  // NEW: Unified submit method for create/update
+  void _submitCourse() {
     if (_formKey.currentState?.validate() ?? false) {
       final state = context.read<CoursesBloc>().state;
 
-      // Check if image is selected (not uploaded)
-      if (state.selectedImage == null) {
+      // NEW: In edit mode, image is optional (can keep existing)
+      if (!widget.isEditMode && state.selectedImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
@@ -387,18 +497,62 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
 
       final authState = context.read<AuthBloc>().state;
       if (authState.user != null) {
-        context.read<CoursesBloc>().add(
-          SubmitNewCourseEvent(
-            title: _titleController.text,
-            description: _descriptionController.text,
-            category: _selectedCategory,
-            price: double.parse(_priceController.text),
-            previewVideoUrl: _previewVideoUrlController.text,
-            instructorId: authState.user!.id,
-          ),
-        );
+        if (widget.isEditMode) {
+          // UPDATE existing course
+          context.read<CoursesBloc>().add(
+            UpdateCourseEvent(
+              courseId: widget.existingCourse!.id,
+              title: _titleController.text,
+              description: _descriptionController.text,
+              category: _selectedCategory,
+              price: double.parse(_priceController.text),
+              previewVideoUrl: _previewVideoUrlController.text,
+              instructorId: authState.user!.id,
+            ),
+          );
+        } else {
+          // CREATE new course
+          context.read<CoursesBloc>().add(
+            SubmitNewCourseEvent(
+              title: _titleController.text,
+              description: _descriptionController.text,
+              category: _selectedCategory,
+              price: double.parse(_priceController.text),
+              previewVideoUrl: _previewVideoUrlController.text,
+              instructorId: authState.user!.id,
+            ),
+          );
+        }
       }
     }
+  }
+
+  // NEW: Delete confirmation dialog
+  void _showDeleteConfirmation() {
+    final t = AppLocalizations.of(context)!;
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(t.delete_course),
+        content: Text(t.delete_course_confirmation),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(t.cancel),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<CoursesBloc>().add(
+                DeleteCourseEvent(courseId: widget.existingCourse!.id),
+              );
+            },
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: Text(t.delete),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildChaptersSection(
@@ -605,10 +759,11 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
   }
 
   Future<void> _addChapter(BuildContext context) async {
+    final courseId = widget.isEditMode ? widget.existingCourse!.id : 'temp';
     final result = await Navigator.push<ChapterEntity>(
       context,
       CupertinoPageRoute(
-        builder: (context) => AddChapterPage(courseId: 'temp'),
+        builder: (context) => AddChapterPage(courseId: courseId),
       ),
     );
 
@@ -622,11 +777,12 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     int index,
     ChapterEntity chapter,
   ) async {
+    final courseId = widget.isEditMode ? widget.existingCourse!.id : 'temp';
     final result = await Navigator.push<ChapterEntity>(
       context,
       CupertinoPageRoute(
         builder: (context) =>
-            AddChapterPage(courseId: 'temp', existingChapter: chapter),
+            AddChapterPage(courseId: courseId, existingChapter: chapter),
       ),
     );
 

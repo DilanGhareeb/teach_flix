@@ -959,4 +959,23 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get revenue => 'داهات';
+
+  @override
+  String get edit_course => 'دەستکاریکردنی خول';
+
+  @override
+  String get course_updated_successfully => 'خولەکە بە سەرکەوتوویی نوێکرایەوە!';
+
+  @override
+  String get course_deleted_successfully => 'خولەکە بە سەرکەوتوویی سڕایەوە!';
+
+  @override
+  String get update_course => 'نوێکردنەوەی خول';
+
+  @override
+  String get delete_course => 'سڕینەوەی خول';
+
+  @override
+  String get delete_course_confirmation =>
+      'دڵنیایت کە دەتەوێت ئەم خولە بسڕیتەوە؟ ئەم کردارە ناتوانرێت هەڵبوەشێنرێتەوە.';
 }

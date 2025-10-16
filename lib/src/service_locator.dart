@@ -18,7 +18,9 @@ import 'package:teach_flix/src/features/auth/domain/usecase/watch_auth_session.d
 import 'package:teach_flix/src/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/withdraw_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/delete_course.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/enroll_in_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/update_course.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/upload_course_image.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/datasources/instructor_stats_firebase_datasource.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/repositories/instructor_stats_repository_impl.dart';
@@ -151,6 +153,8 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => PurchaseCourse(sl()));
   sl.registerFactory(() => EnrollInCourse(sl()));
   sl.registerFactory(() => SearchCourses(sl()));
+  sl.registerFactory(() => UpdateCourse(sl()));
+  sl.registerFactory(() => DeleteCourse(sl()));
 
   // ========== Courses feature - Bloc ==========
   sl.registerFactory(
@@ -166,6 +170,8 @@ Future<void> setupServiceLocator() async {
       addVideoToChapter: sl(),
       purchaseCourse: sl(),
       uploadCourseImage: sl(),
+      updateCourse: sl(),
+      deleteCourse: sl(),
     ),
   );
 
