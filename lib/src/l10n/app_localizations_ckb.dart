@@ -978,4 +978,39 @@ class AppLocalizationsCkb extends AppLocalizations {
   @override
   String get delete_course_confirmation =>
       'دڵنیایت کە دەتەوێت ئەم خولە بسڕیتەوە؟ ئەم کردارە ناتوانرێت هەڵبوەشێنرێتەوە.';
+
+  @override
+  String get become_instructor => 'ببە بە مامۆستا';
+
+  @override
+  String get share_your_knowledge => 'زانیاریەکانت لەگەڵ قوتابیان بەشداری بکە';
+
+  @override
+  String get upload_both_sides =>
+      'تکایە وێنەی ڕوون لە هەردوو لای ناسنامەکەت بار بکە';
+
+  @override
+  String get front_id => 'ڕووی پێشەوەی ناسنامە';
+
+  @override
+  String get back_id => 'ڕووی پشتەوەی ناسنامە';
+
+  @override
+  String get please_upload_both_ids => 'تکایە هەردوو لای ناسنامەکەت بار بکە';
+
+  @override
+  String get application_failed => 'داواکاریەکە سەرکەوتوو نەبوو';
+
+  @override
+  String get application_review_info =>
+      'داواکاریەکەت لە ماوەی ٢-٣ ڕۆژی کاری پێداچوونەوە دەکرێت. کاتێک پەسەند کرا بە ئیمەیڵ ئاگادار دەکرێیتەوە.';
+
+  @override
+  String get error => 'هەڵە';
+
+  @override
+  String get select_image_source => 'سەرچاوەی وێنە هەڵبژێرە';
+
+  @override
+  String get crop_image => 'بڕینی وێنە';
 }

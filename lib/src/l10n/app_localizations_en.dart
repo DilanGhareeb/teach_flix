@@ -975,4 +975,41 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get delete_course_confirmation =>
       'Are you sure you want to delete this course? This action cannot be undone.';
+
+  @override
+  String get become_instructor => 'Become an Instructor';
+
+  @override
+  String get share_your_knowledge =>
+      'Share your knowledge with students worldwide';
+
+  @override
+  String get upload_both_sides =>
+      'Please upload clear photos of both sides of your ID';
+
+  @override
+  String get front_id => 'Front Side of ID';
+
+  @override
+  String get back_id => 'Back Side of ID';
+
+  @override
+  String get please_upload_both_ids =>
+      'Please upload both front and back of your ID';
+
+  @override
+  String get application_failed => 'Application failed';
+
+  @override
+  String get application_review_info =>
+      'Your application will be reviewed within 2-3 business days. You\'ll be notified via email once approved.';
+
+  @override
+  String get error => 'Error';
+
+  @override
+  String get select_image_source => 'Select Image Source';
+
+  @override
+  String get crop_image => 'Crop Image';
 }

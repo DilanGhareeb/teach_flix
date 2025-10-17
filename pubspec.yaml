@@ -59,6 +59,7 @@ dependencies:
   youtube_player_flutter: ^9.1.2
   auto_size_text: ^3.0.0
   fl_chart: ^1.1.1
+  image_cropper: ^11.0.0
 
 dev_dependencies:
   flutter_test:

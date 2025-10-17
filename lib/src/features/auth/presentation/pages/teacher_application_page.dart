@@ -3,11 +3,20 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
-import 'package:teach_flix/src/l10n/app_localizations.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/application_header_card.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/category_dropdown.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/id_image_upload_card.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/image_source_bottom_sheet.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/info_card.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/section_header.dart';
+import 'package:teach_flix/src/features/auth/presentation/widgets/submit_button.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/course_category.dart';
+import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class TeacherApplicationPage extends StatefulWidget {
   const TeacherApplicationPage({super.key});
@@ -18,40 +27,89 @@ class TeacherApplicationPage extends StatefulWidget {
 
 class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
   final _formKey = GlobalKey<FormState>();
-  String? _selectedCategory;
-  File? _teacherIdImage;
+  CourseCategory? _selectedCategory;
+  File? _frontIdImage;
+  File? _backIdImage;
   bool _isSubmitting = false;
+  bool _hasNavigated = false;
 
-  final categories = [
-    'Mathematics',
-    'Science',
-    'Languages',
-    'History',
-    'Computer Science',
-    'Arts',
-  ];
+  Future<void> _pickAndCropImage(bool isFront) async {
+    final source = await _showImageSourceDialog();
+    if (source == null) return;
 
-  Future<void> _pickImage() async {
     final picker = ImagePicker();
-    final picked = await picker.pickImage(source: ImageSource.gallery);
+    final picked = await picker.pickImage(source: source);
 
     if (picked != null) {
-      setState(() {
-        _teacherIdImage = File(picked.path);
-      });
+      final croppedFile = await ImageCropper().cropImage(
+        sourcePath: picked.path,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: AppLocalizations.of(context)!.crop_image,
+            toolbarColor: Theme.of(context).colorScheme.primary,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.ratio16x9,
+            lockAspectRatio: false,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9,
+            ],
+          ),
+          IOSUiSettings(
+            title: AppLocalizations.of(context)!.crop_image,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9,
+            ],
+          ),
+        ],
+      );
+
+      if (croppedFile != null) {
+        setState(() {
+          if (isFront) {
+            _frontIdImage = File(croppedFile.path);
+          } else {
+            _backIdImage = File(croppedFile.path);
+          }
+        });
+      }
     }
+  }
+
+  Future<ImageSource?> _showImageSourceDialog() async {
+    return showModalBottomSheet<ImageSource>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => ImageSourceBottomSheet(),
+    );
   }
 
   Future<Uint8List> _fileToUint8List(File file) async {
     return await file.readAsBytes();
   }
 
+  Future<Uint8List> _combineImages() async {
+    // TODO: Implement image combination logic
+    // For now, return front image bytes
+    return await _fileToUint8List(_frontIdImage!);
+  }
+
   void _submitApplication() async {
     if (_formKey.currentState?.validate() != true) return;
 
-    if (_teacherIdImage == null) {
+    if (_frontIdImage == null || _backIdImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.please_upload_id)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.please_upload_both_ids),
+          backgroundColor: Colors.orange,
+        ),
       );
       return;
     }
@@ -61,18 +119,15 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
     });
 
     try {
-      // Convert image to Uint8List
-      final imageBytes = await _fileToUint8List(_teacherIdImage!);
+      final imageBytes = await _combineImages();
 
-      // Create update params to change role to teacher and upload ID image
       final updateParams = UpdateUserParams(
-        null, // name - keeping current name
-        null, // gender - keeping current gender
-        imageBytes, // teacher ID image
-        role: Role.instructor, // changing role to teacher
+        null,
+        null,
+        imageBytes,
+        role: Role.instructor,
       );
 
-      // Dispatch the update user event
       context.read<AuthBloc>().add(AuthUpdateUserRequested(updateParams));
     } catch (e) {
       setState(() {
@@ -81,7 +136,9 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error processing image: ${e.toString()}'),
+          content: Text(
+            '${AppLocalizations.of(context)!.error}: ${e.toString()}',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -92,188 +149,158 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
+    final languageCode = Localizations.localeOf(context).languageCode;
 
     return Scaffold(
-      appBar: AppBar(title: Text(t.apply_teacher)),
+      backgroundColor: theme.colorScheme.surface,
+      appBar: AppBar(
+        title: Text(t.apply_teacher),
+        elevation: 0,
+        backgroundColor: theme.colorScheme.surface,
+      ),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
+          // Prevent multiple navigations
+          if (_hasNavigated) return;
+
           if (state.status == AuthStatus.authenticated && _isSubmitting) {
-            // Application submitted successfully
+            _hasNavigated = true;
+
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  AppLocalizations.of(context)!.application_submitted,
+                content: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(t.application_submitted)),
+                  ],
                 ),
                 backgroundColor: Colors.green,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                duration: const Duration(seconds: 2),
               ),
             );
-            Navigator.pop(context);
+
+            // Use a delayed pop to ensure the snackbar is visible
+            // and to avoid navigation conflicts
+            Future.delayed(const Duration(milliseconds: 300), () {
+              if (mounted && Navigator.canPop(context)) {
+                Navigator.pop(context);
+              }
+            });
           } else if (state.status == AuthStatus.failure && _isSubmitting) {
-            // Handle submission failure
             setState(() {
               _isSubmitting = false;
             });
 
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text(
-                  'Application failed: ${state.failure?.toString() ?? 'Unknown error'}',
+                content: Row(
+                  children: [
+                    const Icon(Icons.error, color: Colors.white),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        '${t.application_failed}: ${state.failure?.toString() ?? t.unknown_error}',
+                      ),
+                    ),
+                  ],
                 ),
                 backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             );
           }
         },
         child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  /// CATEGORY SELECT
-                  Text(t.select_category, style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  DropdownButtonFormField<String>(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
+          child: Form(
+            key: _formKey,
+            child: CustomScrollView(
+              slivers: [
+                SliverPadding(
+                  padding: const EdgeInsets.all(20),
+                  sliver: SliverList(
+                    delegate: SliverChildListDelegate([
+                      // Header Section
+                      ApplicationHeaderCard(
+                        title: t.become_instructor,
+                        subtitle: t.share_your_knowledge,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                      ),
-                    ),
-                    items: categories
-                        .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                        .toList(),
-                    initialValue: _selectedCategory,
-                    validator: (value) =>
-                        value == null ? t.field_required : null,
-                    onChanged: _isSubmitting
-                        ? null
-                        : (val) {
-                            setState(() {
-                              _selectedCategory = val;
-                            });
-                          },
-                  ),
-                  const SizedBox(height: 24),
+                      const SizedBox(height: 32),
 
-                  /// TEACHER ID UPLOAD
-                  Text(t.upload_teacher_id, style: theme.textTheme.titleMedium),
-                  const SizedBox(height: 8),
-                  GestureDetector(
-                    onTap: _isSubmitting ? null : _pickImage,
-                    child: Container(
-                      height: 160,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: _isSubmitting
-                              ? theme.disabledColor
-                              : theme.dividerColor,
-                          width: 1.2,
-                        ),
-                        color: _isSubmitting
-                            ? theme.disabledColor.withOpacity(0.1)
-                            : theme.colorScheme.surfaceContainerHighest,
+                      // Category Section
+                      SectionHeader(
+                        icon: Icons.category_rounded,
+                        title: t.select_category,
                       ),
-                      child: _teacherIdImage == null
-                          ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(
-                                    Icons.upload_file,
-                                    size: 40,
-                                    color: _isSubmitting
-                                        ? theme.disabledColor
-                                        : null,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    t.tap_to_upload,
-                                    style: TextStyle(
-                                      color: _isSubmitting
-                                          ? theme.disabledColor
-                                          : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Stack(
-                              children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.file(
-                                    _teacherIdImage!,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  ),
-                                ),
-                                if (!_isSubmitting)
-                                  Positioned(
-                                    top: 8,
-                                    right: 8,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: Colors.black.withOpacity(0.6),
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: IconButton(
-                                        icon: const Icon(
-                                          Icons.edit,
-                                          color: Colors.white,
-                                          size: 20,
-                                        ),
-                                        onPressed: _pickImage,
-                                      ),
-                                    ),
-                                  ),
-                              ],
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 32),
+                      const SizedBox(height: 12),
+                      CategoryDropdown(
+                        selectedCategory: _selectedCategory,
+                        languageCode: languageCode,
+                        isEnabled: !_isSubmitting,
+                        onChanged: (category) {
+                          setState(() {
+                            _selectedCategory = category;
+                          });
+                        },
+                        validator: (value) =>
+                            value == null ? t.field_required : null,
+                      ),
+                      const SizedBox(height: 32),
 
-                  /// SUBMIT BUTTON
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                      // ID Upload Section
+                      SectionHeader(
+                        icon: Icons.badge_rounded,
+                        title: t.upload_teacher_id,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        t.upload_both_sides,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
                       ),
-                      onPressed: _isSubmitting ? null : _submitApplication,
-                      child: _isSubmitting
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                  ),
-                                ),
-                                const SizedBox(width: 12),
-                                Text(t.submit_application),
-                              ],
-                            )
-                          : Text(
-                              t.submit_application,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                    ),
+                      const SizedBox(height: 16),
+
+                      // Front ID
+                      IdImageUploadCard(
+                        label: t.front_id,
+                        image: _frontIdImage,
+                        isEnabled: !_isSubmitting,
+                        onTap: () => _pickAndCropImage(true),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Back ID
+                      IdImageUploadCard(
+                        label: t.back_id,
+                        image: _backIdImage,
+                        isEnabled: !_isSubmitting,
+                        onTap: () => _pickAndCropImage(false),
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Info Card
+                      InfoCard(message: t.application_review_info),
+                      const SizedBox(height: 32),
+
+                      // Submit Button
+                      SubmitButton(
+                        isSubmitting: _isSubmitting,
+                        onPressed: _submitApplication,
+                        label: t.submit_application,
+                      ),
+                      const SizedBox(height: 20),
+                    ]),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

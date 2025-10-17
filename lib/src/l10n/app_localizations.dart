@@ -1993,6 +1993,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Are you sure you want to delete this course? This action cannot be undone.'**
   String get delete_course_confirmation;
+
+  /// Title for the become an instructor page
+  ///
+  /// In en, this message translates to:
+  /// **'Become an Instructor'**
+  String get become_instructor;
+
+  /// Subtitle for the become an instructor page
+  ///
+  /// In en, this message translates to:
+  /// **'Share your knowledge with students worldwide'**
+  String get share_your_knowledge;
+
+  /// Instruction to upload both sides of an ID for verification
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload clear photos of both sides of your ID'**
+  String get upload_both_sides;
+
+  /// Label for the front side of the ID upload
+  ///
+  /// In en, this message translates to:
+  /// **'Front Side of ID'**
+  String get front_id;
+
+  /// Label for the back side of the ID upload
+  ///
+  /// In en, this message translates to:
+  /// **'Back Side of ID'**
+  String get back_id;
+
+  /// Validation message prompting user to upload both sides of their ID
+  ///
+  /// In en, this message translates to:
+  /// **'Please upload both front and back of your ID'**
+  String get please_upload_both_ids;
+
+  /// Error message for a failed instructor application
+  ///
+  /// In en, this message translates to:
+  /// **'Application failed'**
+  String get application_failed;
+
+  /// Information about the review process for instructor applications
+  ///
+  /// In en, this message translates to:
+  /// **'Your application will be reviewed within 2-3 business days. You\'ll be notified via email once approved.'**
+  String get application_review_info;
+
+  /// Generic error title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get error;
+
+  /// Prompt to select the source of an image
+  ///
+  /// In en, this message translates to:
+  /// **'Select Image Source'**
+  String get select_image_source;
+
+  /// Button text for cropping an image
+  ///
+  /// In en, this message translates to:
+  /// **'Crop Image'**
+  String get crop_image;
 }
 
 class _AppLocalizationsDelegate
