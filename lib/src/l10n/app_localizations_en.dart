@@ -1120,4 +1120,24 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get price_cannot_be_negative => 'Price cannot be negative';
+
+  @override
+  String get confirm_purchase => 'Confirm Purchase';
+
+  @override
+  String get confirm_enroll => 'Yes, Enroll';
+
+  @override
+  String get confirm_buy => 'Yes, Buy Now';
+
+  @override
+  String get confirm_purchase_message =>
+      'Are you sure you want to purchase this course?';
+
+  @override
+  String get confirm_enroll_message =>
+      'Are you sure you want to enroll in this course?';
+
+  @override
+  String get total_amount => 'Total Amount';
 }

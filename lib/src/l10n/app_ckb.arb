@@ -358,5 +358,11 @@
   "please_login_to_rate": "تکایە بچۆ ژوورەوە بۆ هەڵسەنگاندن",
   "ai_assistant": "یارمەتی زیرەکی دەستکرد",
   "rate_course": "کۆرسەکە هەڵبسەنگێنە",
-  "price_cannot_be_negative": "نرخی کۆرس ناتوانێت نێگەتیڤ بێت"
+  "price_cannot_be_negative": "نرخی کۆرس ناتوانێت نێگەتیڤ بێت",
+  "confirm_purchase": "پشتڕاستکردنەوەی کڕین",
+  "confirm_enroll": "بەڵێ، تۆمارببە",
+  "confirm_buy": "بەڵێ، ئێستا بیکڕە",
+  "confirm_purchase_message": "دڵنیای لە کڕینی ئەم کۆرسە؟",
+  "confirm_enroll_message": "دڵنیای لە تۆماربوون لەم کۆرسەدا؟",
+  "total_amount": "کۆی گشتی"
 }

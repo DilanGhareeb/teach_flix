@@ -1119,4 +1119,22 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get price_cannot_be_negative => 'نرخی کۆرس ناتوانێت نێگەتیڤ بێت';
+
+  @override
+  String get confirm_purchase => 'پشتڕاستکردنەوەی کڕین';
+
+  @override
+  String get confirm_enroll => 'بەڵێ، تۆمارببە';
+
+  @override
+  String get confirm_buy => 'بەڵێ، ئێستا بیکڕە';
+
+  @override
+  String get confirm_purchase_message => 'دڵنیای لە کڕینی ئەم کۆرسە؟';
+
+  @override
+  String get confirm_enroll_message => 'دڵنیای لە تۆماربوون لەم کۆرسەدا؟';
+
+  @override
+  String get total_amount => 'کۆی گشتی';
 }

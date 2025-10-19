@@ -1,4 +1,5 @@
 enum CourseCategory {
+  grade12('12th Grade', 'پۆلی ١٢'),
   programming('Programming', 'پڕۆگرامسازی'),
   design('Design', 'دیزاین'),
   marketing('Marketing', 'مارکێتینگ'),

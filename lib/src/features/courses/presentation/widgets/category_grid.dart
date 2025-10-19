@@ -85,6 +85,8 @@ class _CategoryCard extends StatelessWidget {
 
   List<Color> _getCategoryColors(CourseCategory category) {
     switch (category) {
+      case CourseCategory.grade12:
+        return [Colors.deepOrange[600]!, Colors.deepOrange[800]!];
       case CourseCategory.programming:
         return [Colors.blue[600]!, Colors.blue[800]!];
       case CourseCategory.design:
@@ -114,6 +116,8 @@ class _CategoryCard extends StatelessWidget {
 
   IconData _getCategoryIcon(CourseCategory category) {
     switch (category) {
+      case CourseCategory.grade12:
+        return Icons.school;
       case CourseCategory.programming:
         return Icons.code;
       case CourseCategory.design:

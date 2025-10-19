@@ -1441,5 +1441,29 @@
   "price_cannot_be_negative": "Price cannot be negative",
   "@price_cannot_be_negative": {
     "description": "Validation message indicating that the course price cannot be negative"
+  },
+  "confirm_purchase": "Confirm Purchase",
+  "@confirm_purchase": {
+    "description": "Button text for confirming a course purchase"
+  },
+  "confirm_enroll": "Yes, Enroll",
+  "@confirm_enroll": {
+    "description": "Button text for confirming course enrollment"
+  },
+  "confirm_buy": "Yes, Buy Now",
+  "@confirm_buy": {
+    "description": "Button text for confirming course purchase"
+  },
+  "confirm_purchase_message": "Are you sure you want to purchase this course?",
+  "@confirm_purchase_message": {
+    "description": "Confirmation dialog message asking user to confirm course purchase"
+  },
+  "confirm_enroll_message": "Are you sure you want to enroll in this course?",
+  "@confirm_enroll_message": {
+    "description": "Confirmation dialog message asking user to confirm course enrollment"
+  },
+  "total_amount": "Total Amount",
+  "@total_amount": {
+    "description": "Label for the total amount of a course purchase"
   }
 }

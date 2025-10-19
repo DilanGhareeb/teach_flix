@@ -1070,21 +1070,137 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
       return;
     }
 
-    // Check if course is free
-    if (widget.course.price == 0) {
-      // For FREE courses, use enrollInCourse (no payment)
-      context.read<CoursesBloc>().add(
-        EnrollInCourseEvent(userId: authState.user!.id, courseId: courseId),
-      );
-    } else {
-      // For PAID courses, use purchaseCourse (with payment)
-      context.read<CoursesBloc>().add(
-        PurchaseCourseEvent(userId: authState.user!.id, courseId: courseId),
-      );
-    }
+    // Show confirmation dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: Text(
+            t.confirm_purchase ?? 'Confirm Purchase',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                widget.course.price == 0
+                    ? (t.confirm_enroll_message ??
+                          'Are you sure you want to enroll in this course?')
+                    : (t.confirm_purchase_message ??
+                          'Are you sure you want to purchase this course?'),
+              ),
+              if (widget.course.price > 0) ...[
+                const SizedBox(height: 16),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(dialogContext).colorScheme.primaryContainer,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.payments,
+                        color: Theme.of(dialogContext).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              t.total_amount ?? 'Total Amount',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Theme.of(dialogContext)
+                                    .colorScheme
+                                    .onPrimaryContainer
+                                    .withOpacity(0.7),
+                              ),
+                            ),
+                            Text(
+                              formatter.formatIqd(widget.course.price),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(
+                                  dialogContext,
+                                ).colorScheme.onPrimary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(),
+              child: Text(
+                t.cancel ?? 'Cancel',
+                style: TextStyle(
+                  color: Theme.of(
+                    dialogContext,
+                  ).colorScheme.onSurface.withOpacity(0.6),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+
+                // Proceed with purchase/enrollment
+                if (widget.course.price == 0) {
+                  context.read<CoursesBloc>().add(
+                    EnrollInCourseEvent(
+                      userId: authState.user!.id,
+                      courseId: courseId,
+                    ),
+                  );
+                } else {
+                  context.read<CoursesBloc>().add(
+                    PurchaseCourseEvent(
+                      userId: authState.user!.id,
+                      courseId: courseId,
+                    ),
+                  );
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: widget.course.price == 0
+                    ? Colors.green
+                    : Theme.of(dialogContext).colorScheme.primary,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: Text(
+                widget.course.price == 0
+                    ? (t.confirm_enroll ?? 'Yes, Enroll')
+                    : (t.confirm_buy ?? 'Yes, Buy Now'),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _startLearning(BuildContext context, CourseEntity course) {
+    // Stop the video player if it's working
+    if (_trailerController != null && _trailerController!.value.isPlaying) {
+      _trailerController!.pause();
+    }
+
     Navigator.push(
       context,
       CupertinoPageRoute(

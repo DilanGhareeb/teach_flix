@@ -2251,6 +2251,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Price cannot be negative'**
   String get price_cannot_be_negative;
+
+  /// Button text for confirming a course purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm Purchase'**
+  String get confirm_purchase;
+
+  /// Button text for confirming course enrollment
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Enroll'**
+  String get confirm_enroll;
+
+  /// Button text for confirming course purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Buy Now'**
+  String get confirm_buy;
+
+  /// Confirmation dialog message asking user to confirm course purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to purchase this course?'**
+  String get confirm_purchase_message;
+
+  /// Confirmation dialog message asking user to confirm course enrollment
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to enroll in this course?'**
+  String get confirm_enroll_message;
+
+  /// Label for the total amount of a course purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Total Amount'**
+  String get total_amount;
 }
 
 class _AppLocalizationsDelegate
