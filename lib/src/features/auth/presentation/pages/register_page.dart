@@ -96,8 +96,9 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
             );
           }
+          // When authenticated, pop all routes and let _AuthGate handle navigation
           if (state.status == AuthStatus.authenticated && mounted) {
-            Navigator.of(context).pop();
+            Navigator.of(context).popUntil((route) => route.isFirst);
           }
         },
         child: Container(

@@ -2083,6 +2083,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You are not logged in'**
   String get not_logged_in;
+
+  /// Link text for forgotten password
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forget_password;
+
+  /// Success message for sending password reset email
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset email sent! Check your inbox.'**
+  String get password_reset_email_sent;
+
+  /// Title for the forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot Password?'**
+  String get forgot_password;
+
+  /// Description for the forgot password screen
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email address and we\'ll send you a link to reset your password.'**
+  String get forgot_password_description;
+
+  /// Button text for sending password reset link
+  ///
+  /// In en, this message translates to:
+  /// **'Send Reset Link'**
+  String get send_reset_link;
+
+  /// Title for the email sent confirmation screen
+  ///
+  /// In en, this message translates to:
+  /// **'Email Sent!'**
+  String get email_sent;
+
+  /// Instruction to check email for password reset link
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ve sent a password reset link to'**
+  String get check_email_for_reset_link;
+
+  /// Button text for navigating back to the login screen
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Login'**
+  String get back_to_login;
 }
 
 class _AppLocalizationsDelegate

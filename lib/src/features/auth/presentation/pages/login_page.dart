@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
+import 'package:teach_flix/src/features/auth/presentation/pages/forget_password_page.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/register_page.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
@@ -77,6 +78,10 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             );
+          }
+          // When authenticated, pop all routes and let _AuthGate handle navigation
+          if (state.status == AuthStatus.authenticated && mounted) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
           }
         },
         child: Container(
@@ -161,7 +166,34 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(height: 24),
+                          const SizedBox(height: 8),
+
+                          // Forgot Password Link
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(
+                                  CupertinoPageRoute(
+                                    builder: (_) => BlocProvider.value(
+                                      value: context.read<AuthBloc>(),
+                                      child: const ForgotPasswordPage(),
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                localization.forgot_password ??
+                                    'Forgot Password?',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          const SizedBox(height: 16),
                           BlocBuilder<AuthBloc, AuthState>(
                             buildWhen: (p, c) => p.status != c.status,
                             builder: (context, state) {
@@ -210,7 +242,10 @@ class _LoginPageState extends State<LoginPage> {
                                 onPressed: () {
                                   Navigator.of(context).push(
                                     CupertinoPageRoute(
-                                      builder: (_) => const RegisterPage(),
+                                      builder: (_) => BlocProvider.value(
+                                        value: context.read<AuthBloc>(),
+                                        child: const RegisterPage(),
+                                      ),
                                     ),
                                   );
                                 },

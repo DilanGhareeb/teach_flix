@@ -30,6 +30,8 @@ abstract class AuthApiDatasource {
   Future<Either<Failure, UserEntity>> withdraw({
     required WithdrawParams params,
   });
+
+  Future<Either<Failure, void>> sendPasswordResetEmail({required String email});
   Future<Either<Failure, void>> signOut();
 }
 
@@ -322,6 +324,20 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
         ); // You can create a custom InsufficientBalanceFailure
       }
       return left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> sendPasswordResetEmail({
+    required String email,
+  }) async {
+    try {
+      await _fireAuth.sendPasswordResetEmail(email: email);
+      return const Right(null);
+    } on FirebaseAuthException catch (e) {
+      return Left(AuthFailure.fromFirebaseAuthCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
+import 'package:teach_flix/src/features/auth/domain/usecase/send_reset_password_email.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/login_usecase.dart';
@@ -26,6 +27,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final UpdateUserInfo updateUserInfo;
   final Deposit depositUsecase;
   final Withdraw withdrawUsecase;
+  final SendPasswordResetEmail sendPasswordResetEmail;
   final Logout logoutUsecase;
 
   StreamSubscription<AuthSession>? _authSub;
@@ -39,6 +41,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.updateUserInfo,
     required this.depositUsecase,
     required this.withdrawUsecase,
+    required this.sendPasswordResetEmail,
     required this.logoutUsecase,
   }) : super(const AuthState()) {
     on<AuthBootstrapRequested>(_onBootstrap);
@@ -51,6 +54,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<AuthUpdateUserRequested>(_onUpdateUserRequested);
     on<AuthDepositRequested>(_onDepositRequested);
     on<AuthWithdrawRequested>(_onWithdrawRequested);
+    on<AuthPasswordResetRequested>(_onPasswordResetRequested);
     on<AuthLogoutRequested>(_onLogout);
   }
 
@@ -169,6 +173,22 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     r.fold(
       (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
       (_) {},
+    );
+  }
+
+  Future<void> _onPasswordResetRequested(
+    AuthPasswordResetRequested e,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(state.copyWith(status: AuthStatus.loading, failure: null));
+    final r = await sendPasswordResetEmail(
+      params: SendPasswordResetParams(email: e.email),
+    );
+    r.fold(
+      (f) => emit(state.copyWith(status: AuthStatus.failure, failure: f)),
+      (_) => emit(
+        state.copyWith(status: AuthStatus.unauthenticated, failure: null),
+      ),
     );
   }
 

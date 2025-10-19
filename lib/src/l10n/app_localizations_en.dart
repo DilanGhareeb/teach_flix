@@ -1025,4 +1025,31 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get not_logged_in => 'You are not logged in';
+
+  @override
+  String get forget_password => 'Forgot Password?';
+
+  @override
+  String get password_reset_email_sent =>
+      'Password reset email sent! Check your inbox.';
+
+  @override
+  String get forgot_password => 'Forgot Password?';
+
+  @override
+  String get forgot_password_description =>
+      'Enter your email address and we\'ll send you a link to reset your password.';
+
+  @override
+  String get send_reset_link => 'Send Reset Link';
+
+  @override
+  String get email_sent => 'Email Sent!';
+
+  @override
+  String get check_email_for_reset_link =>
+      'We\'ve sent a password reset link to';
+
+  @override
+  String get back_to_login => 'Back to Login';
 }

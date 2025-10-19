@@ -1025,4 +1025,31 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get not_logged_in => 'ئەکاونتت نییە!';
+
+  @override
+  String get forget_password => 'وشەی نهێنیت لەبیرچووەتەوە؟';
+
+  @override
+  String get password_reset_email_sent =>
+      'ئیمەیڵی گەڕانەوەی وشەی نهێنی نێردرا! سەیری ساندووقەکەت بکە.';
+
+  @override
+  String get forgot_password => 'وشەی نهێنیت لەبیرچووە؟';
+
+  @override
+  String get forgot_password_description =>
+      'ناونیشانی ئیمەیڵەکەت بنووسە و بەستەرێکت بۆ دەنێرین بۆ گەڕانەوەی وشەی نهێنی.';
+
+  @override
+  String get send_reset_link => 'ناردنی بەستەری گەڕانەوە';
+
+  @override
+  String get email_sent => 'ئیمەیڵ نێردرا!';
+
+  @override
+  String get check_email_for_reset_link =>
+      'بەستەرێکی گەڕانەوەی وشەی نهێنیمان ناردووە بۆ';
+
+  @override
+  String get back_to_login => 'گەڕانەوە بۆ چوونەژوورەوە';
 }

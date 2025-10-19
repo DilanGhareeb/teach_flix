@@ -10,6 +10,7 @@ import 'package:teach_flix/src/features/auth/data/datasources/auth_api_datasourc
 import 'package:teach_flix/src/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teach_flix/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/deposit_usecase.dart';
+import 'package:teach_flix/src/features/auth/domain/usecase/send_reset_password_email.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/watch_user_profile_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/login_usecase.dart';
@@ -85,6 +86,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => UpdateUserInfo(sl()));
   sl.registerFactory(() => Logout(repository: sl()));
   sl.registerFactory(() => Deposit(repository: sl()));
+  sl.registerFactory(() => SendPasswordResetEmail(sl()));
   sl.registerFactory(() => Withdraw(repository: sl()));
   sl.registerFactory(
     () => AuthBloc(
@@ -95,6 +97,7 @@ Future<void> setupServiceLocator() async {
       updateUserInfo: sl(),
       logoutUsecase: sl(),
       depositUsecase: sl(),
+      sendPasswordResetEmail: sl(),
       withdrawUsecase: sl(),
     ),
   );

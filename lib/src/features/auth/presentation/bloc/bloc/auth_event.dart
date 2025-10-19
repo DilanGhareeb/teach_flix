@@ -91,6 +91,15 @@ final class AuthRegisterRequested extends AuthEvent {
   ];
 }
 
+final class AuthPasswordResetRequested extends AuthEvent {
+  final String email;
+
+  const AuthPasswordResetRequested(this.email);
+
+  @override
+  List<Object?> get props => [email];
+}
+
 final class AuthLogoutRequested extends AuthEvent {
   const AuthLogoutRequested();
 }

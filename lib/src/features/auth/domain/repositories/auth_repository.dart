@@ -24,5 +24,6 @@ abstract class AuthRepository {
   Future<Either<Failure, UserEntity>> withdraw({
     required WithdrawParams params,
   });
+  Future<Either<Failure, void>> sendPasswordResetEmail({required String email});
   Future<Either<Failure, void>> signOut();
 }

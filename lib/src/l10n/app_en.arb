@@ -1329,5 +1329,37 @@
   "not_logged_in": "You are not logged in",
   "@not_logged_in": {
     "description": "Warning message indicating the user is not logged in"
+  },
+  "forget_password": "Forgot Password?",
+  "@forget_password": {
+    "description": "Link text for forgotten password"
+  },
+  "password_reset_email_sent": "Password reset email sent! Check your inbox.",
+  "@password_reset_email_sent": {
+    "description": "Success message for sending password reset email"
+  },
+  "forgot_password": "Forgot Password?",
+  "@forgot_password": {
+    "description": "Title for the forgot password screen"
+  },
+  "forgot_password_description": "Enter your email address and we'll send you a link to reset your password.",
+  "@forgot_password_description": {
+    "description": "Description for the forgot password screen"
+  },
+  "send_reset_link": "Send Reset Link",
+  "@send_reset_link": {
+    "description": "Button text for sending password reset link"
+  },
+  "email_sent": "Email Sent!",
+  "@email_sent": {
+    "description": "Title for the email sent confirmation screen"
+  },
+  "check_email_for_reset_link": "We've sent a password reset link to",
+  "@check_email_for_reset_link": {
+    "description": "Instruction to check email for password reset link"
+  },
+  "back_to_login": "Back to Login",
+  "@back_to_login": {
+    "description": "Button text for navigating back to the login screen"
   }
 }
