@@ -61,6 +61,14 @@ class ErrorLocalizer {
       return localization.errAlreadyEnrolled;
     } else if (f is InstructorCannotPurchaseOwnCourseFailure) {
       return localization.errInstructorCannotPurchaseOwnCourse;
+    } else if (f is NotEnrolledFailure) {
+      return localization.not_enrolled_error;
+    } else if (f is AlreadyRatedFailure) {
+      return localization.already_rated_error;
+    } else if (f is InvalidRatingValueFailure) {
+      return localization.invalid_rating_error;
+    } else if (f is InstructorCannotRateOwnCourseFailure) {
+      return localization.instructor_cannot_rate_error;
     }
     final base = localization.errUnknown;
     return kDebugMode && f.code != null ? '$base (${f.code})' : base;

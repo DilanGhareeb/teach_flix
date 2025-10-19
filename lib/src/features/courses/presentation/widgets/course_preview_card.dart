@@ -166,21 +166,49 @@ class CoursePreviewCard extends StatelessWidget {
                 Row(
                   children: [
                     if (course.ratings.isNotEmpty) ...[
+                      // Star Icon
                       Icon(
                         Icons.star_rounded,
                         color: Colors.amber[700],
                         size: 20,
                       ),
                       const SizedBox(width: 4),
+
+                      // Average Rating
                       Text(
                         averageRating.toStringAsFixed(1),
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                       const SizedBox(width: 4),
+
+                      // Number of Ratings in Parentheses
                       Text(
                         '(${course.ratings.length})',
                         style: TextStyle(
                           color: colorScheme.onSurface.withOpacity(0.6),
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                    ],
+
+                    // Students Enrolled (if available)
+                    if (course.studentsEnrolled != null &&
+                        course.studentsEnrolled! > 0) ...[
+                      Icon(
+                        Icons.people_rounded,
+                        size: 18,
+                        color: colorScheme.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${course.studentsEnrolled} students',
+                        style: TextStyle(
+                          color: colorScheme.onSurface.withOpacity(0.7),
+                          fontSize: 14,
                         ),
                       ),
                     ],

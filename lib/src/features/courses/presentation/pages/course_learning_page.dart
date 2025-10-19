@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_info_section.dart';
+import 'package:teach_flix/src/features/courses/presentation/widgets/course_rating_dialog.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/now_playing_banner.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/quizzes_list.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/video_list.dart';
@@ -124,7 +125,6 @@ class _CourseLearningPageState extends State<CourseLearningPage>
     );
   }
 
-  // Rate Course Bottom Sheet (simplified - no ownership check needed)
   void _showRateCourseBottomSheet(
     BuildContext context,
     AppLocalizations t,
@@ -132,7 +132,7 @@ class _CourseLearningPageState extends State<CourseLearningPage>
   ) {
     final authState = context.read<AuthBloc>().state;
 
-    // Only check if user is logged in
+    // Check if user is logged in
     if (authState.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -149,25 +149,42 @@ class _CourseLearningPageState extends State<CourseLearningPage>
       return;
     }
 
-    // TODO: Show your rating bottom sheet widget here
-    // Example:
-    // showModalBottomSheet(
-    //   context: context,
-    //   isScrollControlled: true,
-    //   backgroundColor: Colors.transparent,
-    //   builder: (context) => RateCourseBottomSheet(
-    //     course: widget.course,
-    //   ),
-    // );
+    // Check if user is the instructor
+    if (authState.user!.id == widget.course.instructorId) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            t.instructor_cannot_rate_error ??
+                'Instructors cannot rate their own courses',
+          ),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
 
-    // Temporary snackbar
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text('Rating bottom sheet will be implemented'),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
+    // Get the user's existing rating (if any)
+    context
+        .read<CoursesBloc>()
+        .getUserRating(authState.user!.id, widget.course.id)
+        .then((existingRating) {
+          // Show the rating dialog
+          showDialog(
+            context: context,
+            builder: (dialogContext) => BlocProvider.value(
+              value: context.read<CoursesBloc>(),
+              child: CourseRatingDialog(
+                courseId: widget.course.id,
+                userId: authState.user!.id,
+                existingRating: existingRating,
+              ),
+            ),
+          );
+        });
   }
 
   @override
@@ -175,91 +192,145 @@ class _CourseLearningPageState extends State<CourseLearningPage>
     final t = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
-    if (_youtubeController == null) {
-      return Scaffold(
-        backgroundColor: colorScheme.surface,
-        appBar: AppBar(
-          title: Text(widget.course.title),
-          centerTitle: true,
-          elevation: 0,
-          actions: [
-            // AI Assistant Button
-            IconButton(
-              icon: const Icon(Icons.smart_toy_outlined),
-              tooltip: t.ai_assistant ?? 'AI Assistant',
-              onPressed: () => _showAIAssistantSnackbar(context, t),
+    return BlocListener<CoursesBloc, CoursesState>(
+      listener: (context, state) {
+        if (state.status == CoursesStatus.ratingAdded) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                t.rating_added_successfully ?? 'Rating added successfully!',
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
             ),
-            // Rate Course Button
-            IconButton(
-              icon: const Icon(Icons.star_outline_rounded),
-              tooltip: t.rate_course ?? 'Rate Course',
-              onPressed: () =>
-                  _showRateCourseBottomSheet(context, t, colorScheme),
-            ),
-          ],
-        ),
-        body: _buildCourseContent(context, t, colorScheme, null),
-      );
-    }
+          );
+        }
 
-    return YoutubePlayerBuilder(
-      onEnterFullScreen: () {
-        _isFullScreen = true;
-        SystemChrome.setPreferredOrientations([
-          DeviceOrientation.landscapeLeft,
-          DeviceOrientation.landscapeRight,
-        ]);
-      },
-      onExitFullScreen: () {
-        _isFullScreen = false;
-        SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-      },
-      player: YoutubePlayer(
-        controller: _youtubeController!,
-        showVideoProgressIndicator: true,
-        progressIndicatorColor: colorScheme.primary,
-        progressColors: ProgressBarColors(
-          playedColor: colorScheme.primary,
-          handleColor: colorScheme.primary,
-          bufferedColor: colorScheme.primary.withOpacity(0.3),
-          backgroundColor: Colors.grey.withOpacity(0.3),
-        ),
-        onReady: () {
-          _isPlayerReady = true;
-        },
-        onEnded: (data) {
-          if (_autoPlayNext) {
-            _playNextVideo();
-          }
-        },
-        bottomActions: [
-          CurrentPosition(),
-          const SizedBox(width: 8),
-          ProgressBar(isExpanded: true),
-          const SizedBox(width: 8),
-          RemainingDuration(),
-          PlaybackSpeedButton(),
-          FullScreenButton(),
-        ],
-        topActions: [
-          const SizedBox(width: 8.0),
-          Expanded(
-            child: Text(
-              _selectedVideo?.title ?? '',
-              style: const TextStyle(color: Colors.white, fontSize: 16.0),
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              textDirection: TextDirection.ltr,
+        if (state.status == CoursesStatus.ratingUpdated) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                t.rating_updated_successfully ?? 'Rating updated successfully!',
+              ),
+              backgroundColor: Colors.green,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
             ),
-          ),
-        ],
-      ),
-      builder: (context, player) {
-        return Scaffold(
-          backgroundColor: colorScheme.surface,
-          body: _buildCourseContent(context, t, colorScheme, player),
-        );
+          );
+        }
+
+        if (state.status == CoursesStatus.ratingDeleted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                t.rating_deleted_successfully ?? 'Rating deleted successfully!',
+              ),
+              backgroundColor: Colors.orange,
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
       },
+      child: _youtubeController == null
+          ? Scaffold(
+              backgroundColor: colorScheme.surface,
+              appBar: AppBar(
+                title: Text(widget.course.title),
+                centerTitle: true,
+                elevation: 0,
+                actions: [
+                  // AI Assistant Button
+                  IconButton(
+                    icon: const Icon(Icons.smart_toy_outlined),
+                    tooltip: t.ai_assistant ?? 'AI Assistant',
+                    onPressed: () => _showAIAssistantSnackbar(context, t),
+                  ),
+                  // Rate Course Button
+                  IconButton(
+                    icon: const Icon(Icons.star_outline_rounded),
+                    tooltip: t.rate_course ?? 'Rate Course',
+                    onPressed: () =>
+                        _showRateCourseBottomSheet(context, t, colorScheme),
+                  ),
+                ],
+              ),
+              body: _buildCourseContent(context, t, colorScheme, null),
+            )
+          : YoutubePlayerBuilder(
+              onEnterFullScreen: () {
+                _isFullScreen = true;
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.landscapeLeft,
+                  DeviceOrientation.landscapeRight,
+                ]);
+              },
+              onExitFullScreen: () {
+                _isFullScreen = false;
+                SystemChrome.setPreferredOrientations([
+                  DeviceOrientation.portraitUp,
+                ]);
+              },
+              player: YoutubePlayer(
+                controller: _youtubeController!,
+                showVideoProgressIndicator: true,
+                progressIndicatorColor: colorScheme.primary,
+                progressColors: ProgressBarColors(
+                  playedColor: colorScheme.primary,
+                  handleColor: colorScheme.primary,
+                  bufferedColor: colorScheme.primary.withOpacity(0.3),
+                  backgroundColor: Colors.grey.withOpacity(0.3),
+                ),
+                onReady: () {
+                  _isPlayerReady = true;
+                },
+                onEnded: (data) {
+                  if (_autoPlayNext) {
+                    _playNextVideo();
+                  }
+                },
+                bottomActions: [
+                  CurrentPosition(),
+                  const SizedBox(width: 8),
+                  ProgressBar(isExpanded: true),
+                  const SizedBox(width: 8),
+                  RemainingDuration(),
+                  PlaybackSpeedButton(),
+                  FullScreenButton(),
+                ],
+                topActions: [
+                  const SizedBox(width: 8.0),
+                  Expanded(
+                    child: Text(
+                      _selectedVideo?.title ?? '',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.0,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                      textDirection: TextDirection.ltr,
+                    ),
+                  ),
+                ],
+              ),
+              builder: (context, player) {
+                return Scaffold(
+                  backgroundColor: colorScheme.surface,
+                  body: _buildCourseContent(context, t, colorScheme, player),
+                );
+              },
+            ),
     );
   }
 

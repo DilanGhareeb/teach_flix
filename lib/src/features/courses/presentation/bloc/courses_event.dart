@@ -267,3 +267,56 @@ class DeleteCourseEvent extends CoursesEvent {
   @override
   List<Object> get props => [courseId];
 }
+
+class AddRatingEvent extends CoursesEvent {
+  final String userId;
+  final String courseId;
+  final double rating;
+  final String comment;
+
+  const AddRatingEvent({
+    required this.userId,
+    required this.courseId,
+    required this.rating,
+    required this.comment,
+  });
+
+  @override
+  List<Object?> get props => [userId, courseId, rating, comment];
+}
+
+class UpdateRatingEvent extends CoursesEvent {
+  final String ratingId;
+  final double rating;
+  final String comment;
+
+  const UpdateRatingEvent({
+    required this.ratingId,
+    required this.rating,
+    required this.comment,
+  });
+
+  @override
+  List<Object?> get props => [ratingId, rating, comment];
+}
+
+class DeleteRatingEvent extends CoursesEvent {
+  final String ratingId;
+
+  const DeleteRatingEvent({required this.ratingId});
+
+  @override
+  List<Object?> get props => [ratingId];
+}
+
+class LoadUserRatingEvent extends CoursesEvent {
+  final String userId;
+  final String courseId;
+
+  const LoadUserRatingEvent({required this.userId, required this.courseId});
+
+  @override
+  List<Object?> get props => [userId, courseId];
+}
+
+class LoadTopRatedCoursesEvent extends CoursesEvent {}

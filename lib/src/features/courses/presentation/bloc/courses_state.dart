@@ -22,6 +22,9 @@ enum CoursesStatus {
   deleting,
   courseDeleted,
   loadingForEdit,
+  ratingAdded,
+  ratingUpdated,
+  ratingDeleted,
 }
 
 class CoursesState extends Equatable {
@@ -36,6 +39,7 @@ class CoursesState extends Equatable {
   final String? uploadedImageUrl;
   final double? imageUploadProgress;
   final List<ChapterEntity>? chapters;
+  final List<CourseEntity>? topRatedCourses;
   final String? initialImageUrl;
 
   const CoursesState({
@@ -50,6 +54,7 @@ class CoursesState extends Equatable {
     this.uploadedImageUrl,
     this.imageUploadProgress,
     this.chapters,
+    this.topRatedCourses,
     this.initialImageUrl,
   });
 
@@ -65,6 +70,7 @@ class CoursesState extends Equatable {
     String? uploadedImageUrl,
     double? imageUploadProgress,
     List<ChapterEntity>? chapters,
+    List<CourseEntity>? topRatedCourses,
     bool clearImage = false,
     bool clearChapters = false,
     String? initialImageUrl,
@@ -74,6 +80,7 @@ class CoursesState extends Equatable {
       courses: courses ?? this.courses,
       enrolledCourses: enrolledCourses ?? this.enrolledCourses,
       selectedCourse: selectedCourse ?? this.selectedCourse,
+      topRatedCourses: topRatedCourses ?? this.topRatedCourses,
       searchQuery: searchQuery ?? this.searchQuery,
       currentCategory: currentCategory ?? this.currentCategory,
       failure: failure,
@@ -97,6 +104,7 @@ class CoursesState extends Equatable {
     selectedImage,
     uploadedImageUrl,
     imageUploadProgress,
+    topRatedCourses,
     chapters,
     initialImageUrl,
   ];

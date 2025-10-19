@@ -2287,6 +2287,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Total Amount'**
   String get total_amount;
+
+  /// Error message indicating that the user must be enrolled in a course to rate it
+  ///
+  /// In en, this message translates to:
+  /// **'You must be enrolled in this course to rate it'**
+  String get not_enrolled_error;
+
+  /// Error message indicating that the user has already rated a course
+  ///
+  /// In en, this message translates to:
+  /// **'You have already rated this course. You can edit your existing rating.'**
+  String get already_rated_error;
+
+  /// Error message indicating that the rating must be between 1 and 5 stars
+  ///
+  /// In en, this message translates to:
+  /// **'Rating must be between 1 and 5 stars'**
+  String get invalid_rating_error;
+
+  /// Error message indicating that instructors cannot rate their own courses
+  ///
+  /// In en, this message translates to:
+  /// **'Instructors cannot rate their own courses'**
+  String get instructor_cannot_rate_error;
+
+  /// Button text for editing a rating
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Rating'**
+  String get edit_rating;
+
+  /// Button text for deleting a rating
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Rating'**
+  String get delete_rating;
+
+  /// Confirmation dialog message asking user to confirm rating deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your rating?'**
+  String get delete_rating_confirmation;
+
+  /// Label for the comment input field
+  ///
+  /// In en, this message translates to:
+  /// **'Comment'**
+  String get comment;
+
+  /// Placeholder text for the comment input field, encouraging users to share their thoughts
+  ///
+  /// In en, this message translates to:
+  /// **'Share your thoughts about this course...'**
+  String get share_your_thoughts;
+
+  /// Text for the button to submit a rating or comment
+  ///
+  /// In en, this message translates to:
+  /// **'Submit'**
+  String get submit;
+
+  /// Text for the button to update an existing rating or comment
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// Rating level: Poor (1 star)
+  ///
+  /// In en, this message translates to:
+  /// **'Poor'**
+  String get poor;
+
+  /// Rating level: Fair (2 stars)
+  ///
+  /// In en, this message translates to:
+  /// **'Fair'**
+  String get fair;
+
+  /// Rating level: Good (3 stars)
+  ///
+  /// In en, this message translates to:
+  /// **'Good'**
+  String get good;
+
+  /// Rating level: Very Good (4 stars)
+  ///
+  /// In en, this message translates to:
+  /// **'Very Good'**
+  String get very_good;
+
+  /// Rating level: Excellent (5 stars)
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent'**
+  String get excellent;
+
+  /// Success message displayed after a rating is added
+  ///
+  /// In en, this message translates to:
+  /// **'Rating added successfully!'**
+  String get rating_added_successfully;
+
+  /// Success message displayed after a rating is updated
+  ///
+  /// In en, this message translates to:
+  /// **'Rating updated successfully!'**
+  String get rating_updated_successfully;
+
+  /// Success message displayed after a rating is deleted
+  ///
+  /// In en, this message translates to:
+  /// **'Rating deleted successfully!'**
+  String get rating_deleted_successfully;
+
+  /// Label indicating the user's current rating
+  ///
+  /// In en, this message translates to:
+  /// **'Your Rating'**
+  String get your_rating;
+
+  /// Message indicating that a feature is coming soon
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon!'**
+  String get coming_soon;
+
+  /// Label indicating that something happened just now
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get just_now;
+
+  /// Message indicating that there are no reviews yet
+  ///
+  /// In en, this message translates to:
+  /// **'No reviews yet'**
+  String get no_reviews_yet;
+
+  /// Label for the top-rated courses section
+  ///
+  /// In en, this message translates to:
+  /// **'Top Rated Courses'**
+  String get top_rated_courses;
 }
 
 class _AppLocalizationsDelegate

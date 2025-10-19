@@ -262,12 +262,17 @@ class CourseCard extends StatelessWidget {
                       // Rating and Chapters
                       Row(
                         children: [
+                          // Star Icon
                           Icon(
                             Icons.star_rounded,
                             size: 18,
-                            color: Colors.amber[700],
+                            color: averageRating > 0
+                                ? Colors.amber[700]
+                                : Colors.grey[400],
                           ),
                           const SizedBox(width: 4),
+
+                          // Average Rating
                           Text(
                             averageRating > 0
                                 ? averageRating.toStringAsFixed(1)
@@ -278,19 +283,26 @@ class CourseCard extends StatelessWidget {
                             ),
                           ),
                           const SizedBox(width: 4),
+
+                          // Number of Ratings in Parentheses
                           Text(
                             '(${course.ratings.length})',
                             style: textTheme.bodySmall?.copyWith(
                               color: colorScheme.onSurface.withOpacity(0.6),
                             ),
                           ),
+
                           const Spacer(),
+
+                          // Chapters Icon
                           Icon(
                             Icons.menu_book_rounded,
                             size: 16,
                             color: colorScheme.primary,
                           ),
                           const SizedBox(width: 4),
+
+                          // Number of Chapters
                           Text(
                             '${course.chapters.length}',
                             style: textTheme.bodySmall?.copyWith(

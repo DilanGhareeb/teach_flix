@@ -134,3 +134,19 @@ class AlreadyEnrolledFailure extends Failure {
 class InstructorCannotPurchaseOwnCourseFailure extends Failure {
   const InstructorCannotPurchaseOwnCourseFailure({super.code});
 }
+
+class NotEnrolledFailure extends Failure {
+  const NotEnrolledFailure({super.code});
+}
+
+class AlreadyRatedFailure extends Failure {
+  const AlreadyRatedFailure({super.code});
+}
+
+class InvalidRatingValueFailure extends Failure {
+  const InvalidRatingValueFailure({super.code});
+}
+
+class InstructorCannotRateOwnCourseFailure extends Failure {
+  const InstructorCannotRateOwnCourseFailure({super.code});
+}

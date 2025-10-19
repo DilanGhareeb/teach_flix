@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/course_rating_entity.dart';
 
 abstract class CourseRepository {
   Future<Either<Failure, List<CourseEntity>>> getAllCourses();
@@ -23,6 +24,10 @@ abstract class CourseRepository {
     String userId,
     String courseId,
   );
+
+  Future<Either<Failure, List<CourseEntity>>> getTopRatedCourses({
+    int limit = 3,
+  });
   Future<Either<Failure, void>> purchaseCourse(String userId, String courseId);
   Stream<Either<Failure, List<CourseEntity>>> watchCoursesByInstructor(
     String instructorId,
@@ -30,5 +35,25 @@ abstract class CourseRepository {
   Future<Either<Failure, String>> uploadCourseImage(
     File imageFile, {
     void Function(double progress)? onProgress,
+  });
+
+  Future<Either<Failure, void>> addRating({
+    required String userId,
+    required String courseId,
+    required double rating,
+    required String comment,
+  });
+
+  Future<Either<Failure, void>> updateRating({
+    required String ratingId,
+    required double rating,
+    required String comment,
+  });
+
+  Future<Either<Failure, void>> deleteRating(String ratingId);
+
+  Future<Either<Failure, CourseRatingEntity?>> getUserRatingForCourse({
+    required String userId,
+    required String courseId,
   });
 }

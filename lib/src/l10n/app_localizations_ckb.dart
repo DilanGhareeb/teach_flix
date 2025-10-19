@@ -1137,4 +1137,85 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get total_amount => 'کۆی گشتی';
+
+  @override
+  String get not_enrolled_error =>
+      'دەبێت لەم خولەدا ناونووس کرابیت بۆ هەڵسەنگاندنی';
+
+  @override
+  String get already_rated_error =>
+      'تۆ پێشتر ئەم خولەت هەڵسەنگاندووە. دەتوانیت دەستکاری هەڵسەنگاندنی ئێستات بکەیت.';
+
+  @override
+  String get invalid_rating_error =>
+      'هەڵسەنگاندن دەبێت لە نێوان 1 بۆ 5 ئەستێرە بێت';
+
+  @override
+  String get instructor_cannot_rate_error =>
+      'ڕاهێنەر ناتوانێت خولەکانی خۆی هەڵبسەنگێنێت';
+
+  @override
+  String get edit_rating => 'دەستکاریکردنی هەڵسەنگاندن';
+
+  @override
+  String get delete_rating => 'سڕینەوەی هەڵسەنگاندن';
+
+  @override
+  String get delete_rating_confirmation =>
+      'دڵنیایت لە سڕینەوەی هەڵسەنگاندنەکەت؟';
+
+  @override
+  String get comment => 'تێبینی';
+
+  @override
+  String get share_your_thoughts =>
+      'بیر و بۆچوونەکانت دەربارەی ئەم خولە بنووسە...';
+
+  @override
+  String get submit => 'ناردن';
+
+  @override
+  String get update => 'نوێکردنەوە';
+
+  @override
+  String get poor => 'لاواز';
+
+  @override
+  String get fair => 'مامناوەند';
+
+  @override
+  String get good => 'باش';
+
+  @override
+  String get very_good => 'زۆر باش';
+
+  @override
+  String get excellent => 'نایاب';
+
+  @override
+  String get rating_added_successfully =>
+      'هەڵسەنگاندنەکە بە سەرکەوتوویی زیادکرا!';
+
+  @override
+  String get rating_updated_successfully =>
+      'هەڵسەنگاندنەکە بە سەرکەوتوویی نوێکرایەوە!';
+
+  @override
+  String get rating_deleted_successfully =>
+      'هەڵسەنگاندنەکە بە سەرکەوتوویی سڕایەوە!';
+
+  @override
+  String get your_rating => 'هەڵسەنگاندنی تۆ';
+
+  @override
+  String get coming_soon => 'بەم زووانە!';
+
+  @override
+  String get just_now => 'ئێستا';
+
+  @override
+  String get no_reviews_yet => 'هێشتا هەڵسەنگاندن نییە';
+
+  @override
+  String get top_rated_courses => 'باشترین کۆرسەکەکان';
 }

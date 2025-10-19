@@ -5,6 +5,7 @@ import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/courses/data/datasources/course_firebase_datasource.dart';
 import 'package:teach_flix/src/features/courses/data/models/course_model.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/course_rating_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/repositories/course_repository.dart';
 
 class CourseRepositoryImpl implements CourseRepository {
@@ -108,5 +109,64 @@ class CourseRepositoryImpl implements CourseRepository {
     void Function(double progress)? onProgress,
   }) async {
     return await dataSource.uploadImage(imageFile, onProgress: onProgress);
+  }
+
+  @override
+  Future<Either<Failure, void>> addRating({
+    required String userId,
+    required String courseId,
+    required double rating,
+    required String comment,
+  }) async {
+    return await dataSource.addRating(
+      userId: userId,
+      courseId: courseId,
+      rating: rating,
+      comment: comment,
+    );
+  }
+
+  @override
+  Future<Either<Failure, void>> updateRating({
+    required String ratingId,
+    required double rating,
+    required String comment,
+  }) async {
+    return await dataSource.updateRating(
+      ratingId: ratingId,
+      rating: rating,
+      comment: comment,
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<CourseEntity>>> getTopRatedCourses({
+    int limit = 3,
+  }) async {
+    try {
+      final result = await dataSource.getTopRatedCourses(limit: limit);
+      return result.fold(
+        (failure) => Left(failure),
+        (courseModels) => Right(courseModels.map((model) => model).toList()),
+      );
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteRating(String ratingId) async {
+    return await dataSource.deleteRating(ratingId);
+  }
+
+  @override
+  Future<Either<Failure, CourseRatingEntity?>> getUserRatingForCourse({
+    required String userId,
+    required String courseId,
+  }) async {
+    return await dataSource.getUserRatingForCourse(
+      userId: userId,
+      courseId: courseId,
+    );
   }
 }

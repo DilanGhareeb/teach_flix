@@ -7,11 +7,17 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.da
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/course_rating_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/video_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/add_rating_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/delete_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/enroll_in_course.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/get_all_courses.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/get_course_by_id.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/create_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_top_rated_courses.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_user_rating_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/update_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/upload_course_image.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/search_courses.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/get_courses_by_category.dart';
@@ -29,6 +35,7 @@ part 'courses_state.dart';
 class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final GetAllCourses _getAllCourses;
   final GetCourseById _getCourseById;
+  final GetTopRatedCourses getTopRatedCourses;
   final CreateCourse _createCourse;
   final UploadCourseImage _uploadCourseImage;
   final SearchCourses _searchCourses;
@@ -40,6 +47,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final AddVideoToChapter _addVideoToChapter;
   final UpdateCourse _updateCourse;
   final DeleteCourse _deleteCourse;
+  final AddRating _addRating;
+  final UpdateRating _updateRating;
+  final DeleteRating _deleteRating;
+  final GetUserRating _getUserRating;
 
   final AuthBloc _authBloc;
   StreamSubscription<AuthState>? _authSubscription;
@@ -48,6 +59,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required GetAllCourses getAllCourses,
     required GetCourseById getCourseById,
     required CreateCourse createCourse,
+    required this.getTopRatedCourses,
     required UploadCourseImage uploadCourseImage,
     required SearchCourses searchCourses,
     required GetCoursesByCategory getCoursesByCategory,
@@ -59,6 +71,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required UpdateCourse updateCourse,
     required DeleteCourse deleteCourse,
     required AuthBloc authBloc,
+    required AddRating addRating,
+    required UpdateRating updateRating,
+    required DeleteRating deleteRating,
+    required GetUserRating getUserRating,
   }) : _getAllCourses = getAllCourses,
        _getCourseById = getCourseById,
        _createCourse = createCourse,
@@ -73,6 +89,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
        _updateCourse = updateCourse,
        _deleteCourse = deleteCourse,
        _authBloc = authBloc,
+       _addRating = addRating,
+       _updateRating = updateRating,
+       _deleteRating = deleteRating,
+       _getUserRating = getUserRating,
        super(const CoursesState()) {
     on<LoadCoursesEvent>(_onLoadCourses);
     on<LoadCourseDetailEvent>(_onLoadCourseDetail);
@@ -99,6 +119,10 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<LoadExistingCourseForEditEvent>(onLoadExistingCourseForEdit);
     on<UpdateCourseEvent>(onUpdateCourse);
     on<DeleteCourseEvent>(onDeleteCourse);
+    on<AddRatingEvent>(_onAddRating);
+    on<UpdateRatingEvent>(_onUpdateRating);
+    on<DeleteRatingEvent>(_onDeleteRating);
+    on<LoadTopRatedCoursesEvent>(_onLoadTopRatedCourses);
     on<ClearCoursesDataEvent>(_onClearCoursesData);
     _authSubscription = _authBloc.stream.listen((authState) {
       if (authState.status == AuthStatus.unauthenticated ||
@@ -131,6 +155,28 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
           failure: null,
         ),
       ),
+    );
+  }
+
+  Future<void> _onLoadTopRatedCourses(
+    LoadTopRatedCoursesEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    final result = await getTopRatedCourses(
+      limit: 3,
+    ); // <--- This line fetches the data
+
+    result.fold(
+      (failure) {
+        emit(
+          state.copyWith(topRatedCourses: []),
+        ); // <--- If failure, it sets to an empty list
+      },
+      (courses) {
+        emit(
+          state.copyWith(topRatedCourses: courses),
+        ); // <--- If success, it sets to the fetched courses
+      },
     );
   }
 
@@ -802,5 +848,96 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
         state.copyWith(status: CoursesStatus.courseDeleted, failure: null),
       ),
     );
+  }
+
+  Future<void> _onAddRating(
+    AddRatingEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    emit(state.copyWith(status: CoursesStatus.loading));
+
+    final result = await _addRating(
+      params: AddRatingParams(
+        userId: event.userId,
+        courseId: event.courseId,
+        rating: event.rating,
+        comment: event.comment,
+      ),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (_) {
+        // Reload the course to show updated ratings
+        add(LoadCourseDetailEvent(event.courseId));
+
+        emit(state.copyWith(status: CoursesStatus.ratingAdded));
+      },
+    );
+  }
+
+  Future<void> _onUpdateRating(
+    UpdateRatingEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    emit(state.copyWith(status: CoursesStatus.loading));
+
+    final result = await _updateRating(
+      params: UpdateRatingParams(
+        ratingId: event.ratingId,
+        rating: event.rating,
+        comment: event.comment,
+      ),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (_) {
+        // Reload the current course if it's loaded
+        if (state.selectedCourse != null) {
+          add(LoadCourseDetailEvent(state.selectedCourse!.id));
+        }
+
+        emit(state.copyWith(status: CoursesStatus.ratingUpdated));
+      },
+    );
+  }
+
+  Future<void> _onDeleteRating(
+    DeleteRatingEvent event,
+    Emitter<CoursesState> emit,
+  ) async {
+    emit(state.copyWith(status: CoursesStatus.loading));
+
+    final result = await _deleteRating(
+      params: DeleteRatingParams(ratingId: event.ratingId),
+    );
+
+    result.fold(
+      (failure) =>
+          emit(state.copyWith(status: CoursesStatus.failure, failure: failure)),
+      (_) {
+        // Reload the current course if it's loaded
+        if (state.selectedCourse != null) {
+          add(LoadCourseDetailEvent(state.selectedCourse!.id));
+        }
+
+        emit(state.copyWith(status: CoursesStatus.ratingDeleted));
+      },
+    );
+  }
+
+  // 4. Helper method to get user's rating for a course
+  Future<CourseRatingEntity?> getUserRating(
+    String userId,
+    String courseId,
+  ) async {
+    final result = await _getUserRating(
+      params: GetUserRatingParams(userId: userId, courseId: courseId),
+    );
+
+    return result.fold((_) => null, (rating) => rating);
   }
 }

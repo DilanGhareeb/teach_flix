@@ -19,7 +19,6 @@ class CourseModel extends CourseEntity {
     required super.chapters,
   });
 
-  // Add this factory method
   factory CourseModel.fromEntity(CourseEntity entity) {
     return CourseModel(
       id: entity.id,
@@ -37,8 +36,22 @@ class CourseModel extends CourseEntity {
     );
   }
 
-  factory CourseModel.fromFirestore(DocumentSnapshot doc) {
+  static Future<CourseModel> fromFirestore(
+    DocumentSnapshot doc,
+    FirebaseFirestore firestore,
+  ) async {
     final data = doc.data() as Map<String, dynamic>;
+
+    // Fetch ratings from separate collection
+    final ratingsSnapshot = await firestore
+        .collection('ratings')
+        .where('courseId', isEqualTo: doc.id)
+        .get();
+
+    final ratings = ratingsSnapshot.docs
+        .map((ratingDoc) => CourseRatingModel.fromFirestore(ratingDoc))
+        .toList();
+
     return CourseModel(
       id: doc.id,
       title: data['title'] as String,
@@ -50,14 +63,7 @@ class CourseModel extends CourseEntity {
       studentsEnrolled: data['studentsEnrolled'] as int?,
       instructorId: data['instructorId'] as String,
       createAt: (data['createAt'] as Timestamp).toDate(),
-      ratings:
-          (data['ratings'] as List<dynamic>?)
-              ?.map(
-                (rating) =>
-                    CourseRatingModel.fromMap(rating as Map<String, dynamic>),
-              )
-              .toList() ??
-          [],
+      ratings: ratings,
       chapters:
           (data['chapters'] as List<dynamic>?)
               ?.map(
@@ -81,9 +87,7 @@ class CourseModel extends CourseEntity {
       'studentsEnrolled': studentsEnrolled,
       'instructorId': instructorId,
       'createAt': Timestamp.fromDate(createAt),
-      'ratings': ratings
-          .map((rating) => CourseRatingModel.fromEntity(rating).toMap())
-          .toList(),
+      // Don't store ratings in course document
       'chapters': chapters
           .map((chapter) => ChapterModel.fromEntity(chapter).toMap())
           .toList(),

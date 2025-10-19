@@ -1465,5 +1465,101 @@
   "total_amount": "Total Amount",
   "@total_amount": {
     "description": "Label for the total amount of a course purchase"
+  },
+  "not_enrolled_error": "You must be enrolled in this course to rate it",
+  "@not_enrolled_error": {
+    "description": "Error message indicating that the user must be enrolled in a course to rate it"
+  },
+  "already_rated_error": "You have already rated this course. You can edit your existing rating.",
+  "@already_rated_error": {
+    "description": "Error message indicating that the user has already rated a course"
+  },
+  "invalid_rating_error": "Rating must be between 1 and 5 stars",
+  "@invalid_rating_error": {
+    "description": "Error message indicating that the rating must be between 1 and 5 stars"
+  },
+  "instructor_cannot_rate_error": "Instructors cannot rate their own courses",
+  "@instructor_cannot_rate_error": {
+    "description": "Error message indicating that instructors cannot rate their own courses"
+  },
+  "edit_rating": "Edit Rating",
+  "@edit_rating": {
+    "description": "Button text for editing a rating"
+  },
+  "delete_rating": "Delete Rating",
+  "@delete_rating": {
+    "description": "Button text for deleting a rating"
+  },
+  "delete_rating_confirmation": "Are you sure you want to delete your rating?",
+  "@delete_rating_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm rating deletion"
+  },
+  "comment": "Comment",
+  "@comment": {
+    "description": "Label for the comment input field"
+  },
+  "share_your_thoughts": "Share your thoughts about this course...",
+  "@share_your_thoughts": {
+    "description": "Placeholder text for the comment input field, encouraging users to share their thoughts"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Text for the button to submit a rating or comment"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Text for the button to update an existing rating or comment"
+  },
+  "poor": "Poor",
+  "@poor": {
+    "description": "Rating level: Poor (1 star)"
+  },
+  "fair": "Fair",
+  "@fair": {
+    "description": "Rating level: Fair (2 stars)"
+  },
+  "good": "Good",
+  "@good": {
+    "description": "Rating level: Good (3 stars)"
+  },
+  "very_good": "Very Good",
+  "@very_good": {
+    "description": "Rating level: Very Good (4 stars)"
+  },
+  "excellent": "Excellent",
+  "@excellent": {
+    "description": "Rating level: Excellent (5 stars)"
+  },
+  "rating_added_successfully": "Rating added successfully!",
+  "@rating_added_successfully": {
+    "description": "Success message displayed after a rating is added"
+  },
+  "rating_updated_successfully": "Rating updated successfully!",
+  "@rating_updated_successfully": {
+    "description": "Success message displayed after a rating is updated"
+  },
+  "rating_deleted_successfully": "Rating deleted successfully!",
+  "@rating_deleted_successfully": {
+    "description": "Success message displayed after a rating is deleted"
+  },
+  "your_rating": "Your Rating",
+  "@your_rating": {
+    "description": "Label indicating the user's current rating"
+  },
+  "coming_soon": "Coming soon!",
+  "@coming_soon": {
+    "description": "Message indicating that a feature is coming soon"
+  },
+  "just_now": "Just now",
+  "@just_now": {
+    "description": "Label indicating that something happened just now"
+  },
+  "no_reviews_yet": "No reviews yet",
+  "@no_reviews_yet": {
+    "description": "Message indicating that there are no reviews yet"
+  },
+  "top_rated_courses": "Top Rated Courses",
+  "@top_rated_courses": {
+    "description": "Label for the top-rated courses section"
   }
 }

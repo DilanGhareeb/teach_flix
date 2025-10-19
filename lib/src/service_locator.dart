@@ -20,9 +20,14 @@ import 'package:teach_flix/src/features/auth/domain/usecase/watch_auth_session.d
 import 'package:teach_flix/src/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/withdraw_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/add_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/delete_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/delete_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/enroll_in_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_top_rated_courses.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_user_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/update_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/update_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/upload_course_image.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/datasources/instructor_stats_firebase_datasource.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/repositories/instructor_stats_repository_impl.dart';
@@ -163,6 +168,11 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => SearchCourses(sl()));
   sl.registerFactory(() => UpdateCourse(sl()));
   sl.registerFactory(() => DeleteCourse(sl()));
+  sl.registerLazySingleton(() => AddRating(sl()));
+  sl.registerLazySingleton(() => GetUserRating(sl()));
+  sl.registerLazySingleton(() => UpdateRating(sl()));
+  sl.registerLazySingleton(() => DeleteRating(sl()));
+  sl.registerLazySingleton(() => GetTopRatedCourses(sl()));
 
   // ========== Courses feature - Bloc ==========
   // CHANGED: Now can inject AuthBloc since it's a singleton
@@ -181,7 +191,12 @@ Future<void> setupServiceLocator() async {
       uploadCourseImage: sl(),
       updateCourse: sl(),
       deleteCourse: sl(),
-      authBloc: sl<AuthBloc>(), // CHANGED: Inject AuthBloc from GetIt
+      addRating: sl(),
+      getUserRating: sl(),
+      deleteRating: sl(),
+      updateRating: sl(),
+      getTopRatedCourses: sl(),
+      authBloc: sl<AuthBloc>(),
     ),
   );
 

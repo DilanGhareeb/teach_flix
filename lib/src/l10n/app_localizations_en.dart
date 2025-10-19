@@ -1140,4 +1140,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get total_amount => 'Total Amount';
+
+  @override
+  String get not_enrolled_error =>
+      'You must be enrolled in this course to rate it';
+
+  @override
+  String get already_rated_error =>
+      'You have already rated this course. You can edit your existing rating.';
+
+  @override
+  String get invalid_rating_error => 'Rating must be between 1 and 5 stars';
+
+  @override
+  String get instructor_cannot_rate_error =>
+      'Instructors cannot rate their own courses';
+
+  @override
+  String get edit_rating => 'Edit Rating';
+
+  @override
+  String get delete_rating => 'Delete Rating';
+
+  @override
+  String get delete_rating_confirmation =>
+      'Are you sure you want to delete your rating?';
+
+  @override
+  String get comment => 'Comment';
+
+  @override
+  String get share_your_thoughts => 'Share your thoughts about this course...';
+
+  @override
+  String get submit => 'Submit';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get poor => 'Poor';
+
+  @override
+  String get fair => 'Fair';
+
+  @override
+  String get good => 'Good';
+
+  @override
+  String get very_good => 'Very Good';
+
+  @override
+  String get excellent => 'Excellent';
+
+  @override
+  String get rating_added_successfully => 'Rating added successfully!';
+
+  @override
+  String get rating_updated_successfully => 'Rating updated successfully!';
+
+  @override
+  String get rating_deleted_successfully => 'Rating deleted successfully!';
+
+  @override
+  String get your_rating => 'Your Rating';
+
+  @override
+  String get coming_soon => 'Coming soon!';
+
+  @override
+  String get just_now => 'Just now';
+
+  @override
+  String get no_reviews_yet => 'No reviews yet';
+
+  @override
+  String get top_rated_courses => 'Top Rated Courses';
 }

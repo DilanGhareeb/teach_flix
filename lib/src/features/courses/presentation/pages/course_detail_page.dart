@@ -1,7 +1,9 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
+import 'package:teach_flix/src/features/courses/presentation/pages/all_reviews_page.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
@@ -727,7 +729,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
 
                   // Reviews Section
                   if (course.ratings.isNotEmpty)
-                    _buildReviewsSection(course, t, colorScheme),
+                    _buildReviewsSection(context, course, t, colorScheme),
 
                   const SizedBox(height: 120),
                 ],
@@ -889,6 +891,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
   }
 
   Widget _buildReviewsSection(
+    BuildContext context,
     CourseEntity course,
     AppLocalizations t,
     ColorScheme colorScheme,
@@ -900,21 +903,46 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                t.student_reviews ?? 'Student Reviews',
-                style: Theme.of(
-                  context,
-                ).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
-              ),
-              if (course.ratings.length > 3)
-                TextButton(
-                  onPressed: () {},
-                  child: Text(t.view_all ?? 'View All'),
-                ),
-            ],
+          LayoutBuilder(
+            builder: (context, constraints) {
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Wrap title in Flexible so it can resize
+                  Flexible(
+                    child: AutoSizeText(
+                      t.student_reviews ?? 'Student Reviews',
+                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      minFontSize: 8,
+                      stepGranularity: 0.5,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+
+                  if (course.ratings.length > 3)
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (_) => AllReviewsPage(course: course),
+                          ),
+                        );
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          t.view_all ?? 'View All',
+                          style: Theme.of(context).textTheme.labelLarge,
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
           ),
           const SizedBox(height: 16),
           ListView.separated(
@@ -951,13 +979,25 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                rating.userId,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
+                              FutureBuilder<String>(
+                                future: context.read<AuthBloc>().getUserName(
+                                  rating.userId,
                                 ),
-                                overflow: TextOverflow.ellipsis,
+                                builder: (context, snapshot) {
+                                  final userName = snapshot.hasData
+                                      ? snapshot.data!
+                                      : snapshot.hasError
+                                      ? t.student ?? 'Student'
+                                      : '...';
+                                  return Text(
+                                    userName,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  );
+                                },
                               ),
                               Row(
                                 children: List.generate(5, (i) {

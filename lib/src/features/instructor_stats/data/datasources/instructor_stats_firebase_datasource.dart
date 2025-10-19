@@ -57,7 +57,6 @@ class InstructorStatsFirebaseDataSourceImpl
       final courseIds = coursesSnapshot.docs.map((doc) => doc.id).toList();
 
       // Get all transactions for this instructor
-      // REMOVED orderBy to avoid composite index requirement
       final transactionsSnapshot = await _firestore
           .collection('transactions')
           .where('instructorId', isEqualTo: instructorId)
@@ -77,7 +76,7 @@ class InstructorStatsFirebaseDataSourceImpl
       // Calculate detailed profit data for charts
       final detailedProfitData = _calculateDetailedProfits(transactions);
 
-      // Calculate total unique students
+      // Calculate total unique students (excluding instructors)
       final enrollmentsSnapshot = await _firestore
           .collection('enrollments')
           .where('courseId', whereIn: courseIds)
@@ -112,15 +111,299 @@ class InstructorStatsFirebaseDataSourceImpl
         ),
       );
     } on FirebaseException catch (e) {
-      print('Firebase Error: ${e.code} - ${e.message}');
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
-      print('Unknown Error: $e');
       return const Left(UnknownFailure());
     }
   }
 
-  // ADD this new helper method to the PRIVATE HELPER METHODS section:
+  @override
+  Future<Either<Failure, CourseStatsModel>> getCourseStats(
+    String courseId,
+  ) async {
+    try {
+      final courseDoc = await _firestore
+          .collection('courses')
+          .doc(courseId)
+          .get();
+
+      if (!courseDoc.exists) {
+        return const Left(NotFoundFailure());
+      }
+
+      final courseData = courseDoc.data()!;
+
+      // Get transactions for this course
+      final transactionsSnapshot = await _firestore
+          .collection('transactions')
+          .where('courseId', isEqualTo: courseId)
+          .where('type', isEqualTo: 'course_purchase')
+          .get();
+
+      final totalRevenue = transactionsSnapshot.docs.fold<double>(
+        0.0,
+        (sum, doc) => sum + (doc.data()['instructorProfit'] as num).toDouble(),
+      );
+
+      // Get ratings from ratings collection
+      final ratingsSnapshot = await _firestore
+          .collection('ratings')
+          .where('courseId', isEqualTo: courseId)
+          .get();
+
+      // Calculate average rating from ratings collection
+      double averageRating = 0.0;
+      int totalRatings = ratingsSnapshot.docs.length;
+
+      if (totalRatings > 0) {
+        final totalRating = ratingsSnapshot.docs.fold<double>(
+          0.0,
+          (sum, doc) => sum + (doc.data()['rating'] as num).toDouble(),
+        );
+        averageRating = totalRating / totalRatings;
+      }
+
+      return Right(
+        CourseStatsModel(
+          courseId: courseId,
+          courseTitle: courseData['title'] as String,
+          imageUrl: courseData['imageUrl'] as String?,
+          studentsEnrolled:
+              (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0,
+          coursePrice: (courseData['price'] as num).toDouble(),
+          totalRevenue: totalRevenue,
+          averageRating: averageRating,
+          totalRatings: totalRatings,
+          createdAt: (courseData['createAt'] as Timestamp).toDate(),
+        ),
+      );
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TransactionModel>>> getInstructorTransactions(
+    String instructorId, {
+    DateTime? startDate,
+    DateTime? endDate,
+    int? limit,
+  }) async {
+    try {
+      Query<Map<String, dynamic>> query = _firestore
+          .collection('transactions')
+          .where('instructorId', isEqualTo: instructorId)
+          .orderBy('createdAt', descending: true);
+
+      query = _applyDateFilters(query, startDate, endDate);
+
+      if (limit != null) {
+        query = query.limit(limit);
+      }
+
+      final snapshot = await query.get();
+      final transactions = snapshot.docs
+          .map((doc) => TransactionModel.fromFirestore(doc))
+          .toList();
+
+      return Right(transactions);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<TransactionModel>>> getCourseTransactions(
+    String courseId, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async {
+    try {
+      Query<Map<String, dynamic>> query = _firestore
+          .collection('transactions')
+          .where('courseId', isEqualTo: courseId)
+          .orderBy('createdAt', descending: true);
+
+      query = _applyDateFilters(query, startDate, endDate);
+
+      final snapshot = await query.get();
+      final transactions = snapshot.docs
+          .map((doc) => TransactionModel.fromFirestore(doc))
+          .toList();
+
+      return Right(transactions);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Stream<Either<Failure, InstructorStatsModel>> watchInstructorStats(
+    String instructorId,
+  ) {
+    late StreamController<Either<Failure, InstructorStatsModel>> controller;
+    StreamSubscription? coursesSub;
+    StreamSubscription? transactionsSub;
+    StreamSubscription? enrollmentsSub;
+    bool isCalculating = false;
+    bool isCancelled = false;
+
+    controller =
+        StreamController<Either<Failure, InstructorStatsModel>>.broadcast(
+          onCancel: () async {
+            isCancelled = true;
+
+            // Cancel all subscriptions
+            await coursesSub?.cancel();
+            await transactionsSub?.cancel();
+            await enrollmentsSub?.cancel();
+
+            coursesSub = null;
+            transactionsSub = null;
+            enrollmentsSub = null;
+
+            // Close controller if not already closed
+            if (!controller.isClosed) {
+              await controller.close();
+            }
+          },
+        );
+
+    final coursesStream = _firestore
+        .collection('courses')
+        .where('instructorId', isEqualTo: instructorId)
+        .snapshots();
+
+    final transactionsStream = _firestore
+        .collection('transactions')
+        .where('instructorId', isEqualTo: instructorId)
+        .snapshots();
+
+    final enrollmentsStream = _firestore
+        .collection('enrollments')
+        .where('isInstructor', isEqualTo: false)
+        .snapshots();
+
+    Future<void> recalculateStats() async {
+      // Check if cancelled or already calculating
+      if (isCancelled || controller.isClosed || isCalculating) return;
+
+      isCalculating = true;
+      try {
+        final result = await getInstructorStats(instructorId);
+
+        // Check again after async operation
+        if (!isCancelled && !controller.isClosed) {
+          controller.add(result);
+        }
+      } catch (e) {
+        if (!isCancelled && !controller.isClosed) {
+          controller.add(const Left(UnknownFailure()));
+        }
+      } finally {
+        isCalculating = false;
+      }
+    }
+
+    coursesSub = coursesStream.listen(
+      (_) {
+        if (!isCancelled && !controller.isClosed) {
+          recalculateStats();
+        }
+      },
+      onError: (error) {
+        if (!isCancelled && !controller.isClosed) {
+          if (error is FirebaseException) {
+            controller.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
+          } else {
+            controller.add(const Left(UnknownFailure()));
+          }
+        }
+      },
+      cancelOnError: false,
+    );
+
+    transactionsSub = transactionsStream.listen(
+      (_) {
+        if (!isCancelled && !controller.isClosed) {
+          recalculateStats();
+        }
+      },
+      onError: (error) {
+        if (!isCancelled && !controller.isClosed) {
+          if (error is FirebaseException) {
+            controller.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
+          } else {
+            controller.add(const Left(UnknownFailure()));
+          }
+        }
+      },
+      cancelOnError: false,
+    );
+
+    enrollmentsSub = enrollmentsStream.listen(
+      (_) {
+        if (!isCancelled && !controller.isClosed) {
+          recalculateStats();
+        }
+      },
+      onError: (error) {
+        if (!isCancelled && !controller.isClosed) {
+          if (error is FirebaseException) {
+            controller.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
+          } else {
+            controller.add(const Left(UnknownFailure()));
+          }
+        }
+      },
+      cancelOnError: false,
+    );
+
+    return controller.stream;
+  }
+
+  // PRIVATE HELPER METHODS
+
+  Map<String, double> _calculateProfits(List<TransactionModel> transactions) {
+    final now = DateTime.now();
+    final todayStart = DateTime(now.year, now.month, now.day);
+    final monthStart = DateTime(now.year, now.month, 1);
+    final yearStart = DateTime(now.year, 1, 1);
+
+    double todayProfit = 0.0;
+    double monthProfit = 0.0;
+    double yearProfit = 0.0;
+    double totalProfit = 0.0;
+
+    for (final transaction in transactions) {
+      final profit = transaction.instructorProfit;
+      totalProfit += profit;
+
+      if (transaction.createdAt.isAfter(todayStart)) {
+        todayProfit += profit;
+      }
+      if (transaction.createdAt.isAfter(monthStart)) {
+        monthProfit += profit;
+      }
+      if (transaction.createdAt.isAfter(yearStart)) {
+        yearProfit += profit;
+      }
+    }
+
+    return {
+      'today': todayProfit,
+      'month': monthProfit,
+      'year': yearProfit,
+      'total': totalProfit,
+    };
+  }
+
   Map<String, List<PeriodProfitData>> _calculateDetailedProfits(
     List<TransactionModel> transactions,
   ) {
@@ -214,286 +497,6 @@ class InstructorStatsFirebaseDataSourceImpl
     };
   }
 
-  // UPDATE the _createEmptyStats method:
-  InstructorStatsModel _createEmptyStats(String instructorId) {
-    return InstructorStatsModel(
-      instructorId: instructorId,
-      totalCourses: 0,
-      totalStudents: 0,
-      todayProfit: 0.0,
-      monthProfit: 0.0,
-      yearProfit: 0.0,
-      totalProfit: 0.0,
-      courseStats: const [],
-      lastUpdated: DateTime.now(),
-      last30DaysProfits: const [],
-      last12MonthsProfits: const [],
-      allTimeProfits: const [],
-    );
-  }
-
-  @override
-  Future<Either<Failure, CourseStatsModel>> getCourseStats(
-    String courseId,
-  ) async {
-    try {
-      final courseDoc = await _firestore
-          .collection('courses')
-          .doc(courseId)
-          .get();
-
-      if (!courseDoc.exists) {
-        return const Left(NotFoundFailure());
-      }
-
-      final courseData = courseDoc.data()!;
-
-      // Get transactions for this course
-      final transactionsSnapshot = await _firestore
-          .collection('transactions')
-          .where('courseId', isEqualTo: courseId)
-          .where('type', isEqualTo: 'course_purchase')
-          .get();
-
-      final totalRevenue = transactionsSnapshot.docs.fold<double>(
-        0.0,
-        (sum, doc) => sum + (doc.data()['instructorProfit'] as num).toDouble(),
-      );
-
-      // Calculate average rating
-      final ratingData = _calculateAverageRating(courseData);
-
-      return Right(
-        CourseStatsModel(
-          courseId: courseId,
-          courseTitle: courseData['title'] as String,
-          imageUrl: courseData['imageUrl'] as String?,
-          studentsEnrolled:
-              (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0,
-          coursePrice: (courseData['price'] as num).toDouble(),
-          totalRevenue: totalRevenue,
-          averageRating: ratingData['average']!,
-          totalRatings: ratingData['total']!.toInt(),
-          createdAt: (courseData['createAt'] as Timestamp).toDate(),
-        ),
-      );
-    } on FirebaseException catch (e) {
-      return Left(FirestoreFailure.fromFirebaseCode(e.code));
-    } catch (e) {
-      return const Left(UnknownFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<TransactionModel>>> getInstructorTransactions(
-    String instructorId, {
-    DateTime? startDate,
-    DateTime? endDate,
-    int? limit,
-  }) async {
-    try {
-      Query<Map<String, dynamic>> query = _firestore
-          .collection('transactions')
-          .where('instructorId', isEqualTo: instructorId)
-          .orderBy('createdAt', descending: true);
-
-      query = _applyDateFilters(query, startDate, endDate);
-
-      if (limit != null) {
-        query = query.limit(limit);
-      }
-
-      final snapshot = await query.get();
-      final transactions = snapshot.docs
-          .map((doc) => TransactionModel.fromFirestore(doc))
-          .toList();
-
-      return Right(transactions);
-    } on FirebaseException catch (e) {
-      return Left(FirestoreFailure.fromFirebaseCode(e.code));
-    } catch (e) {
-      return const Left(UnknownFailure());
-    }
-  }
-
-  @override
-  Future<Either<Failure, List<TransactionModel>>> getCourseTransactions(
-    String courseId, {
-    DateTime? startDate,
-    DateTime? endDate,
-  }) async {
-    try {
-      Query<Map<String, dynamic>> query = _firestore
-          .collection('transactions')
-          .where('courseId', isEqualTo: courseId)
-          .orderBy('createdAt', descending: true);
-
-      query = _applyDateFilters(query, startDate, endDate);
-
-      final snapshot = await query.get();
-      final transactions = snapshot.docs
-          .map((doc) => TransactionModel.fromFirestore(doc))
-          .toList();
-
-      return Right(transactions);
-    } on FirebaseException catch (e) {
-      return Left(FirestoreFailure.fromFirebaseCode(e.code));
-    } catch (e) {
-      return const Left(UnknownFailure());
-    }
-  }
-
-  @override
-  Stream<Either<Failure, InstructorStatsModel>> watchInstructorStats(
-    String instructorId,
-  ) {
-    late StreamController<Either<Failure, InstructorStatsModel>> controller;
-    StreamSubscription? coursesSub;
-    StreamSubscription? transactionsSub;
-    bool isCalculating = false;
-    bool isCancelled = false;
-
-    controller =
-        StreamController<Either<Failure, InstructorStatsModel>>.broadcast(
-          onCancel: () async {
-            isCancelled = true;
-
-            // Cancel subscriptions
-            await coursesSub?.cancel();
-            await transactionsSub?.cancel();
-
-            coursesSub = null;
-            transactionsSub = null;
-
-            // Close controller if not already closed
-            if (!controller.isClosed) {
-              await controller.close();
-            }
-          },
-        );
-
-    final coursesStream = _firestore
-        .collection('courses')
-        .where('instructorId', isEqualTo: instructorId)
-        .snapshots();
-
-    final transactionsStream = _firestore
-        .collection('transactions')
-        .where('instructorId', isEqualTo: instructorId)
-        .snapshots();
-
-    Future<void> recalculateStats() async {
-      // Check if cancelled or already calculating
-      if (isCancelled || controller.isClosed || isCalculating) return;
-
-      isCalculating = true;
-      try {
-        final result = await getInstructorStats(instructorId);
-
-        // Check again after async operation
-        if (!isCancelled && !controller.isClosed) {
-          controller.add(result);
-        }
-      } catch (e) {
-        if (!isCancelled && !controller.isClosed) {
-          controller.add(const Left(UnknownFailure()));
-        }
-      } finally {
-        isCalculating = false;
-      }
-    }
-
-    coursesSub = coursesStream.listen(
-      (_) {
-        if (!isCancelled && !controller.isClosed) {
-          recalculateStats();
-        }
-      },
-      onError: (error) {
-        if (!isCancelled && !controller.isClosed) {
-          if (error is FirebaseException) {
-            controller.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
-          } else {
-            controller.add(const Left(UnknownFailure()));
-          }
-        }
-      },
-      cancelOnError: false,
-    );
-
-    transactionsSub = transactionsStream.listen(
-      (_) {
-        if (!isCancelled && !controller.isClosed) {
-          recalculateStats();
-        }
-      },
-      onError: (error) {
-        if (!isCancelled && !controller.isClosed) {
-          if (error is FirebaseException) {
-            controller.add(Left(FirestoreFailure.fromFirebaseCode(error.code)));
-          } else {
-            controller.add(const Left(UnknownFailure()));
-          }
-        }
-      },
-      cancelOnError: false,
-    );
-
-    return controller.stream;
-  }
-
-  Map<String, double> _calculateProfits(List<TransactionModel> transactions) {
-    final now = DateTime.now();
-    final todayStart = DateTime(now.year, now.month, now.day);
-    final monthStart = DateTime(now.year, now.month, 1);
-    final yearStart = DateTime(now.year, 1, 1);
-
-    double todayProfit = 0.0;
-    double monthProfit = 0.0;
-    double yearProfit = 0.0;
-    double totalProfit = 0.0;
-
-    for (final transaction in transactions) {
-      final profit = transaction.instructorProfit;
-      totalProfit += profit;
-
-      if (transaction.createdAt.isAfter(todayStart)) {
-        todayProfit += profit;
-      }
-      if (transaction.createdAt.isAfter(monthStart)) {
-        monthProfit += profit;
-      }
-      if (transaction.createdAt.isAfter(yearStart)) {
-        yearProfit += profit;
-      }
-    }
-
-    return {
-      'today': todayProfit,
-      'month': monthProfit,
-      'year': yearProfit,
-      'total': totalProfit,
-    };
-  }
-
-  Map<String, double> _calculateAverageRating(Map<String, dynamic> courseData) {
-    final ratings = (courseData['ratings'] as List<dynamic>?) ?? [];
-
-    if (ratings.isEmpty) {
-      return {'average': 0.0, 'total': 0.0};
-    }
-
-    final totalRating = ratings.fold<double>(
-      0.0,
-      (sum, rating) => sum + (rating['rating'] as num).toDouble(),
-    );
-
-    return {
-      'average': totalRating / ratings.length,
-      'total': ratings.length.toDouble(),
-    };
-  }
-
   Future<List<CourseStatsModel>> _buildCourseStatsList(
     List<QueryDocumentSnapshot<Map<String, dynamic>>> courseDocs,
     List<TransactionModel> allTransactions,
@@ -514,8 +517,22 @@ class InstructorStatsFirebaseDataSourceImpl
         (sum, t) => sum + t.instructorProfit,
       );
 
-      // Calculate rating
-      final ratingData = _calculateAverageRating(courseData);
+      // Get ratings from ratings collection instead of course document
+      final ratingsSnapshot = await _firestore
+          .collection('ratings')
+          .where('courseId', isEqualTo: courseId)
+          .get();
+
+      double averageRating = 0.0;
+      int totalRatings = ratingsSnapshot.docs.length;
+
+      if (totalRatings > 0) {
+        final totalRating = ratingsSnapshot.docs.fold<double>(
+          0.0,
+          (sum, doc) => sum + (doc.data()['rating'] as num).toDouble(),
+        );
+        averageRating = totalRating / totalRatings;
+      }
 
       courseStatsList.add(
         CourseStatsModel(
@@ -526,14 +543,31 @@ class InstructorStatsFirebaseDataSourceImpl
               (courseData['studentsEnrolled'] as num?)?.toInt() ?? 0,
           coursePrice: (courseData['price'] as num).toDouble(),
           totalRevenue: courseRevenue,
-          averageRating: ratingData['average']!,
-          totalRatings: ratingData['total']!.toInt(),
+          averageRating: averageRating,
+          totalRatings: totalRatings,
           createdAt: (courseData['createAt'] as Timestamp).toDate(),
         ),
       );
     }
 
     return courseStatsList;
+  }
+
+  InstructorStatsModel _createEmptyStats(String instructorId) {
+    return InstructorStatsModel(
+      instructorId: instructorId,
+      totalCourses: 0,
+      totalStudents: 0,
+      todayProfit: 0.0,
+      monthProfit: 0.0,
+      yearProfit: 0.0,
+      totalProfit: 0.0,
+      courseStats: const [],
+      lastUpdated: DateTime.now(),
+      last30DaysProfits: const [],
+      last12MonthsProfits: const [],
+      allTimeProfits: const [],
+    );
   }
 
   Query<Map<String, dynamic>> _applyDateFilters(

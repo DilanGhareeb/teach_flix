@@ -206,6 +206,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(const AuthState(status: AuthStatus.guest));
   }
 
+  Future<String> getUserName(String userId) async {
+    final result = await getUserById(params: userId);
+    return result.fold((failure) => 'User', (user) => user.name);
+  }
+
   @override
   Future<void> close() {
     _authSub?.cancel();

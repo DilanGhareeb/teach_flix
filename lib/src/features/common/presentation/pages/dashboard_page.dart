@@ -9,6 +9,7 @@ import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.d
 import 'package:teach_flix/src/features/courses/presentation/widgets/category_selector.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/horizontal_course_list.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/course_detail_page.dart';
+import 'package:teach_flix/src/features/courses/presentation/widgets/top_rated_courses.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -32,6 +33,7 @@ class _DashboardPageState extends State<DashboardPage>
   void initState() {
     super.initState();
     context.read<CoursesBloc>().add(LoadCoursesEvent());
+    context.read<CoursesBloc>().add(LoadTopRatedCoursesEvent());
 
     _fadeController = AnimationController(
       vsync: this,
