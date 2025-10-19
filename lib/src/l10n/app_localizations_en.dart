@@ -1052,4 +1052,57 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get back_to_login => 'Back to Login';
+
+  @override
+  String get instructor_rules => 'Instructor Requirements & Rules';
+
+  @override
+  String get rule_quality => 'Quality Content';
+
+  @override
+  String get rule_quality_desc =>
+      'Create high-quality, original courses that provide real value to students.';
+
+  @override
+  String get rule_commitment => 'Time Commitment';
+
+  @override
+  String get rule_commitment_desc =>
+      'Dedicate sufficient time to create, update, and maintain your courses regularly.';
+
+  @override
+  String get rule_support => 'Student Support';
+
+  @override
+  String get rule_support_desc =>
+      'Respond to student questions and provide support in a timely manner.';
+
+  @override
+  String get rule_guidelines => 'Follow Guidelines';
+
+  @override
+  String get rule_guidelines_desc =>
+      'Adhere to our community guidelines and teaching standards at all times.';
+
+  @override
+  String get rule_copyright => 'Respect Copyright';
+
+  @override
+  String get rule_copyright_desc =>
+      'Only use content you have the right to use and respect intellectual property.';
+
+  @override
+  String get rule_improvement => 'Continuous Improvement';
+
+  @override
+  String get rule_improvement_desc =>
+      'Update your courses based on feedback and stay current with your subject.';
+
+  @override
+  String get agree_to_terms =>
+      'I agree to follow all the rules and requirements listed above';
+
+  @override
+  String get must_agree_to_terms =>
+      'You must agree to the terms and conditions';
 }

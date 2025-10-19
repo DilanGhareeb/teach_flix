@@ -2131,6 +2131,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Login'**
   String get back_to_login;
+
+  /// Title for the instructor requirements and rules section
+  ///
+  /// In en, this message translates to:
+  /// **'Instructor Requirements & Rules'**
+  String get instructor_rules;
+
+  /// Title for the quality content rule
+  ///
+  /// In en, this message translates to:
+  /// **'Quality Content'**
+  String get rule_quality;
+
+  /// Description for the quality content rule
+  ///
+  /// In en, this message translates to:
+  /// **'Create high-quality, original courses that provide real value to students.'**
+  String get rule_quality_desc;
+
+  /// Title for the time commitment rule
+  ///
+  /// In en, this message translates to:
+  /// **'Time Commitment'**
+  String get rule_commitment;
+
+  /// Description for the time commitment rule
+  ///
+  /// In en, this message translates to:
+  /// **'Dedicate sufficient time to create, update, and maintain your courses regularly.'**
+  String get rule_commitment_desc;
+
+  /// Title for the student support rule
+  ///
+  /// In en, this message translates to:
+  /// **'Student Support'**
+  String get rule_support;
+
+  /// Description for the student support rule
+  ///
+  /// In en, this message translates to:
+  /// **'Respond to student questions and provide support in a timely manner.'**
+  String get rule_support_desc;
+
+  /// Title for the follow guidelines rule
+  ///
+  /// In en, this message translates to:
+  /// **'Follow Guidelines'**
+  String get rule_guidelines;
+
+  /// Description for the follow guidelines rule
+  ///
+  /// In en, this message translates to:
+  /// **'Adhere to our community guidelines and teaching standards at all times.'**
+  String get rule_guidelines_desc;
+
+  /// Title for the respect copyright rule
+  ///
+  /// In en, this message translates to:
+  /// **'Respect Copyright'**
+  String get rule_copyright;
+
+  /// Description for the respect copyright rule
+  ///
+  /// In en, this message translates to:
+  /// **'Only use content you have the right to use and respect intellectual property.'**
+  String get rule_copyright_desc;
+
+  /// Title for the continuous improvement rule
+  ///
+  /// In en, this message translates to:
+  /// **'Continuous Improvement'**
+  String get rule_improvement;
+
+  /// Description for the continuous improvement rule
+  ///
+  /// In en, this message translates to:
+  /// **'Update your courses based on feedback and stay current with your subject.'**
+  String get rule_improvement_desc;
+
+  /// Checkbox label for agreeing to instructor terms and conditions
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to follow all the rules and requirements listed above'**
+  String get agree_to_terms;
+
+  /// Validation message prompting user to agree to instructor terms and conditions
+  ///
+  /// In en, this message translates to:
+  /// **'You must agree to the terms and conditions'**
+  String get must_agree_to_terms;
 }
 
 class _AppLocalizationsDelegate

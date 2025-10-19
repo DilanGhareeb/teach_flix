@@ -1,22 +1,9 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/application_header_card.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/category_dropdown.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/id_image_upload_card.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/image_source_bottom_sheet.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/info_card.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/section_header.dart';
-import 'package:teach_flix/src/features/auth/presentation/widgets/submit_button.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/course_category.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class TeacherApplicationPage extends StatefulWidget {
@@ -27,89 +14,20 @@ class TeacherApplicationPage extends StatefulWidget {
 }
 
 class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
-  final _formKey = GlobalKey<FormState>();
-  CourseCategory? _selectedCategory;
-  File? _frontIdImage;
-  File? _backIdImage;
+  bool _agreedToTerms = false;
   bool _isSubmitting = false;
   bool _hasNavigated = false;
 
-  Future<void> _pickAndCropImage(bool isFront) async {
-    final source = await _showImageSourceDialog();
-    if (source == null) return;
-
-    final picker = ImagePicker();
-    final picked = await picker.pickImage(source: source);
-
-    if (picked != null) {
-      final croppedFile = await ImageCropper().cropImage(
-        sourcePath: picked.path,
-        uiSettings: [
-          AndroidUiSettings(
-            toolbarTitle: AppLocalizations.of(context)!.crop_image,
-            toolbarColor: Theme.of(context).colorScheme.primary,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.ratio16x9,
-            lockAspectRatio: false,
-            aspectRatioPresets: [
-              CropAspectRatioPreset.square,
-              CropAspectRatioPreset.ratio3x2,
-              CropAspectRatioPreset.ratio4x3,
-              CropAspectRatioPreset.ratio16x9,
-            ],
-          ),
-          IOSUiSettings(
-            title: AppLocalizations.of(context)!.crop_image,
-            aspectRatioPresets: [
-              CropAspectRatioPreset.square,
-              CropAspectRatioPreset.ratio3x2,
-              CropAspectRatioPreset.ratio4x3,
-              CropAspectRatioPreset.ratio16x9,
-            ],
-          ),
-        ],
-      );
-
-      if (croppedFile != null) {
-        setState(() {
-          if (isFront) {
-            _frontIdImage = File(croppedFile.path);
-          } else {
-            _backIdImage = File(croppedFile.path);
-          }
-        });
-      }
-    }
-  }
-
-  Future<ImageSource?> _showImageSourceDialog() async {
-    return showModalBottomSheet<ImageSource>(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (context) => ImageSourceBottomSheet(),
-    );
-  }
-
-  Future<Uint8List> _fileToUint8List(File file) async {
-    return await file.readAsBytes();
-  }
-
-  Future<Uint8List> _combineImages() async {
-    // TODO: Implement image combination logic
-    // For now, return front image bytes
-    return await _fileToUint8List(_frontIdImage!);
-  }
-
   void _submitApplication() async {
-    if (_formKey.currentState?.validate() != true) return;
-
-    if (_frontIdImage == null || _backIdImage == null) {
+    if (!_agreedToTerms) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(AppLocalizations.of(context)!.please_upload_both_ids),
+          content: Text(
+            AppLocalizations.of(context)!.must_agree_to_terms ??
+                'You must agree to the terms and conditions',
+          ),
           backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
         ),
       );
       return;
@@ -119,49 +37,28 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
       _isSubmitting = true;
     });
 
-    try {
-      final imageBytes = await _combineImages();
+    // Update user role to instructor
+    final updateParams = UpdateUserParams(
+      null,
+      null,
+      null,
+      role: Role.instructor,
+    );
 
-      final updateParams = UpdateUserParams(
-        null,
-        null,
-        imageBytes,
-        role: Role.instructor,
-      );
-
-      context.read<AuthBloc>().add(AuthUpdateUserRequested(updateParams));
-    } catch (e) {
-      setState(() {
-        _isSubmitting = false;
-      });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${AppLocalizations.of(context)!.error}: ${e.toString()}',
-          ),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
+    context.read<AuthBloc>().add(AuthUpdateUserRequested(updateParams));
   }
 
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
-    final languageCode = Localizations.localeOf(context).languageCode;
+    final cs = theme.colorScheme;
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      appBar: AppBar(
-        title: Text(t.apply_teacher),
-        elevation: 0,
-        backgroundColor: theme.colorScheme.surface,
-      ),
+      backgroundColor: cs.surface,
+      appBar: AppBar(title: Text(t.apply_teacher), elevation: 0),
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
-          // Prevent multiple navigations
           if (_hasNavigated) return;
 
           if (state.status == AuthStatus.authenticated && _isSubmitting) {
@@ -173,7 +70,12 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
                   children: [
                     const Icon(Icons.check_circle, color: Colors.white),
                     const SizedBox(width: 12),
-                    Expanded(child: Text(t.application_submitted)),
+                    Expanded(
+                      child: Text(
+                        t.application_submitted ??
+                            'Application submitted successfully!',
+                      ),
+                    ),
                   ],
                 ),
                 backgroundColor: Colors.green,
@@ -181,12 +83,9 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                duration: const Duration(seconds: 2),
               ),
             );
 
-            // Use a delayed pop to ensure the snackbar is visible
-            // and to avoid navigation conflicts
             Future.delayed(const Duration(milliseconds: 300), () {
               if (mounted && Navigator.canPop(context)) {
                 Navigator.pop(context);
@@ -204,9 +103,7 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
                     const Icon(Icons.error, color: Colors.white),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        '${t.application_failed}: ${state.failure?.toString() ?? t.unknown_error}',
-                      ),
+                      child: Text(t.application_failed ?? 'Application failed'),
                     ),
                   ],
                 ),
@@ -220,91 +117,294 @@ class _TeacherApplicationPageState extends State<TeacherApplicationPage> {
           }
         },
         child: SafeArea(
-          child: Form(
-            key: _formKey,
-            child: CustomScrollView(
-              slivers: [
-                SliverPadding(
-                  padding: const EdgeInsets.all(20),
-                  sliver: SliverList(
-                    delegate: SliverChildListDelegate([
-                      // Header Section
-                      ApplicationHeaderCard(
-                        title: t.become_instructor,
-                        subtitle: t.share_your_knowledge,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header Card
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [cs.primary, cs.primary.withOpacity(0.8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(20),
+                    boxShadow: [
+                      BoxShadow(
+                        color: cs.primary.withOpacity(0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
                       ),
-                      const SizedBox(height: 32),
-
-                      // Category Section
-                      SectionHeader(
-                        icon: Icons.category_rounded,
-                        title: t.select_category,
-                      ),
-                      const SizedBox(height: 12),
-                      CategoryDropdown(
-                        selectedCategory: _selectedCategory,
-                        languageCode: languageCode,
-                        isEnabled: !_isSubmitting,
-                        onChanged: (category) {
-                          setState(() {
-                            _selectedCategory = category;
-                          });
-                        },
-                        validator: (value) =>
-                            value == null ? t.field_required : null,
-                      ),
-                      const SizedBox(height: 32),
-
-                      // ID Upload Section
-                      SectionHeader(
-                        icon: Icons.badge_rounded,
-                        title: t.upload_teacher_id,
+                    ],
+                  ),
+                  child: Column(
+                    children: [
+                      Icon(Icons.school_rounded, size: 48, color: cs.onPrimary),
+                      const SizedBox(height: 16),
+                      Text(
+                        t.become_instructor ?? 'Become an Instructor',
+                        style: theme.textTheme.headlineSmall?.copyWith(
+                          color: cs.onPrimary,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        t.upload_both_sides,
+                        t.share_your_knowledge ??
+                            'Share your knowledge with thousands of students',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
+                          color: cs.onPrimary.withOpacity(0.9),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                // Rules Section
+                Text(
+                  t.instructor_rules ?? 'Instructor Requirements & Rules',
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: cs.onSurface,
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Rules List
+                _buildRuleCard(
+                  context,
+                  icon: Icons.verified_rounded,
+                  title: t.rule_quality ?? 'Quality Content',
+                  description:
+                      t.rule_quality_desc ??
+                      'Create high-quality, original courses that provide real value to students.',
+                ),
+
+                const SizedBox(height: 12),
+
+                _buildRuleCard(
+                  context,
+                  icon: Icons.schedule_rounded,
+                  title: t.rule_commitment ?? 'Time Commitment',
+                  description:
+                      t.rule_commitment_desc ??
+                      'Dedicate sufficient time to create, update, and maintain your courses regularly.',
+                ),
+
+                const SizedBox(height: 12),
+
+                _buildRuleCard(
+                  context,
+                  icon: Icons.support_agent_rounded,
+                  title: t.rule_support ?? 'Student Support',
+                  description:
+                      t.rule_support_desc ??
+                      'Respond to student questions and provide support in a timely manner.',
+                ),
+
+                const SizedBox(height: 12),
+
+                _buildRuleCard(
+                  context,
+                  icon: Icons.gavel_rounded,
+                  title: t.rule_guidelines ?? 'Follow Guidelines',
+                  description:
+                      t.rule_guidelines_desc ??
+                      'Adhere to our community guidelines and teaching standards at all times.',
+                ),
+
+                const SizedBox(height: 12),
+
+                _buildRuleCard(
+                  context,
+                  icon: Icons.copyright_rounded,
+                  title: t.rule_copyright ?? 'Respect Copyright',
+                  description:
+                      t.rule_copyright_desc ??
+                      'Only use content you have the right to use and respect intellectual property.',
+                ),
+
+                const SizedBox(height: 12),
+
+                _buildRuleCard(
+                  context,
+                  icon: Icons.trending_up_rounded,
+                  title: t.rule_improvement ?? 'Continuous Improvement',
+                  description:
+                      t.rule_improvement_desc ??
+                      'Update your courses based on feedback and stay current with your subject.',
+                ),
+
+                const SizedBox(height: 32),
+
+                // Agreement Checkbox
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: cs.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(
+                      color: _agreedToTerms
+                          ? cs.primary
+                          : cs.outline.withOpacity(0.3),
+                      width: _agreedToTerms ? 2 : 1,
+                    ),
+                  ),
+                  child: CheckboxListTile(
+                    value: _agreedToTerms,
+                    onChanged: _isSubmitting
+                        ? null
+                        : (value) {
+                            setState(() {
+                              _agreedToTerms = value ?? false;
+                            });
+                          },
+                    controlAffinity: ListTileControlAffinity.leading,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      t.agree_to_terms ??
+                          'I agree to follow all the rules and requirements listed above',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    activeColor: cs.primary,
+                  ),
+                ),
+
+                const SizedBox(height: 24),
+
+                // Submit Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: FilledButton(
+                    onPressed: _isSubmitting ? null : _submitApplication,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: cs.primary,
+                      foregroundColor: cs.onPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: _isSubmitting
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          )
+                        : Text(
+                            t.submit_application ?? 'Submit Application',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                ),
+
+                const SizedBox(height: 16),
+
+                // Info Note
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.blue.withOpacity(0.3)),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.info_outline_rounded,
+                        color: Colors.blue,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          t.application_review_info ??
+                              'Your application will be reviewed by our team. You will be notified once approved.',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.blue.shade800,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 16),
-
-                      // Front ID
-                      IdImageUploadCard(
-                        label: t.front_id,
-                        image: _frontIdImage,
-                        isEnabled: !_isSubmitting,
-                        onTap: () => _pickAndCropImage(true),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Back ID
-                      IdImageUploadCard(
-                        label: t.back_id,
-                        image: _backIdImage,
-                        isEnabled: !_isSubmitting,
-                        onTap: () => _pickAndCropImage(false),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // Info Card
-                      InfoCard(message: t.application_review_info),
-                      const SizedBox(height: 32),
-
-                      // Submit Button
-                      SubmitButton(
-                        isSubmitting: _isSubmitting,
-                        onPressed: _submitApplication,
-                        label: t.submit_application,
-                      ),
-                      const SizedBox(height: 20),
-                    ]),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildRuleCard(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
+    final theme = Theme.of(context);
+    final cs = theme.colorScheme;
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: cs.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: cs.outline.withOpacity(0.2)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: cs.primaryContainer,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, color: cs.primary, size: 24),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: cs.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  description,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: cs.onSurface.withOpacity(0.7),
+                    height: 1.4,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

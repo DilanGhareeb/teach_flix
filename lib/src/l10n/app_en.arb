@@ -1361,5 +1361,65 @@
   "back_to_login": "Back to Login",
   "@back_to_login": {
     "description": "Button text for navigating back to the login screen"
+  },
+  "instructor_rules": "Instructor Requirements & Rules",
+  "@instructor_rules": {
+    "description": "Title for the instructor requirements and rules section"
+  },
+  "rule_quality": "Quality Content",
+  "@rule_quality": {
+    "description": "Title for the quality content rule"
+  },
+  "rule_quality_desc": "Create high-quality, original courses that provide real value to students.",
+  "@rule_quality_desc": {
+    "description": "Description for the quality content rule"
+  },
+  "rule_commitment": "Time Commitment",
+  "@rule_commitment": {
+    "description": "Title for the time commitment rule"
+  },
+  "rule_commitment_desc": "Dedicate sufficient time to create, update, and maintain your courses regularly.",
+  "@rule_commitment_desc": {
+    "description": "Description for the time commitment rule"
+  },
+  "rule_support": "Student Support",
+  "@rule_support": {
+    "description": "Title for the student support rule"
+  },
+  "rule_support_desc": "Respond to student questions and provide support in a timely manner.",
+  "@rule_support_desc": {
+    "description": "Description for the student support rule"
+  },
+  "rule_guidelines": "Follow Guidelines",
+  "@rule_guidelines": {
+    "description": "Title for the follow guidelines rule"
+  },
+  "rule_guidelines_desc": "Adhere to our community guidelines and teaching standards at all times.",
+  "@rule_guidelines_desc": {
+    "description": "Description for the follow guidelines rule"
+  },
+  "rule_copyright": "Respect Copyright",
+  "@rule_copyright": {
+    "description": "Title for the respect copyright rule"
+  },
+  "rule_copyright_desc": "Only use content you have the right to use and respect intellectual property.",
+  "@rule_copyright_desc": {
+    "description": "Description for the respect copyright rule"
+  },
+  "rule_improvement": "Continuous Improvement",
+  "@rule_improvement": {
+    "description": "Title for the continuous improvement rule"
+  },
+  "rule_improvement_desc": "Update your courses based on feedback and stay current with your subject.",
+  "@rule_improvement_desc": {
+    "description": "Description for the continuous improvement rule"
+  },
+  "agree_to_terms": "I agree to follow all the rules and requirements listed above",
+  "@agree_to_terms": {
+    "description": "Checkbox label for agreeing to instructor terms and conditions"
+  },
+  "must_agree_to_terms": "You must agree to the terms and conditions",
+  "@must_agree_to_terms": {
+    "description": "Validation message prompting user to agree to instructor terms and conditions"
   }
 }

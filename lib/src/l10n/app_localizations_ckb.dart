@@ -1052,4 +1052,56 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get back_to_login => 'گەڕانەوە بۆ چوونەژوورەوە';
+
+  @override
+  String get instructor_rules => 'مەرجەکان و یاساکانی مامۆستا';
+
+  @override
+  String get rule_quality => 'ناوەڕۆکی کوالیتی بەرز';
+
+  @override
+  String get rule_quality_desc =>
+      'کۆرسی کوالیتی بەرز و ڕەسەن دروست بکە کە بەهای ڕاستەقینە بۆ قوتابیان دابین بکات.';
+
+  @override
+  String get rule_commitment => 'پابەندبوون بە کات';
+
+  @override
+  String get rule_commitment_desc =>
+      'کاتی پێویست تەرخان بکە بۆ دروستکردن، نوێکردنەوە و پاراستنی کۆرسەکانت بە بەردەوامی.';
+
+  @override
+  String get rule_support => 'پشتگیری قوتابیان';
+
+  @override
+  String get rule_support_desc =>
+      'وەڵامی پرسیارەکانی قوتابیان بدەرەوە و پشتگیریان پێشکەش بکە بە کاتی گونجاو.';
+
+  @override
+  String get rule_guidelines => 'پەیڕەوکردنی ڕێنماییەکان';
+
+  @override
+  String get rule_guidelines_desc =>
+      'پابەند بە بە ڕێنماییەکانی کۆمەڵگا و ستانداردەکانی وانەوتنەوە لە هەموو کاتێکدا.';
+
+  @override
+  String get rule_copyright => 'ڕێزگرتن لە مافی لەبەرگرتنەوە';
+
+  @override
+  String get rule_copyright_desc =>
+      'تەنها ئەو ناوەڕۆکە بەکاربهێنە کە مافی بەکارهێنانیت هەیە و ڕێز لە موڵکی زیهنی بگرە.';
+
+  @override
+  String get rule_improvement => 'باشترکردنی بەردەوام';
+
+  @override
+  String get rule_improvement_desc =>
+      'کۆرسەکانت نوێ بکەرەوە بەپێی فیدباک و لەگەڵ بابەتەکەت بە نوێ بمێنەرەوە.';
+
+  @override
+  String get agree_to_terms =>
+      'من ڕازیم بە پەیڕەوکردنی هەموو یاسا و مەرجەکانی سەرەوە';
+
+  @override
+  String get must_agree_to_terms => 'دەبێت ڕازی بیت بە مەرج و یاساکان';
 }
