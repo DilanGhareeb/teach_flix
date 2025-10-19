@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/category_selector.dart';
@@ -154,6 +155,9 @@ class _DashboardPageState extends State<DashboardPage>
                         child: BlocBuilder<AuthBloc, AuthState>(
                           builder: (context, authState) {
                             final user = authState.user;
+                            final isGuest =
+                                authState.status == AuthStatus.guest;
+
                             return Row(
                               children: [
                                 Container(
@@ -178,14 +182,16 @@ class _DashboardPageState extends State<DashboardPage>
                                   child: CircleAvatar(
                                     radius: 30,
                                     backgroundImage:
-                                        (user?.profilePictureUrl != null &&
+                                        (!isGuest &&
+                                            user?.profilePictureUrl != null &&
                                             user!.profilePictureUrl!.isNotEmpty)
                                         ? CachedNetworkImageProvider(
                                             user.profilePictureUrl!,
                                           )
                                         : null,
                                     child:
-                                        (user?.profilePictureUrl == null ||
+                                        (isGuest ||
+                                            user?.profilePictureUrl == null ||
                                             user!.profilePictureUrl!.isEmpty)
                                         ? Image.asset(
                                             'assets/images/profile.png',
@@ -201,7 +207,9 @@ class _DashboardPageState extends State<DashboardPage>
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '${t.welcome_back ?? 'Welcome back'},',
+                                        isGuest
+                                            ? t.welcomeBack ?? 'Welcome'
+                                            : '${t.welcome_back ?? 'Welcome back'},',
                                         style: textTheme.bodyMedium?.copyWith(
                                           color: colorScheme.onPrimaryContainer
                                               .withOpacity(0.8),
@@ -209,7 +217,9 @@ class _DashboardPageState extends State<DashboardPage>
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
-                                        user?.name ?? t.anonymous,
+                                        isGuest
+                                            ? (t.guest ?? 'Guest')
+                                            : (user?.name ?? t.anonymous),
                                         style: textTheme.headlineSmall
                                             ?.copyWith(
                                               fontWeight: FontWeight.bold,
@@ -232,9 +242,11 @@ class _DashboardPageState extends State<DashboardPage>
                                           ),
                                         ),
                                         child: Text(
-                                          user?.role.name == 'student'
-                                              ? t.student
-                                              : t.instructor,
+                                          isGuest
+                                              ? (t.guest ?? 'Guest')
+                                              : (user?.role.name == 'student'
+                                                    ? t.student
+                                                    : t.instructor),
                                           style: textTheme.bodySmall?.copyWith(
                                             color:
                                                 colorScheme.onPrimaryContainer,

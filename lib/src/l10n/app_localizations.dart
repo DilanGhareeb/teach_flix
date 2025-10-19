@@ -2059,6 +2059,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Crop Image'**
   String get crop_image;
+
+  /// Label for the guest user role
+  ///
+  /// In en, this message translates to:
+  /// **'Guest'**
+  String get guest;
+
+  /// Prompt encouraging users to log in to access additional features
+  ///
+  /// In en, this message translates to:
+  /// **'Login to unlock more features'**
+  String get login_to_unlock_features;
+
+  /// Message encouraging users to create an account
+  ///
+  /// In en, this message translates to:
+  /// **'Create an account to track your learning progress and access exclusive content.'**
+  String get create_account_message;
+
+  /// Warning message indicating the user is not logged in
+  ///
+  /// In en, this message translates to:
+  /// **'You are not logged in'**
+  String get not_logged_in;
 }
 
 class _AppLocalizationsDelegate

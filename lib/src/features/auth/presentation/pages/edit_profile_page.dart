@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/features/settings/presentation/widgets/section_card.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';

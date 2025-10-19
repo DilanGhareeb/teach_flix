@@ -1,6 +1,8 @@
-part of 'auth_bloc.dart';
+import 'package:equatable/equatable.dart';
+import 'package:teach_flix/src/core/errors/failures.dart';
+import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
 
-enum AuthStatus { unauthenticated, loading, authenticated, failure }
+enum AuthStatus { unauthenticated, guest, loading, authenticated, failure }
 
 class AuthState extends Equatable {
   final AuthStatus status;

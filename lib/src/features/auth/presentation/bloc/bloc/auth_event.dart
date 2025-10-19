@@ -10,6 +10,11 @@ final class AuthBootstrapRequested extends AuthEvent {
   const AuthBootstrapRequested();
 }
 
+// New event to continue as guest
+final class AuthContinueAsGuestRequested extends AuthEvent {
+  const AuthContinueAsGuestRequested();
+}
+
 final class _AuthSessionChanged extends AuthEvent {
   final AuthSession session;
   const _AuthSessionChanged(this.session);
@@ -67,7 +72,6 @@ final class AuthRegisterRequested extends AuthEvent {
   final String gender;
   final Uint8List? avatarBytes;
   final String? avatarFileName;
-
   const AuthRegisterRequested({
     required this.name,
     required this.email,
@@ -76,7 +80,6 @@ final class AuthRegisterRequested extends AuthEvent {
     this.avatarBytes,
     this.avatarFileName,
   });
-
   @override
   List<Object?> get props => [
     name,

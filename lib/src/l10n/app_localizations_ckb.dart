@@ -1013,4 +1013,16 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get crop_image => 'بڕینی وێنە';
+
+  @override
+  String get guest => 'میوان';
+
+  @override
+  String get login_to_unlock_features => 'بچۆ ژوورەوە بۆ بەردەوامبوون';
+
+  @override
+  String get create_account_message => 'هەژمارت دروست بکە بۆ بەردەوامبوون';
+
+  @override
+  String get not_logged_in => 'ئەکاونتت نییە!';
 }

@@ -9,6 +9,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart';
 import 'package:teach_flix/src/features/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
@@ -93,8 +94,18 @@ class _AuthGate extends StatelessWidget {
             );
           case AuthStatus.authenticated:
             return const MainPage();
+          case AuthStatus.guest:
+            return const MainPage();
           case AuthStatus.unauthenticated:
-            return const LoginPage();
+            // Automatically continue as guest
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              context.read<AuthBloc>().add(
+                const AuthContinueAsGuestRequested(),
+              );
+            });
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
           case AuthStatus.failure:
             return const LoginPage();
         }

@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/edit_profile_page.dart';
+import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/teacher_application_page.dart';
 import 'package:teach_flix/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/widgets/action_header_card.dart';
@@ -74,10 +76,15 @@ class _SettingsPageState extends State<SettingsPage> {
                 return const Center(child: CircularProgressIndicator());
               }
 
+              final isGuest = userState.status == AuthStatus.guest;
               final user = userState.user;
-              final name = user?.name ?? t.anonymous;
+              final name = isGuest
+                  ? (t.guest ?? 'Guest')
+                  : (user?.name ?? t.anonymous);
               final balance = user?.balance ?? 0.0;
-              final email = user?.email ?? t.no_email;
+              final email = isGuest
+                  ? (t.not_logged_in ?? 'Not logged in')
+                  : (user?.email ?? t.no_email);
               final photo = user?.profilePictureUrl;
 
               return SafeArea(
@@ -89,24 +96,102 @@ class _SettingsPageState extends State<SettingsPage> {
                       email: email,
                       photoUrl: photo,
                       balance: balance,
-                      role: user?.role.name ?? "student",
-                      onEditProfile: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const EditProfilePage(),
-                          ),
-                        );
-                      },
-                      onApplyTeacher: () {
-                        Navigator.of(context).push(
-                          CupertinoPageRoute(
-                            builder: (_) => const TeacherApplicationPage(),
-                          ),
-                        );
-                      },
+                      role: isGuest ? "guest" : (user?.role.name ?? "student"),
+                      onEditProfile: isGuest
+                          ? null
+                          : () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (_) => const EditProfilePage(),
+                                ),
+                              );
+                            },
+                      onApplyTeacher: isGuest
+                          ? null
+                          : () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (_) =>
+                                      const TeacherApplicationPage(),
+                                ),
+                              );
+                            },
                     ),
 
                     const SizedBox(height: 24),
+
+                    // Show login prompt for guests
+                    if (isGuest) ...[
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: theme.colorScheme.primary.withOpacity(0.3),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.person_outline_rounded,
+                              size: 48,
+                              color: theme.colorScheme.primary,
+                            ),
+                            const SizedBox(height: 12),
+                            Text(
+                              t.login_to_unlock_features ??
+                                  'Login to unlock all features',
+                              style: theme.textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: theme.colorScheme.onPrimaryContainer,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              t.create_account_message ??
+                                  'Create an account to purchase courses, track progress, and more',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.onPrimaryContainer
+                                    .withOpacity(0.8),
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16),
+                            SizedBox(
+                              width: double.infinity,
+                              child: ElevatedButton.icon(
+                                onPressed: () {
+                                  Navigator.of(context).push(
+                                    CupertinoPageRoute(
+                                      builder: (_) => BlocProvider.value(
+                                        value: context.read<AuthBloc>(),
+                                        child: const LoginPage(),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.login_rounded),
+                                label: Text(t.login ?? 'Login'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.primary,
+                                  foregroundColor: theme.colorScheme.onPrimary,
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 24,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                    ],
 
                     /// APPEARANCE
                     Text(t.appearance, style: theme.textTheme.titleMedium),
@@ -177,16 +262,37 @@ class _SettingsPageState extends State<SettingsPage> {
                     const SizedBox(height: 8),
                     SectionCard(
                       children: [
-                        ListTile(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 12,
+                        if (isGuest)
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            leading: const Icon(Icons.login_rounded),
+                            title: Text(t.login ?? 'Login'),
+                            onTap: () {
+                              Navigator.of(context).push(
+                                CupertinoPageRoute(
+                                  builder: (_) => BlocProvider.value(
+                                    value: context.read<AuthBloc>(),
+                                    child: const LoginPage(),
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        else
+                          ListTile(
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 12,
+                            ),
+                            leading: const Icon(Icons.logout),
+                            title: Text(t.logout),
+                            onTap: () {
+                              context.read<AuthBloc>().add(
+                                const AuthLogoutRequested(),
+                              );
+                            },
                           ),
-                          leading: const Icon(Icons.logout),
-                          title: Text(t.logout),
-                          onTap: () {
-                            context.read<AuthBloc>().add(AuthLogoutRequested());
-                          },
-                        ),
                       ],
                     ),
 

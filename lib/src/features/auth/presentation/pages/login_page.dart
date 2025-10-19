@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/register_page.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
@@ -59,6 +60,7 @@ class _LoginPageState extends State<LoginPage> {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
+      appBar: AppBar(),
       body: BlocListener<AuthBloc, AuthState>(
         listenWhen: (p, c) => p.status != c.status,
         listener: (context, state) {

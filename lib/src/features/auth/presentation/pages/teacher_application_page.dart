@@ -8,6 +8,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/widgets/application_header_card.dart';
 import 'package:teach_flix/src/features/auth/presentation/widgets/category_dropdown.dart';
 import 'package:teach_flix/src/features/auth/presentation/widgets/id_image_upload_card.dart';

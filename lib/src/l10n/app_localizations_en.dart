@@ -1012,4 +1012,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get crop_image => 'Crop Image';
+
+  @override
+  String get guest => 'Guest';
+
+  @override
+  String get login_to_unlock_features => 'Login to unlock more features';
+
+  @override
+  String get create_account_message =>
+      'Create an account to track your learning progress and access exclusive content.';
+
+  @override
+  String get not_logged_in => 'You are not logged in';
 }

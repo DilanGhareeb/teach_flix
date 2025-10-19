@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
-import 'package:teach_flix/src/features/courses/presentation/pages/create_course_page.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/common/presentation/pages/dashboard_page.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/my_course_page.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/pages/teacher_dashboard_page.dart';

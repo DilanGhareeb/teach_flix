@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class AccountHeaderCard extends StatelessWidget {
@@ -14,8 +15,8 @@ class AccountHeaderCard extends StatelessWidget {
     required this.email,
     required this.balance,
     required this.photoUrl,
-    required this.onEditProfile,
-    required this.onApplyTeacher,
+    this.onEditProfile,
+    this.onApplyTeacher,
   });
 
   final String name;
@@ -23,8 +24,8 @@ class AccountHeaderCard extends StatelessWidget {
   final String email;
   final String? photoUrl;
   final double balance;
-  final VoidCallback onEditProfile;
-  final VoidCallback onApplyTeacher;
+  final VoidCallback? onEditProfile;
+  final VoidCallback? onApplyTeacher;
 
   void _showDepositSheet(BuildContext context) {
     final theme = Theme.of(context);
@@ -353,14 +354,12 @@ class AccountHeaderCard extends StatelessWidget {
                           FilteringTextInputFormatter.allow(
                             RegExp(r'^\d+\.?\d{0,2}'),
                           ),
-                          // Custom formatter to prevent exceeding balance
                           TextInputFormatter.withFunction((oldValue, newValue) {
                             if (newValue.text.isEmpty) return newValue;
 
                             final amount = double.tryParse(newValue.text);
                             if (amount == null) return oldValue;
 
-                            // Prevent typing more than available balance
                             if (amount > currentBalance) {
                               return oldValue;
                             }
@@ -382,7 +381,6 @@ class AccountHeaderCard extends StatelessWidget {
                           return null;
                         },
                         onChanged: (value) {
-                          // Trigger validation on change
                           formKey.currentState?.validate();
                         },
                         decoration: InputDecoration(
@@ -402,7 +400,6 @@ class AccountHeaderCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 24),
 
-                      // Quick amount buttons
                       if (currentBalance > 0) ...[
                         Text(
                           t.quick_amounts ?? 'Quick Amounts',
@@ -556,6 +553,7 @@ class AccountHeaderCard extends StatelessWidget {
     final theme = Theme.of(context);
     final t = AppLocalizations.of(context)!;
     final formatter = Formatter();
+    final isGuest = role.toLowerCase() == 'guest';
 
     return Container(
       decoration: BoxDecoration(
@@ -580,10 +578,11 @@ class AccountHeaderCard extends StatelessWidget {
               CircleAvatar(
                 radius: 34,
                 backgroundColor: theme.colorScheme.onPrimary.withAlpha(30),
-                backgroundImage: (photoUrl != null && photoUrl!.isNotEmpty)
+                backgroundImage:
+                    (!isGuest && photoUrl != null && photoUrl!.isNotEmpty)
                     ? CachedNetworkImageProvider(photoUrl!)
                     : null,
-                child: (photoUrl == null || photoUrl!.isEmpty)
+                child: (isGuest || photoUrl == null || photoUrl!.isEmpty)
                     ? Icon(
                         Icons.person,
                         size: 34,
@@ -607,7 +606,9 @@ class AccountHeaderCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      role == 'student' ? t.student : t.instructor,
+                      isGuest
+                          ? (t.guest ?? 'Guest')
+                          : (role == 'student' ? t.student : t.instructor),
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onPrimary.withAlpha(220),
                         fontWeight: FontWeight.w500,
@@ -625,107 +626,115 @@ class AccountHeaderCard extends StatelessWidget {
                   ],
                 ),
               ),
-              IconButton(
-                onPressed: onEditProfile,
-                icon: Icon(Icons.edit, color: theme.colorScheme.onPrimary),
-              ),
+              if (!isGuest && onEditProfile != null)
+                IconButton(
+                  onPressed: onEditProfile,
+                  icon: Icon(Icons.edit, color: theme.colorScheme.onPrimary),
+                ),
             ],
           ),
           const SizedBox(height: 20),
 
           /// Balance section with Deposit/Withdraw buttons
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.onPrimary.withAlpha(25),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: theme.colorScheme.onPrimary.withAlpha(40),
-                width: 1,
+          if (!isGuest) ...[
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.onPrimary.withAlpha(25),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: theme.colorScheme.onPrimary.withAlpha(40),
+                  width: 1,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    t.balance,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onPrimary.withAlpha(220),
+                      letterSpacing: 1.2,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    formatter.formatIqd(balance),
+                    style: theme.textTheme.headlineMedium?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () => _showDepositSheet(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: theme.colorScheme.onPrimary,
+                            foregroundColor: theme.colorScheme.primary,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            elevation: 0,
+                          ),
+                          icon: const Icon(Icons.add_circle_outline, size: 20),
+                          label: Text(
+                            t.deposit,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: balance > 0
+                              ? () => _showWithdrawSheet(context)
+                              : null,
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: theme.colorScheme.onPrimary,
+                            side: BorderSide(
+                              color: balance > 0
+                                  ? theme.colorScheme.onPrimary.withAlpha(180)
+                                  : theme.colorScheme.onPrimary.withAlpha(80),
+                              width: 1.5,
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          icon: const Icon(
+                            Icons.remove_circle_outline,
+                            size: 20,
+                          ),
+                          label: Text(
+                            t.withdraw,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  t.balance,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimary.withAlpha(220),
-                    letterSpacing: 1.2,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  formatter.formatIqd(balance),
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        onPressed: () => _showDepositSheet(context),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.onPrimary,
-                          foregroundColor: theme.colorScheme.primary,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          elevation: 0,
-                        ),
-                        icon: const Icon(Icons.add_circle_outline, size: 20),
-                        label: Text(
-                          t.deposit,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: balance > 0
-                            ? () => _showWithdrawSheet(context)
-                            : null,
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.onPrimary,
-                          side: BorderSide(
-                            color: balance > 0
-                                ? theme.colorScheme.onPrimary.withAlpha(180)
-                                : theme.colorScheme.onPrimary.withAlpha(80),
-                            width: 1.5,
-                          ),
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                        ),
-                        icon: const Icon(Icons.remove_circle_outline, size: 20),
-                        label: Text(
-                          t.withdraw,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
+          ],
 
           /// Student → Apply button
-          if (role.toLowerCase() == 'student') ...[
+          if (!isGuest &&
+              role.toLowerCase() == 'student' &&
+              onApplyTeacher != null) ...[
             const SizedBox(height: 16),
             SizedBox(
               width: double.infinity,

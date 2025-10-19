@@ -1313,5 +1313,21 @@
   "crop_image": "Crop Image",
   "@crop_image": {
     "description": "Button text for cropping an image"
+  },
+  "guest": "Guest",
+  "@guest": {
+    "description": "Label for the guest user role"
+  },
+  "login_to_unlock_features": "Login to unlock more features",
+  "@login_to_unlock_features": {
+    "description": "Prompt encouraging users to log in to access additional features"
+  },
+  "create_account_message": "Create an account to track your learning progress and access exclusive content.",
+  "@create_account_message": {
+    "description": "Message encouraging users to create an account"
+  },
+  "not_logged_in": "You are not logged in",
+  "@not_logged_in": {
+    "description": "Warning message indicating the user is not logged in"
   }
 }
