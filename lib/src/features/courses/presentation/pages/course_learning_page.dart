@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_info_section.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/now_playing_banner.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/quizzes_list.dart';
@@ -97,6 +100,76 @@ class _CourseLearningPageState extends State<CourseLearningPage>
     super.dispose();
   }
 
+  // AI Assistant Snackbar
+  void _showAIAssistantSnackbar(BuildContext context, AppLocalizations t) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.smart_toy_rounded, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                t.ai_assistant_coming_soon ??
+                    'AI Assistant feature coming soon!',
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: Colors.blue,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  // Rate Course Bottom Sheet (simplified - no ownership check needed)
+  void _showRateCourseBottomSheet(
+    BuildContext context,
+    AppLocalizations t,
+    ColorScheme colorScheme,
+  ) {
+    final authState = context.read<AuthBloc>().state;
+
+    // Only check if user is logged in
+    if (authState.user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            t.please_login_to_rate ?? 'Please log in to rate this course',
+          ),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+      );
+      return;
+    }
+
+    // TODO: Show your rating bottom sheet widget here
+    // Example:
+    // showModalBottomSheet(
+    //   context: context,
+    //   isScrollControlled: true,
+    //   backgroundColor: Colors.transparent,
+    //   builder: (context) => RateCourseBottomSheet(
+    //     course: widget.course,
+    //   ),
+    // );
+
+    // Temporary snackbar
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Rating bottom sheet will be implemented'),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
@@ -109,6 +182,21 @@ class _CourseLearningPageState extends State<CourseLearningPage>
           title: Text(widget.course.title),
           centerTitle: true,
           elevation: 0,
+          actions: [
+            // AI Assistant Button
+            IconButton(
+              icon: const Icon(Icons.smart_toy_outlined),
+              tooltip: t.ai_assistant ?? 'AI Assistant',
+              onPressed: () => _showAIAssistantSnackbar(context, t),
+            ),
+            // Rate Course Button
+            IconButton(
+              icon: const Icon(Icons.star_outline_rounded),
+              tooltip: t.rate_course ?? 'Rate Course',
+              onPressed: () =>
+                  _showRateCourseBottomSheet(context, t, colorScheme),
+            ),
+          ],
         ),
         body: _buildCourseContent(context, t, colorScheme, null),
       );
@@ -219,6 +307,21 @@ class _CourseLearningPageState extends State<CourseLearningPage>
             ),
             centerTitle: true,
             iconTheme: IconThemeData(color: colorScheme.onSurface),
+            actions: [
+              // AI Assistant Button
+              IconButton(
+                icon: const Icon(Icons.smart_toy_outlined),
+                tooltip: t.ai_assistant ?? 'AI Assistant',
+                onPressed: () => _showAIAssistantSnackbar(context, t),
+              ),
+              // Rate Course Button
+              IconButton(
+                icon: const Icon(Icons.star_outline_rounded),
+                tooltip: t.rate_course ?? 'Rate Course',
+                onPressed: () =>
+                    _showRateCourseBottomSheet(context, t, colorScheme),
+              ),
+            ],
           ),
         SliverToBoxAdapter(
           child: Column(

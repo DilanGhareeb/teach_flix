@@ -253,6 +253,13 @@ class UpdateCourseEvent extends CoursesEvent {
   ];
 }
 
+class ClearCoursesDataEvent extends CoursesEvent {
+  const ClearCoursesDataEvent();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class DeleteCourseEvent extends CoursesEvent {
   final String courseId;
   const DeleteCourseEvent({required this.courseId});

@@ -85,6 +85,7 @@ class _AddVideoPageState extends State<AddVideoPage> {
 
             TextFormField(
               controller: _youtubeUrlController,
+              textDirection: TextDirection.ltr,
               decoration: InputDecoration(
                 labelText: t.youtube_url,
                 hintText: t.enter_youtube_url,
@@ -108,55 +109,8 @@ class _AddVideoPageState extends State<AddVideoPage> {
                 return null;
               },
             ),
-            const SizedBox(height: 16),
-
-            TextFormField(
-              controller: _descriptionController,
-              decoration: InputDecoration(
-                labelText: t.description,
-                hintText: t.enter_video_description,
-                prefixIcon: Icon(
-                  Icons.description_rounded,
-                  color: colorScheme.primary,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                filled: true,
-                fillColor: colorScheme.surfaceContainerHighest,
-              ),
-              maxLines: 3,
-            ),
 
             const SizedBox(height: 16),
-
-            // Info card explaining auto-ordering
-            Card(
-              color: colorScheme.primaryContainer.withOpacity(0.3),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline,
-                      color: colorScheme.primary,
-                      size: 20,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        t.video_order_info ??
-                            'Video order is determined by the position in the list. You can reorder videos by dragging them.',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: colorScheme.onSurface.withOpacity(0.7),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
         ),
       ),

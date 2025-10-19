@@ -31,6 +31,8 @@ abstract class AuthApiDatasource {
     required WithdrawParams params,
   });
 
+  Future<Either<Failure, UserEntity>> getUserById(String userId);
+
   Future<Either<Failure, void>> sendPasswordResetEmail({required String email});
   Future<Either<Failure, void>> signOut();
 }
@@ -338,6 +340,20 @@ class AuthApiDatasourceImpl implements AuthApiDatasource {
       return Left(AuthFailure.fromFirebaseAuthCode(e.code));
     } catch (e) {
       return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, UserEntity>> getUserById(String userId) async {
+    try {
+      final doc = await _fireStore.collection('users').doc(userId).get();
+      if (!doc.exists) {
+        return Left(NotFoundFailure());
+      }
+      final user = UserModel.fromMap(doc.data()!);
+      return Right(user);
+    } catch (e) {
+      return Left(ServerFailure());
     }
   }
 

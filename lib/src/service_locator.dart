@@ -10,6 +10,7 @@ import 'package:teach_flix/src/features/auth/data/datasources/auth_api_datasourc
 import 'package:teach_flix/src/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:teach_flix/src/features/auth/domain/repositories/auth_repository.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/deposit_usecase.dart';
+import 'package:teach_flix/src/features/auth/domain/usecase/get_user_by_id_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/send_reset_password_email.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/watch_user_profile_usecase.dart';
@@ -88,7 +89,10 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => Deposit(repository: sl()));
   sl.registerFactory(() => SendPasswordResetEmail(sl()));
   sl.registerFactory(() => Withdraw(repository: sl()));
-  sl.registerFactory(
+  sl.registerFactory(() => GetUserById(sl()));
+
+  // CHANGED: Register AuthBloc as singleton so it can be injected into CoursesBloc
+  sl.registerLazySingleton(
     () => AuthBloc(
       loginUsecase: sl(),
       registerUsecase: sl(),
@@ -99,6 +103,7 @@ Future<void> setupServiceLocator() async {
       depositUsecase: sl(),
       sendPasswordResetEmail: sl(),
       withdrawUsecase: sl(),
+      getUserById: sl(),
     ),
   );
 
@@ -160,6 +165,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => DeleteCourse(sl()));
 
   // ========== Courses feature - Bloc ==========
+  // CHANGED: Now can inject AuthBloc since it's a singleton
   sl.registerFactory(
     () => CoursesBloc(
       getAllCourses: sl(),
@@ -175,6 +181,7 @@ Future<void> setupServiceLocator() async {
       uploadCourseImage: sl(),
       updateCourse: sl(),
       deleteCourse: sl(),
+      authBloc: sl<AuthBloc>(), // CHANGED: Inject AuthBloc from GetIt
     ),
   );
 

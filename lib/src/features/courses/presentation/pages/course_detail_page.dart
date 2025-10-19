@@ -328,6 +328,42 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                 color: colorScheme.onSurface,
                               ),
                         ),
+                        const SizedBox(height: 12),
+
+                        // Instructor Section - NEW
+                        FutureBuilder<String>(
+                          future: context.read<AuthBloc>().getInstructorName(
+                            course.instructorId,
+                          ),
+                          builder: (context, snapshot) {
+                            final instructorName = snapshot.hasData
+                                ? snapshot.data!
+                                : snapshot.hasError
+                                ? t.instructor ?? 'Instructor'
+                                : '...';
+
+                            return Row(
+                              children: [
+                                Icon(
+                                  Icons.person_rounded,
+                                  size: 20,
+                                  color: colorScheme.primary,
+                                ),
+                                const SizedBox(width: 8),
+
+                                Text(
+                                  instructorName,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+
                         const SizedBox(height: 16),
                         if (course.ratings.isNotEmpty)
                           Row(
@@ -798,6 +834,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
     );
   }
 
+  // Rest of the methods remain the same...
   Widget _buildTrailerSection(AppLocalizations t, ColorScheme colorScheme) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),

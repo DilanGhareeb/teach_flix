@@ -2221,6 +2221,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You must agree to the terms and conditions'**
   String get must_agree_to_terms;
+
+  /// Message indicating that the AI Assistant feature is coming soon
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant coming soon!'**
+  String get ai_assistant_coming_soon;
+
+  /// Prompt asking the user to log in before rating a course
+  ///
+  /// In en, this message translates to:
+  /// **'Please log in to rate this course'**
+  String get please_login_to_rate;
+
+  /// Label for the AI Assistant feature
+  ///
+  /// In en, this message translates to:
+  /// **'AI Assistant'**
+  String get ai_assistant;
+
+  /// Prompt to rate the course
+  ///
+  /// In en, this message translates to:
+  /// **'Rate this Course'**
+  String get rate_course;
+
+  /// Validation message indicating that the course price cannot be negative
+  ///
+  /// In en, this message translates to:
+  /// **'Price cannot be negative'**
+  String get price_cannot_be_negative;
 }
 
 class _AppLocalizationsDelegate

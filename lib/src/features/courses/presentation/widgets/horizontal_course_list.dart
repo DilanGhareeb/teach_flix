@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_card.dart';
 
@@ -16,9 +18,10 @@ class HorizontalCourseList extends StatelessWidget {
   Widget build(BuildContext context) {
     final locale = Localizations.localeOf(context);
     final isRtl = ['ckb', 'ar', 'fa', 'ur', 'he'].contains(locale.languageCode);
+    final authBloc = context.read<AuthBloc>();
 
     return SizedBox(
-      height: 400, // Fixed height for cards
+      height: 400,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         physics: const BouncingScrollPhysics(),
@@ -35,6 +38,8 @@ class HorizontalCourseList extends StatelessWidget {
               course: course,
               width: 320,
               onTap: () => onCourseTap?.call(course),
+              getInstructorName: (instructorId) =>
+                  authBloc.getInstructorName(instructorId),
             ),
           );
         },

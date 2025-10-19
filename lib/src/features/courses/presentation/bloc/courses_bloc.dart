@@ -1,7 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/video_entity.dart';
@@ -38,6 +41,9 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
   final UpdateCourse _updateCourse;
   final DeleteCourse _deleteCourse;
 
+  final AuthBloc _authBloc;
+  StreamSubscription<AuthState>? _authSubscription;
+
   CoursesBloc({
     required GetAllCourses getAllCourses,
     required GetCourseById getCourseById,
@@ -52,6 +58,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     required AddVideoToChapter addVideoToChapter,
     required UpdateCourse updateCourse,
     required DeleteCourse deleteCourse,
+    required AuthBloc authBloc,
   }) : _getAllCourses = getAllCourses,
        _getCourseById = getCourseById,
        _createCourse = createCourse,
@@ -65,6 +72,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
        _addVideoToChapter = addVideoToChapter,
        _updateCourse = updateCourse,
        _deleteCourse = deleteCourse,
+       _authBloc = authBloc,
        super(const CoursesState()) {
     on<LoadCoursesEvent>(_onLoadCourses);
     on<LoadCourseDetailEvent>(_onLoadCourseDetail);
@@ -81,17 +89,30 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     on<PickImageFromGalleryEvent>(_onPickImageFromGallery);
     on<PickImageFromCameraEvent>(_onPickImageFromCamera);
     on<UploadCourseImageEvent>(_onUploadCourseImage);
-    on<ClearSelectedImageEvent>(_onClearSelectedImage);
-    on<AddChapterToNewCourseEvent>(_onAddChapterToNewCourse);
-    on<RemoveChapterFromNewCourseEvent>(_onRemoveChapterFromNewCourse);
-    on<SubmitNewCourseEvent>(_onSubmitNewCourse);
-    on<UpdateChapterInNewCourseEvent>(_onUpdateChapterInNewCourse);
-    on<ReorderChaptersEvent>(_onReorderChapters);
-    on<ClearCourseCreationStateEvent>(_onClearCourseCreationState);
-    // NEW: Register event handlers for editing/deleting
-    on<LoadExistingCourseForEditEvent>(_onLoadExistingCourseForEdit);
-    on<UpdateCourseEvent>(_onUpdateCourse);
-    on<DeleteCourseEvent>(_onDeleteCourse);
+    on<ClearSelectedImageEvent>(onClearSelectedImage);
+    on<AddChapterToNewCourseEvent>(onAddChapterToNewCourse);
+    on<RemoveChapterFromNewCourseEvent>(onRemoveChapterFromNewCourse);
+    on<SubmitNewCourseEvent>(onSubmitNewCourse);
+    on<UpdateChapterInNewCourseEvent>(onUpdateChapterInNewCourse);
+    on<ReorderChaptersEvent>(onReorderChapters);
+    on<ClearCourseCreationStateEvent>(onClearCourseCreationState);
+    on<LoadExistingCourseForEditEvent>(onLoadExistingCourseForEdit);
+    on<UpdateCourseEvent>(onUpdateCourse);
+    on<DeleteCourseEvent>(onDeleteCourse);
+    on<ClearCoursesDataEvent>(_onClearCoursesData);
+    _authSubscription = _authBloc.stream.listen((authState) {
+      if (authState.status == AuthStatus.unauthenticated ||
+          authState.status == AuthStatus.guest) {
+        add(const ClearCoursesDataEvent());
+      }
+    });
+  }
+
+  void _onClearCoursesData(
+    ClearCoursesDataEvent event,
+    Emitter<CoursesState> emit,
+  ) {
+    emit(const CoursesState());
   }
 
   Future<void> _onLoadCourses(
@@ -451,7 +472,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  void _onClearSelectedImage(
+  void onClearSelectedImage(
     ClearSelectedImageEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -467,7 +488,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  void _onAddChapterToNewCourse(
+  void onAddChapterToNewCourse(
     AddChapterToNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -482,7 +503,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  void _onRemoveChapterFromNewCourse(
+  void onRemoveChapterFromNewCourse(
     RemoveChapterFromNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -500,7 +521,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     }
   }
 
-  void _onUpdateChapterInNewCourse(
+  void onUpdateChapterInNewCourse(
     UpdateChapterInNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -517,7 +538,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     }
   }
 
-  void _onReorderChapters(
+  void onReorderChapters(
     ReorderChaptersEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -537,7 +558,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  void _onClearCourseCreationState(
+  void onClearCourseCreationState(
     ClearCourseCreationStateEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -554,7 +575,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  Future<void> _onSubmitNewCourse(
+  Future<void> onSubmitNewCourse(
     SubmitNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
@@ -641,7 +662,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  void _onLoadExistingCourseForEdit(
+  void onLoadExistingCourseForEdit(
     LoadExistingCourseForEditEvent event,
     Emitter<CoursesState> emit,
   ) {
@@ -659,7 +680,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  Future<void> _onUpdateCourse(
+  Future<void> onUpdateCourse(
     UpdateCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
@@ -764,7 +785,7 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     );
   }
 
-  Future<void> _onDeleteCourse(
+  Future<void> onDeleteCourse(
     DeleteCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {

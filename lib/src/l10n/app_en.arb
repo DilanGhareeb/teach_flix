@@ -1421,5 +1421,25 @@
   "must_agree_to_terms": "You must agree to the terms and conditions",
   "@must_agree_to_terms": {
     "description": "Validation message prompting user to agree to instructor terms and conditions"
+  },
+  "ai_assistant_coming_soon": "AI Assistant coming soon!",
+  "@ai_assistant_coming_soon": {
+    "description": "Message indicating that the AI Assistant feature is coming soon"
+  },
+  "please_login_to_rate": "Please log in to rate this course",
+  "@please_login_to_rate": {
+    "description": "Prompt asking the user to log in before rating a course"
+  },
+  "ai_assistant": "AI Assistant",
+  "@ai_assistant": {
+    "description": "Label for the AI Assistant feature"
+  },
+  "rate_course": "Rate this Course",
+  "@rate_course": {
+    "description": "Prompt to rate the course"
+  },
+  "price_cannot_be_negative": "Price cannot be negative",
+  "@price_cannot_be_negative": {
+    "description": "Validation message indicating that the course price cannot be negative"
   }
 }

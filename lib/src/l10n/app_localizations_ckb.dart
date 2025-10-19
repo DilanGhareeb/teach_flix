@@ -1104,4 +1104,19 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get must_agree_to_terms => 'دەبێت ڕازی بیت بە مەرج و یاساکان';
+
+  @override
+  String get ai_assistant_coming_soon => 'زیرەکی دەستکرد بەم زووانە';
+
+  @override
+  String get please_login_to_rate => 'تکایە بچۆ ژوورەوە بۆ هەڵسەنگاندن';
+
+  @override
+  String get ai_assistant => 'یارمەتی زیرەکی دەستکرد';
+
+  @override
+  String get rate_course => 'کۆرسەکە هەڵبسەنگێنە';
+
+  @override
+  String get price_cannot_be_negative => 'نرخی کۆرس ناتوانێت نێگەتیڤ بێت';
 }

@@ -9,10 +9,12 @@ class CourseCard extends StatelessWidget {
   final VoidCallback? onTap;
   final bool showPrice;
   final double? width;
+  final Future<String> Function(String instructorId) getInstructorName;
 
   const CourseCard({
     super.key,
     required this.course,
+    required this.getInstructorName,
     this.onTap,
     this.showPrice = true,
     this.width,
@@ -219,17 +221,40 @@ class CourseCard extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
 
-                      // Description
-                      Expanded(
-                        child: Text(
-                          course.description,
-                          style: textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.7),
-                            height: 1.4,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                      // Instructor - Using FutureBuilder
+                      FutureBuilder<String>(
+                        future: getInstructorName(course.instructorId),
+                        builder: (context, snapshot) {
+                          final instructorName = snapshot.hasData
+                              ? snapshot.data!
+                              : snapshot.hasError
+                              ? 'Instructor'
+                              : '...';
+
+                          return Row(
+                            children: [
+                              Icon(
+                                Icons.person_outline_rounded,
+                                size: 16,
+                                color: colorScheme.primary,
+                              ),
+                              const SizedBox(width: 4),
+                              Expanded(
+                                child: Text(
+                                  instructorName,
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurface.withOpacity(
+                                      0.8,
+                                    ),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
 
                       const SizedBox(height: 12),

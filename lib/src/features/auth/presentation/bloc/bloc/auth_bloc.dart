@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/auth_session.dart';
 import 'package:teach_flix/src/features/auth/domain/entities/user.dart';
+import 'package:teach_flix/src/features/auth/domain/usecase/get_user_by_id_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/send_reset_password_email.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/update_user_info_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/watch_user_profile_usecase.dart';
@@ -29,6 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final Withdraw withdrawUsecase;
   final SendPasswordResetEmail sendPasswordResetEmail;
   final Logout logoutUsecase;
+  final GetUserById getUserById;
 
   StreamSubscription<AuthSession>? _authSub;
   StreamSubscription<Either<Failure, UserEntity>>? _profileSub;
@@ -43,6 +45,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     required this.withdrawUsecase,
     required this.sendPasswordResetEmail,
     required this.logoutUsecase,
+    required this.getUserById,
   }) : super(const AuthState()) {
     on<AuthBootstrapRequested>(_onBootstrap);
     on<_AuthSessionChanged>(_onSessionChanged);
@@ -65,6 +68,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(state.copyWith(status: AuthStatus.loading, failure: null));
     await _authSub?.cancel();
     _authSub = watchAuthSession().listen((s) => add(_AuthSessionChanged(s)));
+  }
+
+  Future<String> getInstructorName(String instructorId) async {
+    final result = await getUserById(params: instructorId);
+    return result.fold((failure) => 'Instructor', (user) => user.name);
   }
 
   void _onContinueAsGuest(

@@ -1105,4 +1105,19 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get must_agree_to_terms =>
       'You must agree to the terms and conditions';
+
+  @override
+  String get ai_assistant_coming_soon => 'AI Assistant coming soon!';
+
+  @override
+  String get please_login_to_rate => 'Please log in to rate this course';
+
+  @override
+  String get ai_assistant => 'AI Assistant';
+
+  @override
+  String get rate_course => 'Rate this Course';
+
+  @override
+  String get price_cannot_be_negative => 'Price cannot be negative';
 }

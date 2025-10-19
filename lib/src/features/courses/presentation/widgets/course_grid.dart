@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_card.dart';
 
@@ -10,6 +12,8 @@ class CourseGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final authBloc = context.read<AuthBloc>();
+
     return LayoutBuilder(
       builder: (context, constraints) {
         // Responsive grid based on screen width
@@ -17,19 +21,15 @@ class CourseGrid extends StatelessWidget {
         double childAspectRatio;
 
         if (constraints.maxWidth > 1200) {
-          // Desktop/Large tablets
           crossAxisCount = 3;
           childAspectRatio = 0.75;
         } else if (constraints.maxWidth > 800) {
-          // Tablets
           crossAxisCount = 2;
           childAspectRatio = 0.72;
         } else if (constraints.maxWidth > 600) {
-          // Small tablets/Large phones
           crossAxisCount = 2;
           childAspectRatio = 0.70;
         } else {
-          // Phones
           crossAxisCount = 1;
           childAspectRatio = 0.85;
         }
@@ -49,6 +49,8 @@ class CourseGrid extends StatelessWidget {
             return CourseCard(
               course: course,
               onTap: () => onCourseTap?.call(course),
+              getInstructorName: (instructorId) =>
+                  authBloc.getInstructorName(instructorId),
             );
           },
         );

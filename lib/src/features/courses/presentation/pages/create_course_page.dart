@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/common/error_localizer.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_category.dart';
@@ -197,18 +198,33 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                         _buildTextField(
                           controller: _priceController,
                           label: t.price,
-                          hint: t.enter_price,
-                          icon: Icons.attach_money_rounded,
-                          keyboardType: TextInputType.number,
+                          hint: t.enter_price ?? 'Enter price in IQD',
+                          icon: Icons
+                              .payments_rounded, // Changed to a more appropriate icon
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9.]'),
+                            ),
+                          ],
+                          textDirection: TextDirection.ltr,
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
                               return t.price_required;
                             }
-                            if (double.tryParse(value!) == null) {
+                            final price = double.tryParse(value!);
+                            if (price == null) {
                               return t.invalid_price;
+                            }
+                            if (price < 0) {
+                              return t.price_cannot_be_negative ??
+                                  'Price cannot be negative';
                             }
                             return null;
                           },
+                          suffixText: 'IQD',
                         ),
 
                         const SizedBox(height: 16),
@@ -219,6 +235,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
                           label: t.preview_video_url,
                           hint: t.enter_preview_video_url,
                           icon: Icons.video_library_rounded,
+                          textDirection: TextDirection.ltr,
                           validator: (value) {
                             if (value?.isEmpty ?? true) {
                               return t.preview_video_required;
@@ -741,6 +758,9 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
     int maxLines = 1,
     TextInputType? keyboardType,
     String? Function(String?)? validator,
+    List<TextInputFormatter>? inputFormatters,
+    String? suffixText,
+    TextDirection? textDirection,
   }) {
     return TextFormField(
       controller: controller,
@@ -748,6 +768,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
         labelText: label,
         hintText: hint,
         prefixIcon: Icon(icon),
+        suffixText: suffixText, // NEW: Add suffix text
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
         filled: true,
         fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
@@ -755,6 +776,7 @@ class _CreateCoursePageState extends State<CreateCoursePage> {
       maxLines: maxLines,
       keyboardType: keyboardType,
       validator: validator,
+      inputFormatters: inputFormatters, // NEW: Add input formatters
     );
   }
 

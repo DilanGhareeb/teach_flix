@@ -78,4 +78,9 @@ class AuthRepositoryImpl implements AuthRepository {
     final either = await authApiDatasource.withdraw(params: params);
     return either.fold(Left.new, (UserEntity m) => Right(m));
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> getUserById(String userId) {
+    return authApiDatasource.getUserById(userId);
+  }
 }
