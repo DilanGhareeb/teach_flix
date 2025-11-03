@@ -135,55 +135,57 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   Widget _buildMessageInput(BuildContext context, AiChatState state) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: Theme.of(context).scaffoldBackgroundColor,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 4,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          IconButton(
-            icon: const Icon(Icons.attach_file),
-            onPressed: state.isSending
-                ? null
-                : () => _handleAttachmentPressed(context),
-            tooltip: l10n.attach_file ?? 'attach_file',
-          ),
-          Expanded(
-            child: TextField(
-              controller: _messageController,
-              enabled: !state.isSending,
-              decoration: InputDecoration(
-                hintText: l10n.type_message ?? 'type_message',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(24),
-                ),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-              ),
-              maxLines: null,
-              textInputAction: TextInputAction.send,
-              onSubmitted: state.isSending
-                  ? null
-                  : (_) => _sendMessage(context),
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).scaffoldBackgroundColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
             ),
-          ),
-          const SizedBox(width: 8),
-          IconButton(
-            icon: Icon(state.isSending ? Icons.hourglass_empty : Icons.send),
-            onPressed: state.isSending ? null : () => _sendMessage(context),
-            tooltip: l10n.send ?? 'send',
-          ),
-        ],
+          ],
+        ),
+        child: Row(
+          children: [
+            IconButton(
+              icon: const Icon(Icons.attach_file),
+              onPressed: state.isSending
+                  ? null
+                  : () => _handleAttachmentPressed(context),
+              tooltip: l10n.attach_file ?? 'attach_file',
+            ),
+            Expanded(
+              child: TextField(
+                controller: _messageController,
+                enabled: !state.isSending,
+                decoration: InputDecoration(
+                  hintText: l10n.type_message ?? 'type_message',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                ),
+                maxLines: null,
+                textInputAction: TextInputAction.send,
+                onSubmitted: state.isSending
+                    ? null
+                    : (_) => _sendMessage(context),
+              ),
+            ),
+            const SizedBox(width: 8),
+            IconButton(
+              icon: Icon(state.isSending ? Icons.hourglass_empty : Icons.send),
+              onPressed: state.isSending ? null : () => _sendMessage(context),
+              tooltip: l10n.send ?? 'send',
+            ),
+          ],
+        ),
       ),
     );
   }
