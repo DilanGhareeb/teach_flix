@@ -1328,4 +1328,145 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get progress_share_certificate => 'Share Certificate';
+
+  @override
+  String get please_login_to_chat => 'Please login to start chatting with AI';
+
+  @override
+  String get chat => 'Chat';
+
+  @override
+  String get new_chat => 'New Chat';
+
+  @override
+  String get start_new_chat => 'Start New Chat';
+
+  @override
+  String get no_chats_yet => 'No Chats Yet';
+
+  @override
+  String get start_conversation_with_ai =>
+      'Start a conversation with AI assistant to get help with your questions';
+
+  @override
+  String get chat_title => 'Chat Title';
+
+  @override
+  String get enter_chat_title => 'Enter a title for your chat';
+
+  @override
+  String get title_too_short => 'Title must be at least 3 characters';
+
+  @override
+  String get create => 'Create';
+
+  @override
+  String get delete_chat => 'Delete Chat';
+
+  @override
+  String get delete_chat_confirmation =>
+      'Are you sure you want to delete this chat? This action cannot be undone.';
+
+  @override
+  String get clear_messages => 'Clear Messages';
+
+  @override
+  String get clear_messages_confirmation =>
+      'Are you sure you want to clear all messages in this chat?';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get info => 'Info';
+
+  @override
+  String get ai_assistant_info =>
+      'This AI assistant can help answer your questions, provide explanations, and assist with various tasks. Feel free to ask anything!';
+
+  @override
+  String get type_message => 'Type a message...';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get attach_file => 'Attach File';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get file => 'File';
+
+  @override
+  String get no_file_selected => 'No file selected';
+
+  @override
+  String get start_chatting => 'Start chatting with AI assistant';
+
+  @override
+  String get error_occurred => 'An error occurred';
+
+  @override
+  String get sending => 'Sending...';
+
+  @override
+  String get ai_chat_server_error => 'Server error occurred. Please try again.';
+
+  @override
+  String get ai_chat_network_error =>
+      'Network connection error. Please check your internet.';
+
+  @override
+  String get ai_chat_storage_error => 'File upload failed. Please try again.';
+
+  @override
+  String get ai_chat_not_found => 'Chat session not found.';
+
+  @override
+  String get ai_chat_ai_error =>
+      'AI service is temporarily unavailable. Please try again.';
+
+  @override
+  String get ai_chat_api_error => 'API error occurred. Please try again later.';
+
+  @override
+  String get ai_chat_rate_limit_error =>
+      'Too many requests. Please wait a moment and try again.';
+
+  @override
+  String get ai_chat_quota_exceeded =>
+      'Service quota exceeded. Please try again later.';
+
+  @override
+  String get ai_chat_file_too_large =>
+      'File is too large. Maximum size is 10MB.';
+
+  @override
+  String get ai_chat_invalid_file_format =>
+      'Invalid file format. Please select a different file.';
+
+  @override
+  String get ai_chat_unknown_error =>
+      'An unexpected error occurred. Please try again.';
+
+  @override
+  String get ai_chat_permission_denied =>
+      'Permission denied. Please check your access.';
+
+  @override
+  String get ai_chat_service_unavailable =>
+      'Service temporarily unavailable. Please try again later.';
+
+  @override
+  String get ai_chat_timeout =>
+      'Request timeout. Please check your connection and try again.';
+
+  @override
+  String get ai_chat_already_exists => 'This chat already exists.';
+
+  @override
+  String get ai_chat_firestore_error =>
+      'Database error occurred. Please try again.';
 }

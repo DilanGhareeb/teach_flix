@@ -1331,4 +1331,149 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get progress_share_certificate => 'هاوبەشکردنی بڕوانامە';
+
+  @override
+  String get please_login_to_chat =>
+      'تکایە بچۆ ژوورەوە بۆ دەستپێکردنی گفتوگۆ لەگەڵ AI';
+
+  @override
+  String get chat => 'گفتوگۆ';
+
+  @override
+  String get new_chat => 'گفتوگۆیەکی نوێ';
+
+  @override
+  String get start_new_chat => 'دەستپێکردنی گفتوگۆیەکی نوێ';
+
+  @override
+  String get no_chats_yet => 'هێشتا هیچ گفتوگۆیەک نییە';
+
+  @override
+  String get start_conversation_with_ai =>
+      'دەستپێکردنی گفتوگۆیەک لەگەڵ یاریدەدەری AI بۆ وەرگرتنی یارمەتی لە پرسیارەکانتدا';
+
+  @override
+  String get chat_title => 'ناونیشانی گفتوگۆ';
+
+  @override
+  String get enter_chat_title => 'ناونیشانێک بۆ گفتوگۆکەت بنووسە';
+
+  @override
+  String get title_too_short => 'ناونیشان دەبێت لانیکەم ٣ پیت بێت';
+
+  @override
+  String get create => 'دروستکردن';
+
+  @override
+  String get delete_chat => 'سڕینەوەی گفتوگۆ';
+
+  @override
+  String get delete_chat_confirmation =>
+      'دڵنیایت لە سڕینەوەی ئەم گفتوگۆیە؟ ناتوانرێت ئەم کردارە بگەڕێنرێتەوە.';
+
+  @override
+  String get clear_messages => 'پاککردنەوەی نامەکان';
+
+  @override
+  String get clear_messages_confirmation =>
+      'دڵنیایت لە پاککردنەوەی هەموو نامەکان لەم گفتوگۆیەدا؟';
+
+  @override
+  String get clear => 'پاککردنەوە';
+
+  @override
+  String get info => 'زانیاری';
+
+  @override
+  String get ai_assistant_info =>
+      'ئەم یاریدەدەرە AI دەتوانێت یارمەتیت بدات لە وەڵامدانەوەی پرسیارەکانت، ڕوونکردنەوە پێشکەشکردن، و یارمەتیدان لە ئەرکە جۆراوجۆرەکاندا. بەخۆڕایی هەر شتێک بپرسە!';
+
+  @override
+  String get type_message => 'نامەیەک بنووسە...';
+
+  @override
+  String get send => 'ناردن';
+
+  @override
+  String get attach_file => 'هاوپێچکردنی فایل';
+
+  @override
+  String get photo => 'وێنە';
+
+  @override
+  String get file => 'فایل';
+
+  @override
+  String get no_file_selected => 'هیچ فایلێک هەڵنەبژێردراوە';
+
+  @override
+  String get start_chatting => 'دەستپێکردنی گفتوگۆ لەگەڵ یاریدەدەری AI';
+
+  @override
+  String get error_occurred => 'هەڵەیەک ڕوویدا';
+
+  @override
+  String get sending => 'دەنێردرێت...';
+
+  @override
+  String get ai_chat_server_error =>
+      'هەڵەیەکی سێرڤەر ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_network_error =>
+      'هەڵەی پەیوەندی تۆڕ. تکایە ئینتەرنێتەکەت بپشکنە.';
+
+  @override
+  String get ai_chat_storage_error =>
+      'بارکردنی فایل سەرکەوتوو نەبوو. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_not_found => 'دانیشتنی گفتوگۆ نەدۆزرایەوە.';
+
+  @override
+  String get ai_chat_ai_error =>
+      'خزمەتگوزاری AI کاتیەن بەردەست نییە. تکایە دواتر هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_api_error =>
+      'هەڵەیەکی API ڕوویدا. تکایە دواتر هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_rate_limit_error =>
+      'داواکاری زۆر. تکایە کەمێک چاوەڕێ بکە و دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_quota_exceeded =>
+      'سنووری خزمەتگوزاری تێپەڕێندرا. تکایە دواتر هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_file_too_large =>
+      'قەبارەی فایل زۆر گەورەیە. زۆرترین قەبارە ١٠ مێگابایتە.';
+
+  @override
+  String get ai_chat_invalid_file_format =>
+      'شێوازی فایل نادروستە. تکایە فایلێکی تر هەڵبژێرە.';
+
+  @override
+  String get ai_chat_unknown_error =>
+      'هەڵەیەکی چاوەڕواننەکراو ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_permission_denied =>
+      'مۆڵەت ڕەتکرایەوە. تکایە دەستڕاگەیشتنەکەت بپشکنە.';
+
+  @override
+  String get ai_chat_service_unavailable =>
+      'خزمەتگوزاری کاتیەن بەردەست نییە. تکایە دواتر هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_timeout =>
+      'کاتی داواکاری بەسەرچوو. تکایە پەیوەندیەکەت بپشکنە و دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get ai_chat_already_exists => 'ئەم گفتوگۆیە پێشتر هەیە.';
+
+  @override
+  String get ai_chat_firestore_error =>
+      'هەڵەیەکی بنکەدراوە ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.';
 }

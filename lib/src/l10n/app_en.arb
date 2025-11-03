@@ -1701,5 +1701,173 @@
   "progress_share_certificate": "Share Certificate",
   "@progress_share_certificate": {
     "description": "Button text for sharing the course completion certificate"
+  },
+  "please_login_to_chat": "Please login to start chatting with AI",
+  "@please_login_to_chat": {
+    "description": "Prompt asking the user to log in before using the AI chat feature"
+  },
+  "chat": "Chat",
+  "@chat": {
+    "description": "Label for the chat feature"
+  },
+  "new_chat": "New Chat",
+  "@new_chat": {
+    "description": "Button text for starting a new chat"
+  },
+  "start_new_chat": "Start New Chat",
+  "@start_new_chat": {
+    "description": "Prompt to start a new chat session"
+  },
+  "no_chats_yet": "No Chats Yet",
+  "@no_chats_yet": {
+    "description": "Message indicating that there are no chat sessions yet"
+  },
+  "start_conversation_with_ai": "Start a conversation with AI assistant to get help with your questions",
+  "@start_conversation_with_ai": {
+    "description": "Prompt encouraging users to start a chat with the AI assistant"
+  },
+  "chat_title": "Chat Title",
+  "@chat_title": {
+    "description": "Label for the chat title input field"
+  },
+  "enter_chat_title": "Enter a title for your chat",
+  "@enter_chat_title": {
+    "description": "Placeholder text for entering a chat title"
+  },
+  "title_too_short": "Title must be at least 3 characters",
+  "@title_too_short": {
+    "description": "Validation message indicating that the chat title is too short"
+  },
+  "create": "Create",
+  "@create": {
+    "description": "Button text for creating a new chat"
+  },
+  "delete_chat": "Delete Chat",
+  "@delete_chat": {
+    "description": "Button text for deleting a chat"
+  },
+  "delete_chat_confirmation": "Are you sure you want to delete this chat? This action cannot be undone.",
+  "@delete_chat_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm chat deletion"
+  },
+  "clear_messages": "Clear Messages",
+  "@clear_messages": {
+    "description": "Button text for clearing all messages in a chat"
+  },
+  "clear_messages_confirmation": "Are you sure you want to clear all messages in this chat?",
+  "@clear_messages_confirmation": {
+    "description": "Confirmation dialog message asking user to confirm clearing all messages in a chat"
+  },
+  "clear": "Clear",
+  "@clear": {
+    "description": "Button text for clearing messages"
+  },
+  "info": "Info",
+  "@info": {
+    "description": "Label for the information section"
+  },
+  "ai_assistant_info": "This AI assistant can help answer your questions, provide explanations, and assist with various tasks. Feel free to ask anything!",
+  "@ai_assistant_info": {
+    "description": "Information about the AI assistant feature"
+  },
+  "type_message": "Type a message...",
+  "@type_message": {
+    "description": "Placeholder text for the message input field in the chat"
+  },
+  "send": "Send",
+  "@send": {
+    "description": "Button text for sending a message in the chat"
+  },
+  "attach_file": "Attach File",
+  "@attach_file": {
+    "description": "Button text for attaching a file in the chat"
+  },
+  "photo": "Photo",
+  "@photo": {
+    "description": "Label for photo attachment option"
+  },
+  "file": "File",
+  "@file": {
+    "description": "Label for file attachment option"
+  },
+  "no_file_selected": "No file selected",
+  "@no_file_selected": {
+    "description": "Message indicating that no file has been selected for attachment"
+  },
+  "start_chatting": "Start chatting with AI assistant",
+  "@start_chatting": {
+    "description": "Prompt to start chatting with the AI assistant"
+  },
+  "error_occurred": "An error occurred",
+  "@error_occurred": {
+    "description": "Generic error message for chat feature"
+  },
+  "sending": "Sending...",
+  "@sending": {
+    "description": "Status message indicating that a message is being sent"
+  },
+  "ai_chat_server_error": "Server error occurred. Please try again.",
+  "@ai_chat_server_error": {
+    "description": "Error message for server errors in the AI chat feature"
+  },
+  "ai_chat_network_error": "Network connection error. Please check your internet.",
+  "@ai_chat_network_error": {
+    "description": "Error message for network connection issues in the AI chat feature"
+  },
+  "ai_chat_storage_error": "File upload failed. Please try again.",
+  "@ai_chat_storage_error": {
+    "description": "Error message for file upload failures in the AI chat feature"
+  },
+  "ai_chat_not_found": "Chat session not found.",
+  "@ai_chat_not_found": {
+    "description": "Error message indicating that the chat session was not found"
+  },
+  "ai_chat_ai_error": "AI service is temporarily unavailable. Please try again.",
+  "@ai_chat_ai_error": {
+    "description": "Error message for AI service unavailability in the AI chat feature"
+  },
+  "ai_chat_api_error": "API error occurred. Please try again later.",
+  "@ai_chat_api_error": {
+    "description": "Error message for API errors in the AI chat feature"
+  },
+  "ai_chat_rate_limit_error": "Too many requests. Please wait a moment and try again.",
+  "@ai_chat_rate_limit_error": {
+    "description": "Error message for rate limit exceeded in the AI chat feature"
+  },
+  "ai_chat_quota_exceeded": "Service quota exceeded. Please try again later.",
+  "@ai_chat_quota_exceeded": {
+    "description": "Error message for service quota exceeded in the AI chat feature"
+  },
+  "ai_chat_file_too_large": "File is too large. Maximum size is 10MB.",
+  "@ai_chat_file_too_large": {
+    "description": "Error message for file size exceeding the limit in the AI chat feature"
+  },
+  "ai_chat_invalid_file_format": "Invalid file format. Please select a different file.",
+  "@ai_chat_invalid_file_format": {
+    "description": "Error message for invalid file format in the AI chat feature"
+  },
+  "ai_chat_unknown_error": "An unexpected error occurred. Please try again.",
+  "@ai_chat_unknown_error": {
+    "description": "Generic error message for unexpected errors in the AI chat feature"
+  },
+  "ai_chat_permission_denied": "Permission denied. Please check your access.",
+  "@ai_chat_permission_denied": {
+    "description": "Error message for permission denied in the AI chat feature"
+  },
+  "ai_chat_service_unavailable": "Service temporarily unavailable. Please try again later.",
+  "@ai_chat_service_unavailable": {
+    "description": "Error message for service unavailability in the AI chat feature"
+  },
+  "ai_chat_timeout": "Request timeout. Please check your connection and try again.",
+  "@ai_chat_timeout": {
+    "description": "Error message for request timeout in the AI chat feature"
+  },
+  "ai_chat_already_exists": "This chat already exists.",
+  "@ai_chat_already_exists": {
+    "description": "Error message indicating that the chat session already exists"
+  },
+  "ai_chat_firestore_error": "Database error occurred. Please try again.",
+  "@ai_chat_firestore_error": {
+    "description": "Error message for database errors in the AI chat feature"
   }
 }

@@ -2641,6 +2641,258 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Share Certificate'**
   String get progress_share_certificate;
+
+  /// Prompt asking the user to log in before using the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to start chatting with AI'**
+  String get please_login_to_chat;
+
+  /// Label for the chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Chat'**
+  String get chat;
+
+  /// Button text for starting a new chat
+  ///
+  /// In en, this message translates to:
+  /// **'New Chat'**
+  String get new_chat;
+
+  /// Prompt to start a new chat session
+  ///
+  /// In en, this message translates to:
+  /// **'Start New Chat'**
+  String get start_new_chat;
+
+  /// Message indicating that there are no chat sessions yet
+  ///
+  /// In en, this message translates to:
+  /// **'No Chats Yet'**
+  String get no_chats_yet;
+
+  /// Prompt encouraging users to start a chat with the AI assistant
+  ///
+  /// In en, this message translates to:
+  /// **'Start a conversation with AI assistant to get help with your questions'**
+  String get start_conversation_with_ai;
+
+  /// Label for the chat title input field
+  ///
+  /// In en, this message translates to:
+  /// **'Chat Title'**
+  String get chat_title;
+
+  /// Placeholder text for entering a chat title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a title for your chat'**
+  String get enter_chat_title;
+
+  /// Validation message indicating that the chat title is too short
+  ///
+  /// In en, this message translates to:
+  /// **'Title must be at least 3 characters'**
+  String get title_too_short;
+
+  /// Button text for creating a new chat
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get create;
+
+  /// Button text for deleting a chat
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Chat'**
+  String get delete_chat;
+
+  /// Confirmation dialog message asking user to confirm chat deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this chat? This action cannot be undone.'**
+  String get delete_chat_confirmation;
+
+  /// Button text for clearing all messages in a chat
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Messages'**
+  String get clear_messages;
+
+  /// Confirmation dialog message asking user to confirm clearing all messages in a chat
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all messages in this chat?'**
+  String get clear_messages_confirmation;
+
+  /// Button text for clearing messages
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// Label for the information section
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get info;
+
+  /// Information about the AI assistant feature
+  ///
+  /// In en, this message translates to:
+  /// **'This AI assistant can help answer your questions, provide explanations, and assist with various tasks. Feel free to ask anything!'**
+  String get ai_assistant_info;
+
+  /// Placeholder text for the message input field in the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Type a message...'**
+  String get type_message;
+
+  /// Button text for sending a message in the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Send'**
+  String get send;
+
+  /// Button text for attaching a file in the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Attach File'**
+  String get attach_file;
+
+  /// Label for photo attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// Label for file attachment option
+  ///
+  /// In en, this message translates to:
+  /// **'File'**
+  String get file;
+
+  /// Message indicating that no file has been selected for attachment
+  ///
+  /// In en, this message translates to:
+  /// **'No file selected'**
+  String get no_file_selected;
+
+  /// Prompt to start chatting with the AI assistant
+  ///
+  /// In en, this message translates to:
+  /// **'Start chatting with AI assistant'**
+  String get start_chatting;
+
+  /// Generic error message for chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get error_occurred;
+
+  /// Status message indicating that a message is being sent
+  ///
+  /// In en, this message translates to:
+  /// **'Sending...'**
+  String get sending;
+
+  /// Error message for server errors in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Server error occurred. Please try again.'**
+  String get ai_chat_server_error;
+
+  /// Error message for network connection issues in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Network connection error. Please check your internet.'**
+  String get ai_chat_network_error;
+
+  /// Error message for file upload failures in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'File upload failed. Please try again.'**
+  String get ai_chat_storage_error;
+
+  /// Error message indicating that the chat session was not found
+  ///
+  /// In en, this message translates to:
+  /// **'Chat session not found.'**
+  String get ai_chat_not_found;
+
+  /// Error message for AI service unavailability in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'AI service is temporarily unavailable. Please try again.'**
+  String get ai_chat_ai_error;
+
+  /// Error message for API errors in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'API error occurred. Please try again later.'**
+  String get ai_chat_api_error;
+
+  /// Error message for rate limit exceeded in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Too many requests. Please wait a moment and try again.'**
+  String get ai_chat_rate_limit_error;
+
+  /// Error message for service quota exceeded in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Service quota exceeded. Please try again later.'**
+  String get ai_chat_quota_exceeded;
+
+  /// Error message for file size exceeding the limit in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'File is too large. Maximum size is 10MB.'**
+  String get ai_chat_file_too_large;
+
+  /// Error message for invalid file format in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid file format. Please select a different file.'**
+  String get ai_chat_invalid_file_format;
+
+  /// Generic error message for unexpected errors in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get ai_chat_unknown_error;
+
+  /// Error message for permission denied in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Permission denied. Please check your access.'**
+  String get ai_chat_permission_denied;
+
+  /// Error message for service unavailability in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Service temporarily unavailable. Please try again later.'**
+  String get ai_chat_service_unavailable;
+
+  /// Error message for request timeout in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Request timeout. Please check your connection and try again.'**
+  String get ai_chat_timeout;
+
+  /// Error message indicating that the chat session already exists
+  ///
+  /// In en, this message translates to:
+  /// **'This chat already exists.'**
+  String get ai_chat_already_exists;
+
+  /// Error message for database errors in the AI chat feature
+  ///
+  /// In en, this message translates to:
+  /// **'Database error occurred. Please try again.'**
+  String get ai_chat_firestore_error;
 }
 
 class _AppLocalizationsDelegate

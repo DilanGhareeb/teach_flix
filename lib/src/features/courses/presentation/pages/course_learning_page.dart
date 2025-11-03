@@ -1,6 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:teach_flix/src/features/ai_assistnat/presentation/pages/chat_page.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
@@ -469,7 +471,12 @@ class _CourseLearningPageState extends State<CourseLearningPage>
               IconButton(
                 icon: const Icon(Icons.smart_toy_outlined),
                 tooltip: t.ai_assistant ?? 'AI Assistant',
-                onPressed: () => _showAIAssistantSnackbar(context, t),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const AiChatPage()),
+                  );
+                },
               ),
               // Rate Course Button
               IconButton(

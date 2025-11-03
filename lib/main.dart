@@ -8,6 +8,7 @@ import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegat
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
+import 'package:teach_flix/src/features/ai_assistnat/presentation/bloc/ai_chat_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
           create: (_) => sl<InstructorStatsBloc>(),
         ),
         BlocProvider<ProgressBloc>(create: (_) => sl<ProgressBloc>()),
+        BlocProvider<AiChatBloc>(create: (_) => sl<AiChatBloc>()),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settings) {
