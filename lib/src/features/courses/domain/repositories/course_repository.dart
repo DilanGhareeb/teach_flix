@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_rating_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/student_progress_entity.dart';
 
 abstract class CourseRepository {
   Future<Either<Failure, List<CourseEntity>>> getAllCourses();
@@ -53,6 +54,61 @@ abstract class CourseRepository {
   Future<Either<Failure, void>> deleteRating(String ratingId);
 
   Future<Either<Failure, CourseRatingEntity?>> getUserRatingForCourse({
+    required String userId,
+    required String courseId,
+  });
+
+  /// Student Progress Methods
+  Future<Either<Failure, StudentProgressEntity>> getProgress({
+    required String userId,
+    required String courseId,
+  });
+
+  Stream<Either<Failure, StudentProgressEntity>> watchProgress({
+    required String userId,
+    required String courseId,
+  });
+
+  Future<Either<Failure, void>> markVideoAsCompleted({
+    required String userId,
+    required String courseId,
+    required String videoId,
+  });
+
+  Future<Either<Failure, void>> markVideoAsUncompleted({
+    required String userId,
+    required String courseId,
+    required String videoId,
+  });
+
+  Future<Either<Failure, void>> markQuizAsCompleted({
+    required String userId,
+    required String courseId,
+    required String quizId,
+  });
+
+  Future<Either<Failure, void>> markQuizAsUncompleted({
+    required String userId,
+    required String courseId,
+    required String quizId,
+  });
+
+  Future<Either<Failure, void>> updateProgressPercentage({
+    required String userId,
+    required String courseId,
+    required int totalItems,
+  });
+
+  Future<Either<Failure, List<StudentProgressEntity>>> getUserAllProgress({
+    required String userId,
+  });
+
+  Future<Either<Failure, StudentProgressEntity>> initializeProgress({
+    required String userId,
+    required String courseId,
+  });
+
+  Future<Either<Failure, void>> resetProgress({
     required String userId,
     required String courseId,
   });

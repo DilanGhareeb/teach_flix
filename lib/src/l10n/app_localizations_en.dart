@@ -1216,4 +1216,116 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get top_rated_courses => 'Top Rated Courses';
+
+  @override
+  String get progress_title => 'Progress';
+
+  @override
+  String get progress_overall => 'Overall Progress';
+
+  @override
+  String get progress_completed => 'Completed';
+
+  @override
+  String get progress_not_completed => 'Not Completed';
+
+  @override
+  String get progress_video_completed => 'Video Completed';
+
+  @override
+  String get progress_quiz_completed => 'Quiz Completed';
+
+  @override
+  String get progress_mark_as_complete => 'Mark as Complete';
+
+  @override
+  String get progress_mark_as_incomplete => 'Mark as Incomplete';
+
+  @override
+  String get progress_reset => 'Reset Progress';
+
+  @override
+  String get progress_reset_confirm_title => 'Reset Progress?';
+
+  @override
+  String get progress_reset_confirm_message =>
+      'Are you sure you want to reset your progress for this course? This action cannot be undone.';
+
+  @override
+  String get progress_reset_success => 'Progress reset successfully';
+
+  @override
+  String get progress_loading => 'Loading progress...';
+
+  @override
+  String get progress_error => 'Failed to load progress';
+
+  @override
+  String get progress_update_error => 'Failed to update progress';
+
+  @override
+  String progress_percentage(Object percentage) {
+    return '$percentage% Complete';
+  }
+
+  @override
+  String progress_items_completed(Object completed, Object total) {
+    return '$completed of $total items completed';
+  }
+
+  @override
+  String get progress_continue_learning => 'Continue Learning';
+
+  @override
+  String get progress_start_course => 'Start Course';
+
+  @override
+  String get progress_course_completed => 'Course Completed! 🎉';
+
+  @override
+  String get progress_videos => 'Videos';
+
+  @override
+  String get progress_quizzes => 'Quizzes';
+
+  @override
+  String get progress_chapter => 'Chapter';
+
+  @override
+  String get progress_no_progress => 'No progress yet. Start learning!';
+
+  @override
+  String get reset => 'Reset';
+
+  @override
+  String get quiz => 'Quiz';
+
+  @override
+  String get progress_download_certificate => 'Download Certificate';
+
+  @override
+  String get progress_generating_certificate => 'Generating Certificate...';
+
+  @override
+  String get progress_certificate_generated => 'Certificate Generated!';
+
+  @override
+  String get progress_certificate_saved =>
+      'Your certificate has been saved successfully.';
+
+  @override
+  String get progress_open_certificate => 'Open';
+
+  @override
+  String get progress_certificate_error =>
+      'Failed to generate certificate. Please try again.';
+
+  @override
+  String get ok => 'OK';
+
+  @override
+  String get progress_view_certificate => 'View Certificate';
+
+  @override
+  String get progress_share_certificate => 'Share Certificate';
 }

@@ -1,40 +1,54 @@
 import 'package:flutter/material.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
+import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/courses/presentation/widgets/progress_checkbox.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class QuizzesList extends StatelessWidget {
   final CourseEntity course;
   final ColorScheme colorScheme;
+  final String? userId;
+  final int totalItems;
 
   const QuizzesList({
     super.key,
     required this.course,
     required this.colorScheme,
+    this.userId,
+    required this.totalItems,
   });
+
+  void _navigateToQuiz(BuildContext context, QuizEntity quiz) {
+    // TODO: Navigate to quiz taking page
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Quiz: ${quiz.title}'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final localizations = AppLocalizations.of(context)!;
-    final allQuizzes = course.chapters
-        .expand((chapter) => chapter.quizzes)
-        .toList();
+    final t = AppLocalizations.of(context)!;
 
-    if (allQuizzes.isEmpty) {
+    if (course.chapters.isEmpty ||
+        course.chapters.every((c) => c.quizzes.isEmpty)) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
               Icons.quiz_outlined,
-              size: 80,
+              size: 64,
               color: colorScheme.onSurface.withOpacity(0.3),
             ),
             const SizedBox(height: 16),
             Text(
-              localizations.no_quizzes_available ?? 'No quizzes available',
+              t.no_quizzes_available ?? 'No quizzes available',
               style: TextStyle(
-                color: colorScheme.onSurface.withOpacity(0.6),
                 fontSize: 16,
+                color: colorScheme.onSurface.withOpacity(0.6),
               ),
             ),
           ],
@@ -43,92 +57,123 @@ class QuizzesList extends StatelessWidget {
     }
 
     return ListView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      itemCount: allQuizzes.length,
-      itemBuilder: (context, index) {
-        final quiz = allQuizzes[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
-            borderRadius: BorderRadius.circular(16),
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      itemCount: course.chapters.length,
+      itemBuilder: (context, chapterIndex) {
+        final chapter = course.chapters[chapterIndex];
+
+        if (chapter.quizzes.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(localizations.quiz_functionality_coming_soon),
-                    behavior: SnackBarBehavior.floating,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
-                );
-              },
-              borderRadius: BorderRadius.circular(16),
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.purple, Colors.purple.shade700],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.purple.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.quiz,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            quiz.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              color: colorScheme.onSurface,
-                              fontSize: 15,
-                            ),
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${quiz.questions.length} ${localizations.questions}',
-                            style: TextStyle(
-                              color: colorScheme.onSurfaceVariant,
-                              fontSize: 13,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Icon(
-                      Icons.chevron_right,
-                      color: colorScheme.onSurfaceVariant,
-                    ),
-                  ],
+          child: Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              tilePadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              childrenPadding: const EdgeInsets.only(bottom: 8),
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.secondaryContainer,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.folder_outlined,
+                  color: colorScheme.secondary,
+                  size: 24,
                 ),
               ),
+              title: Text(
+                chapter.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 4),
+                child: Text(
+                  '${chapter.quizzes.length} ${chapter.quizzes.length == 1 ? t.quiz : t.quizzes}',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: colorScheme.onSurface.withOpacity(0.6),
+                  ),
+                ),
+              ),
+              children: chapter.quizzes.map((quiz) {
+                return Container(
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: colorScheme.surfaceContainerHighest.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    leading: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.quiz,
+                        color: colorScheme.secondary,
+                        size: 28,
+                      ),
+                    ),
+                    title: Text(
+                      quiz.title,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        t.quiz,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: colorScheme.onSurface.withOpacity(0.6),
+                        ),
+                      ),
+                    ),
+                    // PROGRESS CHECKBOX TRAILING
+                    trailing: userId != null
+                        ? SizedBox(
+                            width: 40,
+                            child: ProgressCheckbox(
+                              itemId: quiz.id,
+                              itemType: 'quiz',
+                              userId: userId!,
+                              courseId: course.id,
+                              totalItems: totalItems,
+                              showTitle: false,
+                            ),
+                          )
+                        : null,
+                    onTap: () => _navigateToQuiz(context, quiz),
+                  ),
+                );
+              }).toList(),
             ),
           ),
         );

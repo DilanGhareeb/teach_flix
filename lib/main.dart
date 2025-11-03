@@ -12,6 +12,7 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.da
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart';
 import 'package:teach_flix/src/features/common/presentation/pages/main_page.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
 import 'package:teach_flix/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
@@ -46,6 +47,7 @@ class MyApp extends StatelessWidget {
         BlocProvider<InstructorStatsBloc>(
           create: (_) => sl<InstructorStatsBloc>(),
         ),
+        BlocProvider<ProgressBloc>(create: (_) => sl<ProgressBloc>()),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settings) {

@@ -2431,6 +2431,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Top Rated Courses'**
   String get top_rated_courses;
+
+  /// Title for the progress section
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress_title;
+
+  /// Label for overall course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Overall Progress'**
+  String get progress_overall;
+
+  /// Label for completed progress
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get progress_completed;
+
+  /// Label for not completed progress
+  ///
+  /// In en, this message translates to:
+  /// **'Not Completed'**
+  String get progress_not_completed;
+
+  /// Label indicating that a video has been completed
+  ///
+  /// In en, this message translates to:
+  /// **'Video Completed'**
+  String get progress_video_completed;
+
+  /// Label indicating that a quiz has been completed
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz Completed'**
+  String get progress_quiz_completed;
+
+  /// Button text for marking a lesson as complete
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Complete'**
+  String get progress_mark_as_complete;
+
+  /// Button text for marking a lesson as incomplete
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Incomplete'**
+  String get progress_mark_as_incomplete;
+
+  /// Button text for resetting course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Progress'**
+  String get progress_reset;
+
+  /// Title for the reset progress confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Progress?'**
+  String get progress_reset_confirm_title;
+
+  /// Confirmation dialog message asking user to confirm progress reset
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to reset your progress for this course? This action cannot be undone.'**
+  String get progress_reset_confirm_message;
+
+  /// Success message for resetting course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Progress reset successfully'**
+  String get progress_reset_success;
+
+  /// Status message indicating that progress is being loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Loading progress...'**
+  String get progress_loading;
+
+  /// Error message for failing to load course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load progress'**
+  String get progress_error;
+
+  /// Error message for failing to update course progress
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update progress'**
+  String get progress_update_error;
+
+  /// Label showing the percentage of course completed
+  ///
+  /// In en, this message translates to:
+  /// **'{percentage}% Complete'**
+  String progress_percentage(Object percentage);
+
+  /// Label showing the number of completed items out of total items
+  ///
+  /// In en, this message translates to:
+  /// **'{completed} of {total} items completed'**
+  String progress_items_completed(Object completed, Object total);
+
+  /// Button text for continuing learning from the progress section
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Learning'**
+  String get progress_continue_learning;
+
+  /// Button text for starting a course from the progress section
+  ///
+  /// In en, this message translates to:
+  /// **'Start Course'**
+  String get progress_start_course;
+
+  /// Message displayed when the course is completed
+  ///
+  /// In en, this message translates to:
+  /// **'Course Completed! 🎉'**
+  String get progress_course_completed;
+
+  /// Label for the videos section in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Videos'**
+  String get progress_videos;
+
+  /// Label for the quizzes section in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Quizzes'**
+  String get progress_quizzes;
+
+  /// Label for the chapter section in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Chapter'**
+  String get progress_chapter;
+
+  /// Message indicating that there is no progress yet
+  ///
+  /// In en, this message translates to:
+  /// **'No progress yet. Start learning!'**
+  String get progress_no_progress;
+
+  /// Button text for resetting a form or progress
+  ///
+  /// In en, this message translates to:
+  /// **'Reset'**
+  String get reset;
+
+  /// Generic label for a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Quiz'**
+  String get quiz;
+
+  /// Button text for downloading the course completion certificate
+  ///
+  /// In en, this message translates to:
+  /// **'Download Certificate'**
+  String get progress_download_certificate;
+
+  /// Status message indicating that the certificate is being generated
+  ///
+  /// In en, this message translates to:
+  /// **'Generating Certificate...'**
+  String get progress_generating_certificate;
+
+  /// Message displayed when the certificate has been generated
+  ///
+  /// In en, this message translates to:
+  /// **'Certificate Generated!'**
+  String get progress_certificate_generated;
+
+  /// Message indicating that the certificate has been saved successfully
+  ///
+  /// In en, this message translates to:
+  /// **'Your certificate has been saved successfully.'**
+  String get progress_certificate_saved;
+
+  /// Button text for opening the generated certificate
+  ///
+  /// In en, this message translates to:
+  /// **'Open'**
+  String get progress_open_certificate;
+
+  /// Error message for failing to generate the course completion certificate
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate certificate. Please try again.'**
+  String get progress_certificate_error;
+
+  /// Button text for confirming an action
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get ok;
+
+  /// Button text for viewing the course completion certificate
+  ///
+  /// In en, this message translates to:
+  /// **'View Certificate'**
+  String get progress_view_certificate;
+
+  /// Button text for sharing the course completion certificate
+  ///
+  /// In en, this message translates to:
+  /// **'Share Certificate'**
+  String get progress_share_certificate;
 }
 
 class _AppLocalizationsDelegate

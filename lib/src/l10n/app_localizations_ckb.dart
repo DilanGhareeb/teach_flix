@@ -1218,4 +1218,117 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get top_rated_courses => 'باشترین کۆرسەکەکان';
+
+  @override
+  String get progress_title => 'پڕۆگرێس';
+
+  @override
+  String get progress_overall => 'پڕۆگرێسی گشتی';
+
+  @override
+  String get progress_completed => 'تەواو بووە';
+
+  @override
+  String get progress_not_completed => 'تەواو نەبووە';
+
+  @override
+  String get progress_video_completed => 'ڤیدیۆ تەواو بووە';
+
+  @override
+  String get progress_quiz_completed => 'تاقیکردنەوە تەواو بووە';
+
+  @override
+  String get progress_mark_as_complete => 'نیشانەکردن وەک تەواو';
+
+  @override
+  String get progress_mark_as_incomplete => 'نیشانەکردن وەک تەواو نەبوو';
+
+  @override
+  String get progress_reset => 'دووبارە ڕێکخستنەوەی پڕۆگرێس';
+
+  @override
+  String get progress_reset_confirm_title => 'دووبارە ڕێکخستنەوەی پڕۆگرێس؟';
+
+  @override
+  String get progress_reset_confirm_message =>
+      'دڵنیایت لە دووبارە ڕێکخستنەوەی پڕۆگرێست لەم کۆرسەدا؟ ناتوانرێت ئەم کردارە بگەڕێنرێتەوە.';
+
+  @override
+  String get progress_reset_success =>
+      'پڕۆگرێس بە سەرکەوتوویی دووبارە ڕێکخرایەوە';
+
+  @override
+  String get progress_loading => 'بارکردنی پڕۆگرێس...';
+
+  @override
+  String get progress_error => 'شکستی هێنا لە بارکردنی پڕۆگرێس';
+
+  @override
+  String get progress_update_error => 'شکستی هێنا لە نوێکردنەوەی پڕۆگرێس';
+
+  @override
+  String progress_percentage(Object percentage) {
+    return '$percentage٪ تەواو بووە';
+  }
+
+  @override
+  String progress_items_completed(Object completed, Object total) {
+    return '$completed لە $total بڕگە تەواو بووە';
+  }
+
+  @override
+  String get progress_continue_learning => 'بەردەوامبوون لە فێربوون';
+
+  @override
+  String get progress_start_course => 'دەستپێکردنی کۆرس';
+
+  @override
+  String get progress_course_completed => 'کۆرس تەواو بوو! 🎉';
+
+  @override
+  String get progress_videos => 'ڤیدیۆکان';
+
+  @override
+  String get progress_quizzes => 'تاقیکردنەوەکان';
+
+  @override
+  String get progress_chapter => 'بەش';
+
+  @override
+  String get progress_no_progress => 'هێشتا پڕۆگرێسێک نییە. فێربوون دەستپێبکە!';
+
+  @override
+  String get reset => 'دووبارە ڕێکخستنەوە';
+
+  @override
+  String get quiz => 'تاقیکردنەوە';
+
+  @override
+  String get progress_download_certificate => 'داگرتنی بڕوانامە';
+
+  @override
+  String get progress_generating_certificate => 'دروستکردنی بڕوانامە...';
+
+  @override
+  String get progress_certificate_generated => 'بڕوانامە دروستکرا!';
+
+  @override
+  String get progress_certificate_saved =>
+      'بڕوانامەکەت بە سەرکەوتوویی پاشەکەوت کرا.';
+
+  @override
+  String get progress_open_certificate => 'کردنەوە';
+
+  @override
+  String get progress_certificate_error =>
+      'شکستی هێنا لە دروستکردنی بڕوانامە. تکایە دووبارە هەوڵبدەرەوە.';
+
+  @override
+  String get ok => 'باشە';
+
+  @override
+  String get progress_view_certificate => 'بینینی بڕوانامە';
+
+  @override
+  String get progress_share_certificate => 'هاوبەشکردنی بڕوانامە';
 }

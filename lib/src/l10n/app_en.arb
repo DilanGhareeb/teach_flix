@@ -1561,5 +1561,145 @@
   "top_rated_courses": "Top Rated Courses",
   "@top_rated_courses": {
     "description": "Label for the top-rated courses section"
+  },
+  "progress_title": "Progress",
+  "@progress_title": {
+    "description": "Title for the progress section"
+  },
+  "progress_overall": "Overall Progress",
+  "@progress_overall": {
+    "description": "Label for overall course progress"
+  },
+  "progress_completed": "Completed",
+  "@progress_completed": {
+    "description": "Label for completed progress"
+  },
+  "progress_not_completed": "Not Completed",
+  "@progress_not_completed": {
+    "description": "Label for not completed progress"
+  },
+  "progress_video_completed": "Video Completed",
+  "@progress_video_completed": {
+    "description": "Label indicating that a video has been completed"
+  },
+  "progress_quiz_completed": "Quiz Completed",
+  "@progress_quiz_completed": {
+    "description": "Label indicating that a quiz has been completed"
+  },
+  "progress_mark_as_complete": "Mark as Complete",
+  "@progress_mark_as_complete": {
+    "description": "Button text for marking a lesson as complete"
+  },
+  "progress_mark_as_incomplete": "Mark as Incomplete",
+  "@progress_mark_as_incomplete": {
+    "description": "Button text for marking a lesson as incomplete"
+  },
+  "progress_reset": "Reset Progress",
+  "@progress_reset": {
+    "description": "Button text for resetting course progress"
+  },
+  "progress_reset_confirm_title": "Reset Progress?",
+  "@progress_reset_confirm_title": {
+    "description": "Title for the reset progress confirmation dialog"
+  },
+  "progress_reset_confirm_message": "Are you sure you want to reset your progress for this course? This action cannot be undone.",
+  "@progress_reset_confirm_message": {
+    "description": "Confirmation dialog message asking user to confirm progress reset"
+  },
+  "progress_reset_success": "Progress reset successfully",
+  "@progress_reset_success": {
+    "description": "Success message for resetting course progress"
+  },
+  "progress_loading": "Loading progress...",
+  "@progress_loading": {
+    "description": "Status message indicating that progress is being loaded"
+  },
+  "progress_error": "Failed to load progress",
+  "@progress_error": {
+    "description": "Error message for failing to load course progress"
+  },
+  "progress_update_error": "Failed to update progress",
+  "@progress_update_error": {
+    "description": "Error message for failing to update course progress"
+  },
+  "progress_percentage": "{percentage}% Complete",
+  "@progress_percentage": {
+    "description": "Label showing the percentage of course completed"
+  },
+  "progress_items_completed": "{completed} of {total} items completed",
+  "@progress_items_completed": {
+    "description": "Label showing the number of completed items out of total items"
+  },
+  "progress_continue_learning": "Continue Learning",
+  "@progress_continue_learning": {
+    "description": "Button text for continuing learning from the progress section"
+  },
+  "progress_start_course": "Start Course",
+  "@progress_start_course": {
+    "description": "Button text for starting a course from the progress section"
+  },
+  "progress_course_completed": "Course Completed! 🎉",
+  "@progress_course_completed": {
+    "description": "Message displayed when the course is completed"
+  },
+  "progress_videos": "Videos",
+  "@progress_videos": {
+    "description": "Label for the videos section in progress"
+  },
+  "progress_quizzes": "Quizzes",
+  "@progress_quizzes": {
+    "description": "Label for the quizzes section in progress"
+  },
+  "progress_chapter": "Chapter",
+  "@progress_chapter": {
+    "description": "Label for the chapter section in progress"
+  },
+  "progress_no_progress": "No progress yet. Start learning!",
+  "@progress_no_progress": {
+    "description": "Message indicating that there is no progress yet"
+  },
+  "reset": "Reset",
+  "@reset": {
+    "description": "Button text for resetting a form or progress"
+  },
+  "quiz": "Quiz",
+  "@quiz": {
+    "description": "Generic label for a quiz"
+  },
+  "progress_download_certificate": "Download Certificate",
+  "@progress_download_certificate": {
+    "description": "Button text for downloading the course completion certificate"
+  },
+  "progress_generating_certificate": "Generating Certificate...",
+  "@progress_generating_certificate": {
+    "description": "Status message indicating that the certificate is being generated"
+  },
+  "progress_certificate_generated": "Certificate Generated!",
+  "@progress_certificate_generated": {
+    "description": "Message displayed when the certificate has been generated"
+  },
+  "progress_certificate_saved": "Your certificate has been saved successfully.",
+  "@progress_certificate_saved": {
+    "description": "Message indicating that the certificate has been saved successfully"
+  },
+  "progress_open_certificate": "Open",
+  "@progress_open_certificate": {
+    "description": "Button text for opening the generated certificate"
+  },
+  "progress_certificate_error": "Failed to generate certificate. Please try again.",
+  "@progress_certificate_error": {
+    "description": "Error message for failing to generate the course completion certificate"
+  },
+  "ok": "OK",
+  "@ok": {
+    "description": "Button text for confirming an action"
+  },
+  "progress_view_certificate": "View Certificate",
+  "@progress_view_certificate": {
+    "description": "Button text for viewing the course completion certificate"
+  },
+  "progress_share_certificate": "Share Certificate",
+  "@progress_share_certificate": {
+    "description": "Button text for sharing the course completion certificate"
   }
 }

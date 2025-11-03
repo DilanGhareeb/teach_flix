@@ -3,9 +3,13 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/progress_event.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/progress_state.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_info_section.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/course_rating_dialog.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/now_playing_banner.dart';
+import 'package:teach_flix/src/features/courses/presentation/widgets/progress_indicator_widget.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/quizzes_list.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/video_list.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -35,10 +39,23 @@ class _CourseLearningPageState extends State<CourseLearningPage>
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+
+    // Initialize video player
     if (widget.course.chapters.isNotEmpty &&
         widget.course.chapters[0].videosUrls.isNotEmpty) {
       _selectedVideo = widget.course.chapters[0].videosUrls[0];
       _initializePlayer(_selectedVideo!.youtubeUrl);
+    }
+
+    // LOAD PROGRESS - Get current user and load their progress
+    final authState = context.read<AuthBloc>().state;
+    if (authState.user != null) {
+      context.read<ProgressBloc>().add(
+        WatchProgressEvent(
+          userId: authState.user!.id,
+          courseId: widget.course.id,
+        ),
+      );
     }
   }
 
@@ -101,6 +118,16 @@ class _CourseLearningPageState extends State<CourseLearningPage>
     super.dispose();
   }
 
+  // Calculate total items (videos + quizzes) for progress calculation
+  int get _totalItems {
+    int count = 0;
+    for (var chapter in widget.course.chapters) {
+      count += chapter.videosUrls.length;
+      count += chapter.quizzes.length;
+    }
+    return count;
+  }
+
   // AI Assistant Snackbar
   void _showAIAssistantSnackbar(BuildContext context, AppLocalizations t) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -121,6 +148,53 @@ class _CourseLearningPageState extends State<CourseLearningPage>
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         duration: const Duration(seconds: 3),
+      ),
+    );
+  }
+
+  // Show Reset Progress Dialog
+  void _showResetProgressDialog(
+    BuildContext context,
+    AppLocalizations t,
+    String userId,
+  ) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(t.progress_reset_confirm_title ?? 'Reset Progress?'),
+        content: Text(
+          t.progress_reset_confirm_message ??
+              'Are you sure you want to reset your progress for this course? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: Text(t.cancel ?? 'Cancel'),
+          ),
+          FilledButton(
+            onPressed: () {
+              context.read<ProgressBloc>().add(
+                ResetProgressEvent(userId: userId, courseId: widget.course.id),
+              );
+              Navigator.of(dialogContext).pop();
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    t.progress_reset_success ?? 'Progress reset successfully',
+                  ),
+                  backgroundColor: Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+            },
+            style: FilledButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(t.reset ?? 'Reset'),
+          ),
+        ],
       ),
     );
   }
@@ -191,95 +265,100 @@ class _CourseLearningPageState extends State<CourseLearningPage>
   Widget build(BuildContext context) {
     final t = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
+    final authState = context.watch<AuthBloc>().state;
 
-    return BlocListener<CoursesBloc, CoursesState>(
-      listener: (context, state) {
-        if (state.status == CoursesStatus.ratingAdded) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                t.rating_added_successfully ?? 'Rating added successfully!',
-              ),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
+    return MultiBlocListener(
+      listeners: [
+        // Courses Bloc Listener
+        BlocListener<CoursesBloc, CoursesState>(
+          listener: (context, state) {
+            if (state.status == CoursesStatus.ratingAdded) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    t.rating_added_successfully ?? 'Rating added successfully!',
+                  ),
+                  backgroundColor: Colors.green,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
 
-        if (state.status == CoursesStatus.ratingUpdated) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                t.rating_updated_successfully ?? 'Rating updated successfully!',
-              ),
-              backgroundColor: Colors.green,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
+            if (state.status == CoursesStatus.ratingUpdated) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    t.rating_updated_successfully ??
+                        'Rating updated successfully!',
+                  ),
+                  backgroundColor: Colors.green,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
 
-        if (state.status == CoursesStatus.ratingDeleted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                t.rating_deleted_successfully ?? 'Rating deleted successfully!',
-              ),
-              backgroundColor: Colors.orange,
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        }
-      },
+            if (state.status == CoursesStatus.ratingDeleted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    t.rating_deleted_successfully ??
+                        'Rating deleted successfully!',
+                  ),
+                  backgroundColor: Colors.orange,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            }
+          },
+        ),
+        // PROGRESS BLOC LISTENER
+        BlocListener<ProgressBloc, ProgressState>(
+          listener: (context, state) {
+            if (state is ProgressUpdateError) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    t.progress_update_error ?? 'Failed to update progress',
+                  ),
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              );
+            }
+          },
+        ),
+      ],
       child: _youtubeController == null
           ? Scaffold(
-              backgroundColor: colorScheme.surface,
-              appBar: AppBar(
-                title: Text(widget.course.title),
-                centerTitle: true,
-                elevation: 0,
-                actions: [
-                  // AI Assistant Button
-                  IconButton(
-                    icon: const Icon(Icons.smart_toy_outlined),
-                    tooltip: t.ai_assistant ?? 'AI Assistant',
-                    onPressed: () => _showAIAssistantSnackbar(context, t),
-                  ),
-                  // Rate Course Button
-                  IconButton(
-                    icon: const Icon(Icons.star_outline_rounded),
-                    tooltip: t.rate_course ?? 'Rate Course',
-                    onPressed: () =>
-                        _showRateCourseBottomSheet(context, t, colorScheme),
-                  ),
-                ],
-              ),
-              body: _buildCourseContent(context, t, colorScheme, null),
+              appBar: AppBar(title: Text(widget.course.title)),
+              body: const Center(child: CircularProgressIndicator()),
             )
           : YoutubePlayerBuilder(
-              onEnterFullScreen: () {
-                _isFullScreen = true;
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.landscapeLeft,
-                  DeviceOrientation.landscapeRight,
-                ]);
-              },
               onExitFullScreen: () {
-                _isFullScreen = false;
-                SystemChrome.setPreferredOrientations([
-                  DeviceOrientation.portraitUp,
-                ]);
+                SystemChrome.setPreferredOrientations(DeviceOrientation.values);
+                setState(() {
+                  _isFullScreen = false;
+                });
+              },
+              onEnterFullScreen: () {
+                setState(() {
+                  _isFullScreen = true;
+                });
               },
               player: YoutubePlayer(
                 controller: _youtubeController!,
@@ -327,7 +406,13 @@ class _CourseLearningPageState extends State<CourseLearningPage>
               builder: (context, player) {
                 return Scaffold(
                   backgroundColor: colorScheme.surface,
-                  body: _buildCourseContent(context, t, colorScheme, player),
+                  body: _buildCourseContent(
+                    context,
+                    t,
+                    colorScheme,
+                    player,
+                    authState.user?.id,
+                  ),
                 );
               },
             ),
@@ -362,6 +447,7 @@ class _CourseLearningPageState extends State<CourseLearningPage>
     AppLocalizations t,
     ColorScheme colorScheme,
     Widget? player,
+    String? userId,
   ) {
     return CustomScrollView(
       slivers: [
@@ -419,6 +505,49 @@ class _CourseLearningPageState extends State<CourseLearningPage>
                   colorScheme: colorScheme,
                 ),
               if (!_isFullScreen) ...[
+                // PROGRESS INDICATOR SECTION
+                if (userId != null)
+                  Container(
+                    margin: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primaryContainer.withOpacity(0.3),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: colorScheme.primary.withOpacity(0.2),
+                        width: 1,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.trending_up_rounded,
+                              color: colorScheme.primary,
+                              size: 22,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              t.progress_overall ?? 'Your Progress',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: colorScheme.onSurface,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        ProgressIndicatorWidget(
+                          courseId: widget.course.id,
+                          showPercentage: true,
+                          showItemsCount: false,
+                        ),
+                      ],
+                    ),
+                  ),
                 CourseInfoSection(
                   course: widget.course,
                   colorScheme: colorScheme,
@@ -476,14 +605,23 @@ class _CourseLearningPageState extends State<CourseLearningPage>
             child: TabBarView(
               controller: _tabController,
               children: [
+                // PASS userId AND totalItems TO VideosList
                 VideosList(
                   course: widget.course,
                   selectedVideo: _selectedVideo,
                   youtubeController: _youtubeController,
                   onVideoTap: _changeVideo,
                   colorScheme: colorScheme,
+                  userId: userId,
+                  totalItems: _totalItems,
                 ),
-                QuizzesList(course: widget.course, colorScheme: colorScheme),
+                // PASS userId AND totalItems TO QuizzesList
+                QuizzesList(
+                  course: widget.course,
+                  colorScheme: colorScheme,
+                  userId: userId,
+                  totalItems: _totalItems,
+                ),
               ],
             ),
           ),

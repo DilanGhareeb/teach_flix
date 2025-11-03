@@ -6,7 +6,6 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/courses/data/models/course_model.dart';
 import 'package:teach_flix/src/features/courses/data/models/course_rating_model.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/course_rating_entity.dart';
 
 abstract class CourseFirebaseDataSource {
   Future<Either<Failure, List<CourseModel>>> getAllCourses();

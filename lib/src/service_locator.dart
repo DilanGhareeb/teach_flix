@@ -20,15 +20,24 @@ import 'package:teach_flix/src/features/auth/domain/usecase/watch_auth_session.d
 import 'package:teach_flix/src/features/auth/domain/usecase/logout_usecase.dart';
 import 'package:teach_flix/src/features/auth/domain/usecase/withdraw_usecase.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
+import 'package:teach_flix/src/features/courses/data/datasources/progress_firebase_datasource.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/add_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/delete_course.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/delete_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/enroll_in_course.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_progress_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/get_top_rated_courses.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/get_user_all_progress_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/get_user_rating_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/initialize_progress_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/reset_progress_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/toggle_quiz_completion_usecase.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/toggle_video_completion_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/update_course.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/update_rating_usecase.dart';
 import 'package:teach_flix/src/features/courses/domain/usecases/upload_course_image.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/watch_progress_usecase.dart';
+import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/datasources/instructor_stats_firebase_datasource.dart';
 import 'package:teach_flix/src/features/instructor_stats/data/repositories/instructor_stats_repository_impl.dart';
 import 'package:teach_flix/src/features/instructor_stats/domain/repositories/instructor_stats_repository.dart';
@@ -150,8 +159,15 @@ Future<void> setupServiceLocator() async {
     ),
   );
 
+  sl.registerLazySingleton<ProgressFirebaseDataSource>(
+    () => ProgressFirebaseDataSourceImpl(firestore: sl<FirebaseFirestore>()),
+  );
+
   sl.registerLazySingleton<CourseRepository>(
-    () => CourseRepositoryImpl(dataSource: sl<CourseFirebaseDataSource>()),
+    () => CourseRepositoryImpl(
+      dataSource: sl<CourseFirebaseDataSource>(),
+      progressDataSource: sl<ProgressFirebaseDataSource>(),
+    ),
   );
 
   // ========== Courses feature - Use Cases ==========
@@ -197,6 +213,26 @@ Future<void> setupServiceLocator() async {
       updateRating: sl(),
       getTopRatedCourses: sl(),
       authBloc: sl<AuthBloc>(),
+    ),
+  );
+
+  sl.registerFactory(() => GetProgress(sl()));
+  sl.registerFactory(() => WatchProgress(sl()));
+  sl.registerFactory(() => ToggleVideoCompletion(sl()));
+  sl.registerFactory(() => ToggleQuizCompletion(sl()));
+  sl.registerFactory(() => InitializeProgress(sl()));
+  sl.registerFactory(() => ResetProgress(sl()));
+  sl.registerFactory(() => GetUserAllProgress(sl()));
+
+  sl.registerFactory(
+    () => ProgressBloc(
+      getProgress: sl<GetProgress>(),
+      watchProgress: sl<WatchProgress>(),
+      toggleVideoCompletion: sl<ToggleVideoCompletion>(),
+      toggleQuizCompletion: sl<ToggleQuizCompletion>(),
+      initializeProgress: sl<InitializeProgress>(),
+      resetProgress: sl<ResetProgress>(),
+      getUserAllProgress: sl<GetUserAllProgress>(),
     ),
   );
 
