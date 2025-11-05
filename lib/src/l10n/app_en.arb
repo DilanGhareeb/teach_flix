@@ -1869,5 +1869,61 @@
   "ai_chat_firestore_error": "Database error occurred. Please try again.",
   "@ai_chat_firestore_error": {
     "description": "Error message for database errors in the AI chat feature"
+  },
+  "hour_ago": "hour ago",
+  "@hour_ago": {
+    "description": "Label for one hour ago"
+  },
+  "hours_ago": "hours ago",
+  "@hours_ago": {
+    "description": "Label for a number of hours ago"
+  },
+  "minute_ago": "minute ago",
+  "@minute_ago": {
+    "description": "Label for one minute ago"
+  },
+  "minutes_ago": "minutes ago",
+  "@minutes_ago": {
+    "description": "Label for a number of minutes ago"
+  },
+  "hours_short": "h",
+  "@hours_short": {
+    "description": "Abbreviation for hours"
+  },
+  "minutes_short": "m",
+  "@minutes_short": {
+    "description": "Abbreviation for minutes"
+  },
+  "seconds_short": "s",
+  "@seconds_short": {
+    "description": "Abbreviation for seconds"
+  },
+  "bytes": "bytes",
+  "@bytes": {
+    "description": "Label for bytes unit"
+  },
+  "kilobytes": "KB",
+  "@kilobytes": {
+    "description": "Label for kilobytes unit"
+  },
+  "megabytes": "MB",
+  "@megabytes": {
+    "description": "Label for megabytes unit"
+  },
+  "gigabytes": "GB",
+  "@gigabytes": {
+    "description": "Label for gigabytes unit"
+  },
+  "failed_to_pick_image": "Failed to pick image",
+  "@failed_to_pick_image": {
+    "description": "Error message for failing to pick an image"
+  },
+  "camera_cancelled": "Camera operation cancelled",
+  "@camera_cancelled": {
+    "description": "Message indicating that the camera operation was cancelled"
+  },
+  "failed_to_send_message": "Failed to send message",
+  "@failed_to_send_message": {
+    "description": "Error message for failing to send a chat message"
   }
 }

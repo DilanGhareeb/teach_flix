@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:intl/intl.dart';
+import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/message.dart';
+import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class MessageBubble extends StatelessWidget {
   final Message message;
@@ -11,6 +12,8 @@ class MessageBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
@@ -19,69 +22,92 @@ class MessageBubble extends StatelessWidget {
             : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if (!isUser) _buildAvatar(context),
-          const SizedBox(width: 8),
+          if (!isUser) ...[_buildAvatar(context), const SizedBox(width: 8)],
           Flexible(
-            child: Column(
-              crossAxisAlignment: isUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isUser
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.grey[200],
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(20),
-                      topRight: const Radius.circular(20),
-                      bottomLeft: Radius.circular(isUser ? 20 : 4),
-                      bottomRight: Radius.circular(isUser ? 4 : 20),
-                    ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (message.type == MessageType.image &&
-                          message.mediaUrl != null)
-                        _buildImageContent(context),
-                      if (message.type == MessageType.file &&
-                          message.mediaUrl != null)
-                        _buildFileContent(context),
-                      if (message.text.isNotEmpty)
-                        Text(
-                          message.text,
-                          style: TextStyle(
-                            color: isUser ? Colors.white : Colors.black87,
-                            fontSize: 15,
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Row(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return Column(
+                  crossAxisAlignment: isUser
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      _formatTime(message.createdAt),
-                      style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+                    Container(
+                      constraints: BoxConstraints(
+                        maxWidth: constraints.maxWidth * 0.85,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isUser
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey[200],
+                        borderRadius: BorderRadius.only(
+                          topLeft: const Radius.circular(20),
+                          topRight: const Radius.circular(20),
+                          bottomLeft: Radius.circular(isUser ? 20 : 4),
+                          bottomRight: Radius.circular(isUser ? 4 : 20),
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (message.type == MessageType.image &&
+                              message.mediaUrl != null)
+                            _buildImageContent(context),
+                          if (message.type == MessageType.file &&
+                              message.mediaUrl != null)
+                            _buildFileContent(context, localization),
+                          if (message.text.isNotEmpty)
+                            Text(
+                              message.text,
+                              style: TextStyle(
+                                color: isUser ? Colors.white : Colors.black87,
+                                fontSize: 15,
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                    if (isUser && message.status != MessageStatus.sent) ...[
-                      const SizedBox(width: 4),
-                      _buildStatusIcon(),
-                    ],
+                    const SizedBox(height: 4),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: IntrinsicWidth(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                Formatter.formatTime(
+                                  message.createdAt,
+                                  localization: localization,
+                                ),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey[600],
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                            if (isUser &&
+                                message.status != MessageStatus.sent) ...[
+                              const SizedBox(width: 4),
+                              _buildStatusIcon(),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
-                ),
-              ],
+                );
+              },
             ),
           ),
-          const SizedBox(width: 8),
-          if (isUser) _buildAvatar(context),
+          if (isUser) ...[const SizedBox(width: 8), _buildAvatar(context)],
         ],
       ),
     );
@@ -127,7 +153,10 @@ class MessageBubble extends StatelessWidget {
     );
   }
 
-  Widget _buildFileContent(BuildContext context) {
+  Widget _buildFileContent(
+    BuildContext context,
+    AppLocalizations? localization,
+  ) {
     return Container(
       padding: const EdgeInsets.all(8),
       margin: const EdgeInsets.only(bottom: 8),
@@ -135,41 +164,48 @@ class MessageBubble extends StatelessWidget {
         color: isUser ? Colors.white.withOpacity(0.2) : Colors.white,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.insert_drive_file,
-            color: isUser ? Colors.white : Colors.grey[700],
-          ),
-          const SizedBox(width: 8),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  message.mediaName ?? 'File',
-                  style: TextStyle(
-                    color: isUser ? Colors.white : Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                if (message.mediaSize != null)
-                  Text(
-                    _formatFileSize(message.mediaSize!),
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isUser
-                          ? Colors.white.withOpacity(0.8)
-                          : Colors.grey[600],
-                    ),
-                  ),
-              ],
+      child: IntrinsicHeight(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.insert_drive_file,
+              color: isUser ? Colors.white : Colors.grey[700],
+              size: 20,
             ),
-          ),
-        ],
+            const SizedBox(width: 8),
+            Flexible(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    message.mediaName ?? 'File',
+                    style: TextStyle(
+                      color: isUser ? Colors.white : Colors.black87,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  if (message.mediaSize != null)
+                    Text(
+                      Formatter.formatFileSize(
+                        message.mediaSize!,
+                        localization: localization,
+                      ),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isUser
+                            ? Colors.white.withOpacity(0.8)
+                            : Colors.grey[600],
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -187,15 +223,5 @@ class MessageBubble extends StatelessWidget {
       default:
         return const SizedBox.shrink();
     }
-  }
-
-  String _formatTime(DateTime time) {
-    return DateFormat('HH:mm').format(time);
-  }
-
-  String _formatFileSize(int bytes) {
-    if (bytes < 1024) return '$bytes B';
-    if (bytes < 1024 * 1024) return '${(bytes / 1024).toStringAsFixed(1)} KB';
-    return '${(bytes / (1024 * 1024)).toStringAsFixed(1)} MB';
   }
 }

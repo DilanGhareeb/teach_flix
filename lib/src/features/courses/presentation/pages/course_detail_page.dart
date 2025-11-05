@@ -22,7 +22,6 @@ class CourseDetailPage extends StatefulWidget {
 }
 
 class _CourseDetailPageState extends State<CourseDetailPage> {
-  final formatter = Formatter();
   YoutubePlayerController? _trailerController;
 
   @override
@@ -482,7 +481,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
-                                  formatter.formatIqd(course.price),
+                                  Formatter.formatIqd(course.price),
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 32,
@@ -1163,7 +1162,7 @@ class _CourseDetailPageState extends State<CourseDetailPage> {
                               ),
                             ),
                             Text(
-                              formatter.formatIqd(widget.course.price),
+                              Formatter.formatIqd(widget.course.price),
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,

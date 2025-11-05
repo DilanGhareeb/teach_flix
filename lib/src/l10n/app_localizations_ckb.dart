@@ -1476,4 +1476,46 @@ class AppLocalizationsCkb extends AppLocalizations {
   @override
   String get ai_chat_firestore_error =>
       'هەڵەیەکی بنکەدراوە ڕوویدا. تکایە دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get hour_ago => 'کاتژمێرێک لەمەوبەر';
+
+  @override
+  String get hours_ago => 'کاتژمێر لەمەوبەر';
+
+  @override
+  String get minute_ago => 'خولەکێک لەمەوبەر';
+
+  @override
+  String get minutes_ago => 'خولەک لەمەوبەر';
+
+  @override
+  String get hours_short => 'کاتژمێر';
+
+  @override
+  String get minutes_short => 'خولەک';
+
+  @override
+  String get seconds_short => 'چرکە';
+
+  @override
+  String get bytes => 'بایت';
+
+  @override
+  String get kilobytes => 'کێلوبایت';
+
+  @override
+  String get megabytes => 'مەگابایت';
+
+  @override
+  String get gigabytes => 'گیگابایت';
+
+  @override
+  String get failed_to_pick_image => 'شکستی هێنا لە هەڵبژاردنی وێنە';
+
+  @override
+  String get camera_cancelled => 'کەمێرا هەڵوەشێنرایەوە';
+
+  @override
+  String get failed_to_send_message => 'شکستی هێنا لە ناردنی نامە';
 }

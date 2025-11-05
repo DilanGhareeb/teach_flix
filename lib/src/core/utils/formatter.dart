@@ -1,39 +1,169 @@
+import 'package:intl/intl.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class Formatter {
-  String formatIqd(double value) {
+  Formatter._();
+
+  static String formatIqd(double value, {AppLocalizations? localization}) {
     final intValue = value.toInt();
-    final str = intValue.toString();
-    final buffer = StringBuffer();
 
-    for (int i = 0; i < str.length; i++) {
-      final pos = str.length - i;
-      buffer.write(str[i]);
-      if (pos > 1 && pos % 3 == 1) buffer.write(',');
-    }
+    final formatter = NumberFormat('#,###', localization?.localeName ?? 'en');
+    final formattedNumber = formatter.format(intValue);
 
-    return '${buffer.toString()} IQD';
+    return '$formattedNumber IQD';
   }
 
-  String formatDate(DateTime date, AppLocalizations localization) {
+  static String formatCurrency(
+    double value,
+    String currencyCode, {
+    AppLocalizations? localization,
+  }) {
+    final formatter = NumberFormat.currency(
+      locale: localization?.localeName ?? 'en',
+      symbol: _getCurrencySymbol(currencyCode),
+      decimalDigits: _shouldShowDecimals(currencyCode) ? 2 : 0,
+    );
+    return formatter.format(value);
+  }
+
+  static String formatRelativeDate(
+    DateTime date,
+    AppLocalizations localization,
+  ) {
     final now = DateTime.now();
     final difference = now.difference(date);
 
+    // Today
     if (difference.inDays == 0) {
-      return localization.today;
-    } else if (difference.inDays == 1) {
-      return localization.yesterday ?? 'Yesterday';
-    } else if (difference.inDays < 7) {
-      return '${difference.inDays} ${localization.days_ago ?? "days ago"}';
-    } else if (difference.inDays < 30) {
-      final weeks = (difference.inDays / 7).floor();
-      return '$weeks ${weeks == 1 ? (localization.week_ago ?? "week ago") : (localization.weeks_ago ?? "weeks ago")}';
-    } else if (difference.inDays < 365) {
-      final months = (difference.inDays / 30).floor();
-      return '$months ${months == 1 ? (localization.month_ago ?? "month ago") : (localization.months_ago ?? "months ago")}';
-    } else {
-      final years = (difference.inDays / 365).floor();
-      return '$years ${years == 1 ? (localization.year_ago ?? "year ago") : (localization.years_ago ?? "years ago")}';
+      if (difference.inHours < 1) {
+        return localization.just_now ?? 'Just now';
+      } else if (difference.inHours == 1) {
+        return localization.hour_ago ?? '1 hour ago';
+      } else {
+        return '${difference.inHours} ${localization.hours_ago ?? 'hours ago'}';
+      }
     }
+
+    if (difference.inDays == 1) {
+      return localization.yesterday ?? 'Yesterday';
+    }
+
+    if (difference.inDays < 7) {
+      return '${difference.inDays} ${localization.days_ago ?? 'days ago'}';
+    }
+
+    if (difference.inDays < 30) {
+      final weeks = (difference.inDays / 7).floor();
+      return weeks == 1
+          ? localization.week_ago ?? '1 week ago'
+          : '$weeks ${localization.weeks_ago ?? 'weeks ago'}';
+    }
+
+    if (difference.inDays < 365) {
+      final months = (difference.inDays / 30).floor();
+      return months == 1
+          ? localization.month_ago ?? '1 month ago'
+          : '$months ${localization.months_ago ?? 'months ago'}';
+    }
+
+    final years = (difference.inDays / 365).floor();
+    return years == 1
+        ? localization.year_ago ?? '1 year ago'
+        : '$years ${localization.years_ago ?? 'years ago'}';
+  }
+
+  static String formatDate(DateTime date, {AppLocalizations? localization}) {
+    final formatter = DateFormat.yMMMd(localization?.localeName ?? 'en');
+    return formatter.format(date);
+  }
+
+  static String formatDateTime(
+    DateTime dateTime, {
+    AppLocalizations? localization,
+  }) {
+    final formatter = DateFormat.yMMMd(
+      localization?.localeName ?? 'en',
+    ).add_jm();
+    return formatter.format(dateTime);
+  }
+
+  static String formatTime(DateTime time, {AppLocalizations? localization}) {
+    final formatter = DateFormat.jm(localization?.localeName ?? 'en');
+    return formatter.format(time);
+  }
+
+  static String formatNumber(
+    num value, {
+    AppLocalizations? localization,
+    int? decimalDigits,
+  }) {
+    final formatter = NumberFormat(
+      decimalDigits != null ? '#,##0.${'0' * decimalDigits}' : '#,###',
+      localization?.localeName ?? 'en',
+    );
+    return formatter.format(value);
+  }
+
+  static String formatFileSize(int bytes, {AppLocalizations? localization}) {
+    if (bytes < 1024) {
+      return '$bytes ${localization?.bytes ?? 'B'}';
+    } else if (bytes < 1024 * 1024) {
+      final kb = bytes / 1024;
+      return '${kb.toStringAsFixed(1)} ${localization?.kilobytes ?? 'KB'}';
+    } else if (bytes < 1024 * 1024 * 1024) {
+      final mb = bytes / (1024 * 1024);
+      return '${mb.toStringAsFixed(1)} ${localization?.megabytes ?? 'MB'}';
+    } else {
+      final gb = bytes / (1024 * 1024 * 1024);
+      return '${gb.toStringAsFixed(1)} ${localization?.gigabytes ?? 'GB'}';
+    }
+  }
+
+  static String formatPercentage(
+    double value, {
+    AppLocalizations? localization,
+    int decimalDigits = 1,
+  }) {
+    final formatter = NumberFormat.percentPattern(
+      localization?.localeName ?? 'en',
+    );
+    formatter.minimumFractionDigits = decimalDigits;
+    formatter.maximumFractionDigits = decimalDigits;
+    return formatter.format(value);
+  }
+
+  static String formatDuration(
+    Duration duration, {
+    AppLocalizations? localization,
+  }) {
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final seconds = duration.inSeconds.remainder(60);
+
+    if (hours > 0) {
+      return '$hours${localization?.hours_short ?? 'h'} $minutes${localization?.minutes_short ?? 'm'}';
+    } else if (minutes > 0) {
+      return '$minutes${localization?.minutes_short ?? 'm'} $seconds${localization?.seconds_short ?? 's'}';
+    } else {
+      return '$seconds${localization?.seconds_short ?? 's'}';
+    }
+  }
+
+  static String _getCurrencySymbol(String currencyCode) {
+    final symbols = {
+      'USD': '\$',
+      'EUR': '€',
+      'GBP': '£',
+      'IQD': 'IQD',
+      'SAR': 'SAR',
+      'AED': 'AED',
+      'KWD': 'KWD',
+    };
+    return symbols[currencyCode.toUpperCase()] ?? currencyCode;
+  }
+
+  static bool _shouldShowDecimals(String currencyCode) {
+    final noDecimalCurrencies = {'IQD', 'JPY', 'KRW'};
+    return !noDecimalCurrencies.contains(currencyCode.toUpperCase());
   }
 }

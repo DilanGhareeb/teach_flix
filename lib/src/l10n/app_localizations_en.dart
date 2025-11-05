@@ -1469,4 +1469,46 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ai_chat_firestore_error =>
       'Database error occurred. Please try again.';
+
+  @override
+  String get hour_ago => 'hour ago';
+
+  @override
+  String get hours_ago => 'hours ago';
+
+  @override
+  String get minute_ago => 'minute ago';
+
+  @override
+  String get minutes_ago => 'minutes ago';
+
+  @override
+  String get hours_short => 'h';
+
+  @override
+  String get minutes_short => 'm';
+
+  @override
+  String get seconds_short => 's';
+
+  @override
+  String get bytes => 'bytes';
+
+  @override
+  String get kilobytes => 'KB';
+
+  @override
+  String get megabytes => 'MB';
+
+  @override
+  String get gigabytes => 'GB';
+
+  @override
+  String get failed_to_pick_image => 'Failed to pick image';
+
+  @override
+  String get camera_cancelled => 'Camera operation cancelled';
+
+  @override
+  String get failed_to_send_message => 'Failed to send message';
 }

@@ -35,7 +35,6 @@ class CourseCard extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final averageRating = _calculateAverageRating();
-    final formatter = Formatter();
 
     return SizedBox(
       width: width ?? 320,
@@ -339,7 +338,7 @@ class CourseCard extends StatelessWidget {
                               Expanded(
                                 child: Text(
                                   course.price > 0
-                                      ? formatter.formatIqd(course.price)
+                                      ? Formatter.formatIqd(course.price)
                                       : t.free_course,
                                   style: textTheme.titleMedium?.copyWith(
                                     color: colorScheme.onPrimary,

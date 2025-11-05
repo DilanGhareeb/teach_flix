@@ -2893,6 +2893,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Database error occurred. Please try again.'**
   String get ai_chat_firestore_error;
+
+  /// Label for one hour ago
+  ///
+  /// In en, this message translates to:
+  /// **'hour ago'**
+  String get hour_ago;
+
+  /// Label for a number of hours ago
+  ///
+  /// In en, this message translates to:
+  /// **'hours ago'**
+  String get hours_ago;
+
+  /// Label for one minute ago
+  ///
+  /// In en, this message translates to:
+  /// **'minute ago'**
+  String get minute_ago;
+
+  /// Label for a number of minutes ago
+  ///
+  /// In en, this message translates to:
+  /// **'minutes ago'**
+  String get minutes_ago;
+
+  /// Abbreviation for hours
+  ///
+  /// In en, this message translates to:
+  /// **'h'**
+  String get hours_short;
+
+  /// Abbreviation for minutes
+  ///
+  /// In en, this message translates to:
+  /// **'m'**
+  String get minutes_short;
+
+  /// Abbreviation for seconds
+  ///
+  /// In en, this message translates to:
+  /// **'s'**
+  String get seconds_short;
+
+  /// Label for bytes unit
+  ///
+  /// In en, this message translates to:
+  /// **'bytes'**
+  String get bytes;
+
+  /// Label for kilobytes unit
+  ///
+  /// In en, this message translates to:
+  /// **'KB'**
+  String get kilobytes;
+
+  /// Label for megabytes unit
+  ///
+  /// In en, this message translates to:
+  /// **'MB'**
+  String get megabytes;
+
+  /// Label for gigabytes unit
+  ///
+  /// In en, this message translates to:
+  /// **'GB'**
+  String get gigabytes;
+
+  /// Error message for failing to pick an image
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image'**
+  String get failed_to_pick_image;
+
+  /// Message indicating that the camera operation was cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Camera operation cancelled'**
+  String get camera_cancelled;
+
+  /// Error message for failing to send a chat message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send message'**
+  String get failed_to_send_message;
 }
 
 class _AppLocalizationsDelegate

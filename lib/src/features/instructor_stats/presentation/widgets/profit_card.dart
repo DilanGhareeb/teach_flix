@@ -67,7 +67,6 @@ class _ProfitCardState extends State<ProfitCard>
     final t = AppLocalizations.of(context)!;
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
-    final formatter = Formatter();
 
     final periods = [
       (t.today, widget.todayProfit),
@@ -145,7 +144,7 @@ class _ProfitCardState extends State<ProfitCard>
                     );
                   },
                   child: Text(
-                    formatter.formatIqd(selectedProfit),
+                    Formatter.formatIqd(selectedProfit),
                     style: theme.textTheme.headlineLarge?.copyWith(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
@@ -251,10 +250,9 @@ class _ProfitCardState extends State<ProfitCard>
                               FittedBox(
                                 fit: BoxFit.scaleDown,
                                 child: Text(
-                                  formatter
-                                      .formatIqd(periods[index].$2)
-                                      .replaceAll('IQD', '')
-                                      .trim(),
+                                  Formatter.formatIqd(
+                                    periods[index].$2,
+                                  ).replaceAll('IQD', '').trim(),
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: Colors.white.withOpacity(
                                       isSelected ? 1.0 : 0.6,
@@ -501,11 +499,10 @@ class ProfitChart extends StatelessWidget {
               vertical: 8,
             ),
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
-              final formatter = Formatter();
               final label = _getTooltipLabel(group.x.toInt());
 
               return BarTooltipItem(
-                '$label\n${formatter.formatIqd(rod.toY)}',
+                '$label\n${Formatter.formatIqd(rod.toY)}',
                 TextStyle(
                   color: Theme.of(context).colorScheme.primary,
                   fontWeight: FontWeight.bold,

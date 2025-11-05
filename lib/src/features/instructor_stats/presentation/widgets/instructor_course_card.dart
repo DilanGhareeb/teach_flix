@@ -20,7 +20,6 @@ class InstructorCourseCard extends StatelessWidget {
     final theme = Theme.of(context);
     final cs = theme.colorScheme;
     final t = AppLocalizations.of(context)!;
-    final formatter = Formatter();
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Responsive breakpoints
@@ -118,12 +117,7 @@ class InstructorCourseCard extends StatelessWidget {
 
                           // Course Info
                           Expanded(
-                            child: _buildCourseInfo(
-                              context,
-                              t,
-                              formatter,
-                              isCompact,
-                            ),
+                            child: _buildCourseInfo(context, t, isCompact),
                           ),
 
                           // Arrow Icon
@@ -172,14 +166,7 @@ class InstructorCourseCard extends StatelessWidget {
                       SizedBox(height: isCompact ? 12 : 16),
 
                       // Stats Grid
-                      _buildStatsGrid(
-                        context,
-                        t,
-                        formatter,
-                        isCompact,
-                        isMedium,
-                        isLarge,
-                      ),
+                      _buildStatsGrid(context, t, isCompact, isMedium, isLarge),
                     ],
                   ),
                 ),
@@ -350,7 +337,6 @@ class InstructorCourseCard extends StatelessWidget {
   Widget _buildCourseInfo(
     BuildContext context,
     AppLocalizations t,
-    Formatter formatter,
     bool isCompact,
   ) {
     final theme = Theme.of(context);
@@ -467,7 +453,7 @@ class InstructorCourseCard extends StatelessWidget {
               const SizedBox(width: 4),
               Flexible(
                 child: AutoSizeText(
-                  formatter.formatDate(courseStats.createdAt, t),
+                  Formatter.formatDate(courseStats.createdAt, localization: t),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: cs.primary.withOpacity(0.8),
                     fontSize: 10,
@@ -488,7 +474,6 @@ class InstructorCourseCard extends StatelessWidget {
   Widget _buildStatsGrid(
     BuildContext context,
     AppLocalizations t,
-    Formatter formatter,
     bool isCompact,
     bool isMedium,
     bool isLarge,
@@ -510,7 +495,7 @@ class InstructorCourseCard extends StatelessWidget {
           icon: Icons.payments_rounded,
           iconColor: Colors.blue,
           label: t.price ?? 'Price',
-          value: formatter.formatIqd(courseStats.coursePrice),
+          value: Formatter.formatIqd(courseStats.coursePrice),
           valueColor: Colors.blue,
           gradientColors: [
             Colors.blue.withOpacity(0.1),
@@ -522,7 +507,7 @@ class InstructorCourseCard extends StatelessWidget {
           icon: Icons.trending_up_rounded,
           iconColor: Colors.green,
           label: t.revenue ?? 'Revenue',
-          value: formatter.formatIqd(courseStats.totalRevenue),
+          value: Formatter.formatIqd(courseStats.totalRevenue),
           valueColor: Colors.green,
           isHighlight: courseStats.totalRevenue > 0,
           gradientColors: [

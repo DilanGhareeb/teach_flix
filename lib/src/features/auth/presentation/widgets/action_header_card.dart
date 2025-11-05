@@ -336,7 +336,7 @@ class AccountHeaderCard extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              Formatter().formatIqd(currentBalance),
+                              Formatter.formatIqd(currentBalance),
                               style: theme.textTheme.titleMedium?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: theme.colorScheme.primary,
@@ -389,7 +389,7 @@ class AccountHeaderCard extends StatelessWidget {
                           prefixText: 'IQD ',
                           helperText:
                               t.max_withdraw_amount ??
-                              'Maximum: ${Formatter().formatIqd(currentBalance)}',
+                              'Maximum: ${Formatter.formatIqd(currentBalance)}',
                           helperMaxLines: 2,
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -533,7 +533,7 @@ class AccountHeaderCard extends StatelessWidget {
       label: Text(
         isMax
             ? t.max ?? 'Max'
-            : Formatter().formatIqd(amount).replaceAll('IQD', '').trim(),
+            : Formatter.formatIqd(amount).replaceAll('IQD', '').trim(),
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
@@ -552,7 +552,6 @@ class AccountHeaderCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final t = AppLocalizations.of(context)!;
-    final formatter = Formatter();
     final isGuest = role.toLowerCase() == 'guest';
 
     return Container(
@@ -660,7 +659,7 @@ class AccountHeaderCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    formatter.formatIqd(balance),
+                    Formatter.formatIqd(balance),
                     style: theme.textTheme.headlineMedium?.copyWith(
                       color: theme.colorScheme.onPrimary,
                       fontWeight: FontWeight.bold,

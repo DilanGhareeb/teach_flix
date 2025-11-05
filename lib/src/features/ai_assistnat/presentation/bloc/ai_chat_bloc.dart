@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/chat_session.dart';
@@ -51,13 +52,20 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatSessionRequested event,
     Emitter<AiChatState> emit,
   ) async {
+    debugPrint('📋 Session requested for user: ${event.userId}');
     emit(state.copyWith(status: AiChatStatus.loading, failure: null));
 
     await _sessionsSub?.cancel();
     _sessionsSub = watchChatSessions(params: event.userId).listen(
       (either) => either.fold(
-        (f) => add(_AiChatSessionsFailed(f)),
-        (sessions) => add(_AiChatSessionsChanged(sessions)),
+        (f) {
+          debugPrint('❌ Sessions load failed: $f');
+          add(_AiChatSessionsFailed(f));
+        },
+        (sessions) {
+          debugPrint('✅ Sessions loaded: ${sessions.length} sessions');
+          add(_AiChatSessionsChanged(sessions));
+        },
       ),
     );
   }
@@ -66,6 +74,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatNewSessionRequested event,
     Emitter<AiChatState> emit,
   ) async {
+    debugPrint('🆕 New session requested: ${event.title}');
     emit(state.copyWith(status: AiChatStatus.loading, failure: null));
 
     final result = await createChatSession(
@@ -73,9 +82,12 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     );
 
     result.fold(
-      (failure) =>
-          emit(state.copyWith(status: AiChatStatus.failure, failure: failure)),
+      (failure) {
+        debugPrint('❌ Session creation failed: $failure');
+        emit(state.copyWith(status: AiChatStatus.failure, failure: failure));
+      },
       (session) {
+        debugPrint('✅ Session created: ${session.id}');
         add(AiChatSessionSelected(session.id));
       },
     );
@@ -85,6 +97,8 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatSessionSelected event,
     Emitter<AiChatState> emit,
   ) async {
+    debugPrint('🎯 Session selected: ${event.sessionId}');
+
     // Find the session, or use first available if not found
     ChatSession? session;
     try {
@@ -93,8 +107,10 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
       // If not found and we have sessions, use the first one
       if (state.sessions.isNotEmpty) {
         session = state.sessions.first;
+        debugPrint('⚠️  Session not found, using first: ${session.id}');
       } else {
         // No sessions available, emit failure
+        debugPrint('❌ No sessions available');
         emit(
           state.copyWith(
             status: AiChatStatus.failure,
@@ -117,8 +133,14 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     await _messagesSub?.cancel();
     _messagesSub = watchMessages(params: event.sessionId).listen(
       (either) => either.fold(
-        (f) => add(_AiChatMessagesFailed(f)),
-        (messages) => add(_AiChatMessagesChanged(messages)),
+        (f) {
+          debugPrint('❌ Messages load failed: $f');
+          add(_AiChatMessagesFailed(f));
+        },
+        (messages) {
+          debugPrint('✅ Messages loaded: ${messages.length} messages');
+          add(_AiChatMessagesChanged(messages));
+        },
       ),
     );
   }
@@ -127,8 +149,14 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatMessageSent event,
     Emitter<AiChatState> emit,
   ) async {
-    if (state.currentSession == null) return;
+    if (state.currentSession == null) {
+      debugPrint('❌ Cannot send message: No current session');
+      return;
+    }
 
+    debugPrint(
+      '📤 Sending text message: ${event.text.substring(0, event.text.length.clamp(0, 50))}...',
+    );
     emit(state.copyWith(isSending: true, failure: null));
 
     final result = await sendMessage(
@@ -140,14 +168,20 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     );
 
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: AiChatStatus.failure,
-          failure: failure,
-          isSending: false,
-        ),
-      ),
-      (_) => emit(state.copyWith(isSending: false)),
+      (failure) {
+        debugPrint('❌ Message send failed: $failure');
+        emit(
+          state.copyWith(
+            status: AiChatStatus.failure,
+            failure: failure,
+            isSending: false,
+          ),
+        );
+      },
+      (_) {
+        debugPrint('✅ Message sent successfully');
+        emit(state.copyWith(isSending: false));
+      },
     );
   }
 
@@ -155,7 +189,22 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatMediaMessageSent event,
     Emitter<AiChatState> emit,
   ) async {
-    if (state.currentSession == null) return;
+    if (state.currentSession == null) {
+      debugPrint('❌ Cannot send media: No current session');
+      emit(
+        state.copyWith(
+          status: AiChatStatus.failure,
+          failure: NotFoundFailure(),
+          isSending: false,
+        ),
+      );
+      return;
+    }
+
+    debugPrint('📤 Sending media message');
+    debugPrint('   File path: ${event.filePath}');
+    debugPrint('   Type: ${event.messageType}');
+    debugPrint('   Session: ${state.currentSession!.id}');
 
     emit(state.copyWith(isSending: true, failure: null));
 
@@ -170,14 +219,20 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     );
 
     result.fold(
-      (failure) => emit(
-        state.copyWith(
-          status: AiChatStatus.failure,
-          failure: failure,
-          isSending: false,
-        ),
-      ),
-      (_) => emit(state.copyWith(isSending: false)),
+      (failure) {
+        debugPrint('❌ Media message send failed: $failure');
+        emit(
+          state.copyWith(
+            status: AiChatStatus.failure,
+            failure: failure,
+            isSending: false,
+          ),
+        );
+      },
+      (_) {
+        debugPrint('✅ Media message sent successfully');
+        emit(state.copyWith(isSending: false));
+      },
     );
   }
 
@@ -185,14 +240,18 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatSessionDeleted event,
     Emitter<AiChatState> emit,
   ) async {
+    debugPrint('🗑️  Deleting session: ${event.sessionId}');
     emit(state.copyWith(status: AiChatStatus.loading, failure: null));
 
     final result = await deleteChatSession(params: event.sessionId);
 
     result.fold(
-      (failure) =>
-          emit(state.copyWith(status: AiChatStatus.failure, failure: failure)),
+      (failure) {
+        debugPrint('❌ Session deletion failed: $failure');
+        emit(state.copyWith(status: AiChatStatus.failure, failure: failure));
+      },
       (_) {
+        debugPrint('✅ Session deleted successfully');
         if (state.currentSession?.id == event.sessionId) {
           emit(
             state.copyWith(
@@ -210,6 +269,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     AiChatMessagesCleared event,
     Emitter<AiChatState> emit,
   ) async {
+    debugPrint('🧹 Clearing messages for session: ${event.sessionId}');
     emit(state.copyWith(status: AiChatStatus.loading, failure: null));
     // Implementation would require a use case
     emit(state.copyWith(status: AiChatStatus.chatLoaded));
@@ -219,6 +279,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     _AiChatSessionsChanged event,
     Emitter<AiChatState> emit,
   ) {
+    debugPrint('🔄 Sessions updated: ${event.sessions.length} sessions');
     emit(
       state.copyWith(
         status: AiChatStatus.sessionsLoaded,
@@ -232,6 +293,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     _AiChatMessagesChanged event,
     Emitter<AiChatState> emit,
   ) {
+    debugPrint('🔄 Messages updated: ${event.messages.length} messages');
     emit(
       state.copyWith(
         status: AiChatStatus.chatLoaded,
@@ -245,6 +307,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     _AiChatSessionsFailed event,
     Emitter<AiChatState> emit,
   ) {
+    debugPrint('⚠️  Sessions stream failed: ${event.failure}');
     emit(state.copyWith(status: AiChatStatus.failure, failure: event.failure));
   }
 
@@ -252,11 +315,13 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     _AiChatMessagesFailed event,
     Emitter<AiChatState> emit,
   ) {
+    debugPrint('⚠️  Messages stream failed: ${event.failure}');
     emit(state.copyWith(status: AiChatStatus.failure, failure: event.failure));
   }
 
   @override
   Future<void> close() {
+    debugPrint('🔚 Closing AiChatBloc');
     _sessionsSub?.cancel();
     _messagesSub?.cancel();
     return super.close();
