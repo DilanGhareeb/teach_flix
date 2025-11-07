@@ -1518,4 +1518,10 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get failed_to_send_message => 'شکستی هێنا لە ناردنی نامە';
+
+  @override
+  String get image_attached => 'وێنەکە لکێنرا';
+
+  @override
+  String get add_message_to_image => 'نامەیەک زیاد بکە بۆ وێنەکە...';
 }

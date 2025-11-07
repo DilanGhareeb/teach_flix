@@ -2977,6 +2977,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to send message'**
   String get failed_to_send_message;
+
+  /// Success message for attaching an image in the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Image attached'**
+  String get image_attached;
+
+  /// Placeholder text for adding a message along with an attached image in the chat
+  ///
+  /// In en, this message translates to:
+  /// **'Add a message to go with your image...'**
+  String get add_message_to_image;
 }
 
 class _AppLocalizationsDelegate

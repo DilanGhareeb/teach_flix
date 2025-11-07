@@ -1511,4 +1511,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get failed_to_send_message => 'Failed to send message';
+
+  @override
+  String get image_attached => 'Image attached';
+
+  @override
+  String get add_message_to_image => 'Add a message to go with your image...';
 }

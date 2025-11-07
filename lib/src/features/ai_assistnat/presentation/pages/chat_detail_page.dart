@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,6 +24,9 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   // Key for accessing ScaffoldMessenger
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+
+  // Selected image state
+  String? _selectedImagePath;
 
   @override
   void dispose() {
@@ -143,7 +147,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   Widget _buildMessageInput(BuildContext context, AiChatState state) {
     final l10n = AppLocalizations.of(context)!;
-    final screenWidth = MediaQuery.of(context).size.width;
 
     return SafeArea(
       child: Container(
@@ -158,61 +161,135 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ),
           ],
         ),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              SizedBox(
-                width: 48,
-                child: IconButton(
-                  icon: const Icon(Icons.image),
-                  onPressed: state.isSending
-                      ? null
-                      : () => _showImageSourceDialog(context),
-                  tooltip: l10n.upload_image ?? 'Attach Image',
-                  padding: EdgeInsets.zero,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Image preview section
+            if (_selectedImagePath != null)
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.grey[100],
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey[300]!),
                 ),
-              ),
-              Expanded(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 120,
-                    maxWidth: screenWidth - 120,
-                  ),
-                  child: TextField(
-                    controller: _messageController,
-                    enabled: !state.isSending,
-                    decoration: InputDecoration(
-                      hintText: l10n.type_message ?? 'type_message',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(24),
+                child: Row(
+                  children: [
+                    // Image preview
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.file(
+                        File(_selectedImagePath!),
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.cover,
                       ),
-                      contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 10,
-                      ),
-                      isDense: true,
                     ),
-                    maxLines: null,
-                    minLines: 1,
-                    textInputAction: TextInputAction.send,
-                    onSubmitted: state.isSending ? null : (_) => _sendMessage(),
-                  ),
+                    const SizedBox(width: 12),
+                    // Image info
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            _selectedImagePath!.split('/').last,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            l10n.image_attached ?? 'Image attached',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    // Remove button
+                    IconButton(
+                      icon: const Icon(Icons.close, size: 20),
+                      onPressed: () {
+                        setState(() {
+                          _selectedImagePath = null;
+                        });
+                      },
+                      tooltip: l10n.delete ?? 'Remove',
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(
+                        minWidth: 32,
+                        minHeight: 32,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(
-                width: 48,
-                child: IconButton(
-                  icon: Icon(
-                    state.isSending ? Icons.hourglass_empty : Icons.send,
+            // Input row
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                // Image picker button
+                SizedBox(
+                  width: 48,
+                  child: IconButton(
+                    icon: const Icon(Icons.image),
+                    onPressed: state.isSending
+                        ? null
+                        : () => _showImageSourceDialog(context),
+                    tooltip: l10n.upload_image ?? 'Attach Image',
+                    padding: EdgeInsets.zero,
                   ),
-                  onPressed: state.isSending ? null : () => _sendMessage(),
-                  tooltip: l10n.send ?? 'send',
-                  padding: EdgeInsets.zero,
                 ),
-              ),
-            ],
-          ),
+                // Text input
+                Expanded(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 120),
+                    child: TextField(
+                      controller: _messageController,
+                      enabled: !state.isSending,
+                      decoration: InputDecoration(
+                        hintText: _selectedImagePath != null
+                            ? (l10n.add_message_to_image ?? 'Add a message...')
+                            : (l10n.type_message ?? 'Type a message...'),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 10,
+                        ),
+                        isDense: true,
+                      ),
+                      maxLines: null,
+                      minLines: 1,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: state.isSending
+                          ? null
+                          : (_) => _sendMessage(),
+                    ),
+                  ),
+                ),
+                // Send button
+                SizedBox(
+                  width: 48,
+                  child: IconButton(
+                    icon: Icon(
+                      state.isSending ? Icons.hourglass_empty : Icons.send,
+                    ),
+                    onPressed: state.isSending ? null : () => _sendMessage(),
+                    tooltip: l10n.send ?? 'Send',
+                    padding: EdgeInsets.zero,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
@@ -220,11 +297,31 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
 
   void _sendMessage() {
     final text = _messageController.text.trim();
-    if (text.isEmpty) return;
+
+    // Check if we have either text or image
+    if (text.isEmpty && _selectedImagePath == null) return;
 
     try {
-      context.read<AiChatBloc>().add(AiChatMessageSent(text));
-      _messageController.clear();
+      if (_selectedImagePath != null) {
+        // Send image with optional text
+        context.read<AiChatBloc>().add(
+          AiChatMediaMessageSent(
+            text: text,
+            filePath: _selectedImagePath!,
+            messageType: MessageType.image,
+          ),
+        );
+
+        // Clear both text and image
+        _messageController.clear();
+        setState(() {
+          _selectedImagePath = null;
+        });
+      } else {
+        // Send text only
+        context.read<AiChatBloc>().add(AiChatMessageSent(text));
+        _messageController.clear();
+      }
     } catch (e) {
       debugPrint('Error sending message: $e');
       _scaffoldMessengerKey.currentState?.showSnackBar(
@@ -298,19 +395,14 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       if (image != null) {
         debugPrint('Image picked: ${image.path}');
 
-        // Send the image message
-        if (mounted) {
-          context.read<AiChatBloc>().add(
-            AiChatMediaMessageSent(
-              text: '',
-              filePath: image.path,
-              messageType: MessageType.image,
-            ),
-          );
-          debugPrint('Image message sent to BLoC');
-        }
+        // Set the selected image - don't send yet
+        setState(() {
+          _selectedImagePath = image.path;
+        });
+
+        // Focus on the text field so user can type
+        FocusScope.of(context).requestFocus(FocusNode());
       } else {
-        // User cancelled the picker
         debugPrint('Image picker cancelled');
       }
     } catch (e) {

@@ -479,5 +479,7 @@
   "gigabytes": "گیگابایت",
   "failed_to_pick_image": "شکستی هێنا لە هەڵبژاردنی وێنە",
   "camera_cancelled": "کەمێرا هەڵوەشێنرایەوە",
-  "failed_to_send_message": "شکستی هێنا لە ناردنی نامە"
+  "failed_to_send_message": "شکستی هێنا لە ناردنی نامە",
+  "image_attached": "وێنەکە لکێنرا",
+  "add_message_to_image": "نامەیەک زیاد بکە بۆ وێنەکە..."
 }

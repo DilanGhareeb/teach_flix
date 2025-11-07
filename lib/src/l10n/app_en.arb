@@ -1925,5 +1925,13 @@
   "failed_to_send_message": "Failed to send message",
   "@failed_to_send_message": {
     "description": "Error message for failing to send a chat message"
+  },
+  "image_attached": "Image attached",
+  "@image_attached": {
+    "description": "Success message for attaching an image in the chat"
+  },
+  "add_message_to_image": "Add a message to go with your image...",
+  "@add_message_to_image": {
+    "description": "Placeholder text for adding a message along with an attached image in the chat"
   }
 }
