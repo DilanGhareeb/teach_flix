@@ -70,6 +70,7 @@ dependencies:
   flutter_chat_types: ^3.6.2
   uuid: ^4.5.2
   file_picker: ^10.3.3
+  flutter_markdown: ^0.7.7+1
 
 dev_dependencies:
   flutter_test:

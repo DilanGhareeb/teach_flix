@@ -12,6 +12,8 @@ import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/send_message
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/send_message_with_media.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/watch_chat_session.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/watch_message.dart';
+import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/clear_messages.dart';
+import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/update_chat_session_title.dart';
 
 part 'ai_chat_event.dart';
 part 'ai_chat_state.dart';
@@ -23,6 +25,8 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
   final SendMessage sendMessage;
   final SendMessageWithMedia sendMessageWithMedia;
   final DeleteChatSession deleteChatSession;
+  final ClearMessages clearMessages;
+  final UpdateChatSessionTitle updateChatSessionTitle;
 
   StreamSubscription<Either<Failure, List<ChatSession>>>? _sessionsSub;
   StreamSubscription<Either<Failure, List<Message>>>? _messagesSub;
@@ -34,6 +38,8 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     required this.sendMessage,
     required this.sendMessageWithMedia,
     required this.deleteChatSession,
+    required this.clearMessages,
+    required this.updateChatSessionTitle,
   }) : super(const AiChatState()) {
     on<AiChatSessionRequested>(_onSessionRequested);
     on<AiChatNewSessionRequested>(_onNewSessionRequested);
@@ -42,6 +48,7 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     on<AiChatMediaMessageSent>(_onMediaMessageSent);
     on<AiChatSessionDeleted>(_onSessionDeleted);
     on<AiChatMessagesCleared>(_onMessagesCleared);
+    on<AiChatSessionTitleUpdated>(_onSessionTitleUpdated);
     on<_AiChatSessionsChanged>(_onSessionsChanged);
     on<_AiChatMessagesChanged>(_onMessagesChanged);
     on<_AiChatSessionsFailed>(_onSessionsFailed);
@@ -271,8 +278,47 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
   ) async {
     debugPrint('🧹 Clearing messages for session: ${event.sessionId}');
     emit(state.copyWith(status: AiChatStatus.loading, failure: null));
-    // Implementation would require a use case
-    emit(state.copyWith(status: AiChatStatus.chatLoaded));
+
+    final result = await clearMessages(params: event.sessionId);
+
+    result.fold(
+      (failure) {
+        debugPrint('❌ Messages clear failed: $failure');
+        emit(state.copyWith(status: AiChatStatus.failure, failure: failure));
+      },
+      (_) {
+        debugPrint('✅ Messages cleared successfully');
+        emit(state.copyWith(status: AiChatStatus.chatLoaded));
+      },
+    );
+  }
+
+  Future<void> _onSessionTitleUpdated(
+    AiChatSessionTitleUpdated event,
+    Emitter<AiChatState> emit,
+  ) async {
+    debugPrint(
+      '✏️  Updating session title: ${event.sessionId} -> ${event.title}',
+    );
+    emit(state.copyWith(status: AiChatStatus.loading, failure: null));
+
+    final result = await updateChatSessionTitle(
+      params: UpdateChatSessionTitleParams(
+        sessionId: event.sessionId,
+        title: event.title,
+      ),
+    );
+
+    result.fold(
+      (failure) {
+        debugPrint('❌ Title update failed: $failure');
+        emit(state.copyWith(status: AiChatStatus.failure, failure: failure));
+      },
+      (_) {
+        debugPrint('✅ Title updated successfully');
+        emit(state.copyWith(status: AiChatStatus.sessionsLoaded));
+      },
+    );
   }
 
   void _onSessionsChanged(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/message.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
@@ -62,13 +63,7 @@ class MessageBubble extends StatelessWidget {
                               message.mediaUrl != null)
                             _buildFileContent(context, localization),
                           if (message.text.isNotEmpty)
-                            Text(
-                              message.text,
-                              style: TextStyle(
-                                color: isUser ? Colors.white : Colors.black87,
-                                fontSize: 15,
-                              ),
-                            ),
+                            _buildMessageText(context),
                         ],
                       ),
                     ),
@@ -123,6 +118,79 @@ class MessageBubble extends StatelessWidget {
         isUser ? Icons.person : Icons.smart_toy,
         size: 18,
         color: Colors.white,
+      ),
+    );
+  }
+
+  Widget _buildMessageText(BuildContext context) {
+    // For AI messages (non-user), render as markdown
+    if (!isUser) {
+      return MarkdownBody(
+        data: message.text,
+        selectable: true,
+        styleSheet: MarkdownStyleSheet(
+          p: const TextStyle(color: Colors.black87, fontSize: 15),
+          code: TextStyle(
+            backgroundColor: Colors.grey[300],
+            color: Colors.black87,
+            fontSize: 14,
+            fontFamily: 'monospace',
+          ),
+          codeblockDecoration: BoxDecoration(
+            color: Colors.grey[300],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          blockquote: TextStyle(color: Colors.grey[700], fontSize: 15),
+          blockquoteDecoration: BoxDecoration(
+            color: Colors.grey[100],
+            borderRadius: BorderRadius.circular(4),
+            border: Border(
+              left: BorderSide(color: Colors.grey[400]!, width: 4),
+            ),
+          ),
+          h1: const TextStyle(
+            color: Colors.black87,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+          h2: const TextStyle(
+            color: Colors.black87,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          h3: const TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          listBullet: const TextStyle(color: Colors.black87, fontSize: 15),
+          tableHead: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+          tableBody: const TextStyle(color: Colors.black87),
+          strong: const TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+          em: const TextStyle(
+            fontStyle: FontStyle.italic,
+            color: Colors.black87,
+          ),
+          a: TextStyle(
+            color: Colors.blue[700],
+            decoration: TextDecoration.underline,
+          ),
+        ),
+      );
+    }
+
+    // For user messages, render as plain text
+    return Text(
+      message.text,
+      style: TextStyle(
+        color: isUser ? Colors.white : Colors.black87,
+        fontSize: 15,
       ),
     );
   }

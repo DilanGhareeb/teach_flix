@@ -20,6 +20,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   final _scrollController = ScrollController();
   final _imagePicker = ImagePicker();
 
+  // Key for accessing ScaffoldMessenger
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
+
   @override
   void dispose() {
     _messageController.dispose();
@@ -32,66 +36,69 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     final l10n = AppLocalizations.of(context)!;
     final chatState = context.watch<AiChatBloc>().state;
 
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(chatState.currentSession?.title ?? l10n.chat ?? 'Chat'),
-        actions: [
-          PopupMenuButton(
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: 'clear',
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.clear_all),
-                    const SizedBox(width: 8),
-                    Flexible(
-                      child: Text(
-                        l10n.clear_messages ?? 'clear_messages',
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-            onSelected: (value) {
-              if (value == 'clear' && chatState.currentSession != null) {
-                _showClearDialog(context, chatState.currentSession!.id);
-              }
-            },
+    return ScaffoldMessenger(
+      key: _scaffoldMessengerKey,
+      child: Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
           ),
-        ],
-      ),
-      body: BlocConsumer<AiChatBloc, AiChatState>(
-        listener: (context, state) {
-          if (state.status == AiChatStatus.failure && state.failure != null) {
-            final errorMessage = ErrorLocalizer.of(state.failure!, l10n);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(errorMessage),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-        },
-        builder: (context, state) {
-          return Column(
+          title: Text(chatState.currentSession?.title ?? l10n.chat ?? 'Chat'),
+          actions: [
+            PopupMenuButton(
+              itemBuilder: (context) => [
+                PopupMenuItem(
+                  value: 'clear',
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.clear_all),
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: Text(
+                          l10n.clear_messages ?? 'clear_messages',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+              onSelected: (value) {
+                if (value == 'clear' && chatState.currentSession != null) {
+                  _showClearDialog(context, chatState.currentSession!.id);
+                }
+              },
+            ),
+          ],
+        ),
+        body: BlocListener<AiChatBloc, AiChatState>(
+          listener: (context, state) {
+            if (state.status == AiChatStatus.failure && state.failure != null) {
+              final errorMessage = ErrorLocalizer.of(state.failure!, l10n);
+              _scaffoldMessengerKey.currentState?.showSnackBar(
+                SnackBar(
+                  content: Text(errorMessage),
+                  backgroundColor: Colors.red,
+                  duration: const Duration(seconds: 3),
+                ),
+              );
+            }
+          },
+          child: Column(
             children: [
               Expanded(
-                child: state.messages.isEmpty
+                child: chatState.messages.isEmpty
                     ? _buildEmptyState(context)
-                    : _buildMessageList(context, state),
+                    : _buildMessageList(context, chatState),
               ),
-              if (state.isSending) const LinearProgressIndicator(minHeight: 2),
-              _buildMessageInput(context, state),
+              if (chatState.isSending)
+                const LinearProgressIndicator(minHeight: 2),
+              _buildMessageInput(context, chatState),
             ],
-          );
-        },
+          ),
+        ),
       ),
     );
   }
@@ -151,100 +158,81 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ),
           ],
         ),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            return IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: 48,
-                    child: IconButton(
-                      icon: const Icon(Icons.image),
-                      onPressed: state.isSending
-                          ? null
-                          : () => _showImageSourceDialog(context),
-                      tooltip: l10n.upload_image ?? 'Attach Image',
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-                  Expanded(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxHeight: 120,
-                        maxWidth: screenWidth - 120,
-                      ),
-                      child: TextField(
-                        controller: _messageController,
-                        enabled: !state.isSending,
-                        decoration: InputDecoration(
-                          hintText: l10n.type_message ?? 'type_message',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          isDense: true,
-                        ),
-                        maxLines: null,
-                        minLines: 1,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: state.isSending
-                            ? null
-                            : (_) => _sendMessage(context),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: 48,
-                    child: IconButton(
-                      icon: Icon(
-                        state.isSending ? Icons.hourglass_empty : Icons.send,
-                      ),
-                      onPressed: state.isSending
-                          ? null
-                          : () => _sendMessage(context),
-                      tooltip: l10n.send ?? 'send',
-                      padding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              SizedBox(
+                width: 48,
+                child: IconButton(
+                  icon: const Icon(Icons.image),
+                  onPressed: state.isSending
+                      ? null
+                      : () => _showImageSourceDialog(context),
+                  tooltip: l10n.upload_image ?? 'Attach Image',
+                  padding: EdgeInsets.zero,
+                ),
               ),
-            );
-          },
+              Expanded(
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 120,
+                    maxWidth: screenWidth - 120,
+                  ),
+                  child: TextField(
+                    controller: _messageController,
+                    enabled: !state.isSending,
+                    decoration: InputDecoration(
+                      hintText: l10n.type_message ?? 'type_message',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 10,
+                      ),
+                      isDense: true,
+                    ),
+                    maxLines: null,
+                    minLines: 1,
+                    textInputAction: TextInputAction.send,
+                    onSubmitted: state.isSending ? null : (_) => _sendMessage(),
+                  ),
+                ),
+              ),
+              SizedBox(
+                width: 48,
+                child: IconButton(
+                  icon: Icon(
+                    state.isSending ? Icons.hourglass_empty : Icons.send,
+                  ),
+                  onPressed: state.isSending ? null : () => _sendMessage(),
+                  tooltip: l10n.send ?? 'send',
+                  padding: EdgeInsets.zero,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _sendMessage(BuildContext context) {
-    if (!mounted) return;
-
+  void _sendMessage() {
     final text = _messageController.text.trim();
     if (text.isEmpty) return;
 
-    // Get BLoC and messenger before any async operations
-    final chatBloc = context.read<AiChatBloc>();
-    final messenger = ScaffoldMessenger.of(context);
-    final l10n = AppLocalizations.of(context);
-
     try {
-      chatBloc.add(AiChatMessageSent(text));
+      context.read<AiChatBloc>().add(AiChatMessageSent(text));
       _messageController.clear();
     } catch (e) {
       debugPrint('Error sending message: $e');
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n?.failed_to_send_message ?? 'Failed to send message',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text('Failed to send message: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -256,7 +244,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => SafeArea(
+      builder: (modalContext) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 16),
           child: Column(
@@ -266,8 +254,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 leading: const Icon(Icons.camera_alt, color: Colors.blue),
                 title: Text(l10n.camera ?? 'Camera'),
                 onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(context, ImageSource.camera);
+                  Navigator.pop(modalContext);
+                  _pickImage(ImageSource.camera);
                 },
               ),
               const Divider(height: 1),
@@ -275,8 +263,8 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 leading: const Icon(Icons.photo_library, color: Colors.green),
                 title: Text(l10n.gallery ?? 'Gallery'),
                 onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(context, ImageSource.gallery);
+                  Navigator.pop(modalContext);
+                  _pickImage(ImageSource.gallery);
                 },
               ),
             ],
@@ -286,21 +274,12 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     );
   }
 
-  Future<void> _pickImage(BuildContext context, ImageSource source) async {
-    if (!mounted) return;
-
-    // Get localization before async gap
-    final l10n = AppLocalizations.of(context);
-    // Get ScaffoldMessenger before async gap
-    final messenger = ScaffoldMessenger.of(context);
-    // Get BLoC before async gap
-    final chatBloc = context.read<AiChatBloc>();
-
+  Future<void> _pickImage(ImageSource source) async {
     // Check if we have a current session
-    final currentSession = chatBloc.state.currentSession;
+    final currentSession = context.read<AiChatBloc>().state.currentSession;
     if (currentSession == null) {
-      messenger.showSnackBar(
-        SnackBar(
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        const SnackBar(
           content: Text('No active chat session'),
           backgroundColor: Colors.red,
         ),
@@ -316,45 +295,32 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         imageQuality: 85,
       );
 
-      if (!mounted) return;
-
       if (image != null) {
         debugPrint('Image picked: ${image.path}');
 
         // Send the image message
-        chatBloc.add(
-          AiChatMediaMessageSent(
-            text: '',
-            filePath: image.path,
-            messageType: MessageType.image,
-          ),
-        );
-
-        debugPrint('Image message sent to BLoC');
+        if (mounted) {
+          context.read<AiChatBloc>().add(
+            AiChatMediaMessageSent(
+              text: '',
+              filePath: image.path,
+              messageType: MessageType.image,
+            ),
+          );
+          debugPrint('Image message sent to BLoC');
+        }
       } else {
         // User cancelled the picker
         debugPrint('Image picker cancelled');
-        if (source == ImageSource.camera) {
-          messenger.showSnackBar(
-            SnackBar(
-              content: Text(l10n?.camera_cancelled ?? 'Camera cancelled'),
-            ),
-          );
-        }
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
-      if (mounted) {
-        messenger.showSnackBar(
-          SnackBar(
-            content: Text(
-              l10n?.failed_to_pick_image ??
-                  'Failed to pick image: ${e.toString()}',
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
+      _scaffoldMessengerKey.currentState?.showSnackBar(
+        SnackBar(
+          content: Text('Failed to pick image: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 

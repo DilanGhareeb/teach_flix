@@ -1,4 +1,3 @@
-// lib/src/service_locator.dart
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get_it/get_it.dart';
@@ -8,10 +7,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teach_flix/src/features/ai_assistnat/data/datasource/ai_chat_remote_data_source.dart';
 import 'package:teach_flix/src/features/ai_assistnat/data/repository/ai_chat_repostiory_impl.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/repository/chat_ai_repository.dart';
+import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/clear_messages.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/create_chat_session.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/delete_chat_session.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/send_message.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/send_message_with_media.dart';
+import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/update_chat_session_title.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/watch_chat_session.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/usecase/watch_message.dart';
 import 'package:teach_flix/src/features/ai_assistnat/presentation/bloc/ai_chat_bloc.dart';
@@ -304,6 +305,10 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => SendMessage(sl<AiChatRepository>()));
   sl.registerLazySingleton(() => SendMessageWithMedia(sl<AiChatRepository>()));
   sl.registerLazySingleton(() => DeleteChatSession(sl<AiChatRepository>()));
+  sl.registerLazySingleton(() => ClearMessages(sl<AiChatRepository>()));
+  sl.registerLazySingleton(
+    () => UpdateChatSessionTitle(sl<AiChatRepository>()),
+  );
 
   // BLoC
   sl.registerFactory(
@@ -314,6 +319,8 @@ Future<void> setupServiceLocator() async {
       sendMessage: sl<SendMessage>(),
       sendMessageWithMedia: sl<SendMessageWithMedia>(),
       deleteChatSession: sl<DeleteChatSession>(),
+      clearMessages: sl<ClearMessages>(),
+      updateChatSessionTitle: sl<UpdateChatSessionTitle>(),
     ),
   );
 }

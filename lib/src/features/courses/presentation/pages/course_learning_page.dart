@@ -474,7 +474,9 @@ class _CourseLearningPageState extends State<CourseLearningPage>
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const AiChatPage()),
+                    CupertinoPageRoute(
+                      builder: (context) => const AiChatPage(),
+                    ),
                   );
                 },
               ),

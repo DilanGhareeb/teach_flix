@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:open_file/open_file.dart';
@@ -210,7 +211,7 @@ class CertificateViewerDialog extends StatelessWidget {
     // Open PDF in the new page
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
+      CupertinoPageRoute(builder: (_) => PdfPreviewPage(filePath: file.path)),
     );
   }
 

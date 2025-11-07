@@ -68,6 +68,15 @@ class AiChatSessionDeleted extends AiChatEvent {
   List<Object?> get props => [sessionId];
 }
 
+class AiChatMessagesCleared extends AiChatEvent {
+  final String sessionId;
+
+  const AiChatMessagesCleared(this.sessionId);
+
+  @override
+  List<Object?> get props => [sessionId];
+}
+
 class AiChatSessionTitleUpdated extends AiChatEvent {
   final String sessionId;
   final String title;
@@ -81,15 +90,7 @@ class AiChatSessionTitleUpdated extends AiChatEvent {
   List<Object?> get props => [sessionId, title];
 }
 
-class AiChatMessagesCleared extends AiChatEvent {
-  final String sessionId;
-
-  const AiChatMessagesCleared(this.sessionId);
-
-  @override
-  List<Object?> get props => [sessionId];
-}
-
+// Internal events
 class _AiChatSessionsChanged extends AiChatEvent {
   final List<ChatSession> sessions;
 

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ai/firebase_ai.dart';
@@ -45,6 +46,14 @@ abstract class AiChatRemoteDataSource {
     required String sessionId,
     required String userId,
     required String message,
+    List<MessageModel>? conversationHistory,
+  });
+
+  Future<String> getAiResponseWithImage({
+    required String sessionId,
+    required String userId,
+    required String message,
+    required String imagePath,
     List<MessageModel>? conversationHistory,
   });
 }
@@ -149,6 +158,11 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
       final file = File(filePath);
       final fileName = file.path.split('/').last;
 
+      print('📤 Starting media upload...');
+      print('   Message ID: $messageId');
+      print('   File: $fileName');
+      print('   Type: ${messageType.name}');
+
       final userMessage = MessageModel(
         id: messageId,
         text: text,
@@ -160,6 +174,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         mediaSize: await file.length(),
       );
 
+      // Save initial message
       await firestore
           .collection('chat_sessions')
           .doc(sessionId)
@@ -167,25 +182,19 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .doc(messageId)
           .set(userMessage.toFirestore());
 
+      print('✅ Message saved to Firestore');
+
+      // Upload to storage
       final storageRef = storage.ref().child(
         'chat_media/$sessionId/$messageId/$fileName',
       );
 
+      print('⬆️  Uploading to Firebase Storage...');
       final uploadTask = await storageRef.putFile(file);
       final downloadUrl = await uploadTask.ref.getDownloadURL();
+      print('✅ Upload complete: $downloadUrl');
 
-      final updatedMessage = MessageModel(
-        id: messageId,
-        text: text,
-        authorId: userId,
-        createdAt: now,
-        type: messageType,
-        status: MessageStatus.sent,
-        mediaUrl: downloadUrl,
-        mediaName: fileName,
-        mediaSize: await file.length(),
-      );
-
+      // Update message with media URL
       await firestore
           .collection('chat_sessions')
           .doc(sessionId)
@@ -199,10 +208,62 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         now,
       );
 
-      return updatedMessage;
+      // If it's an image, get AI response with image analysis
+      if (messageType == MessageType.image) {
+        print('🤖 Requesting AI analysis of image...');
+        final conversationHistory = await _getConversationHistory(sessionId);
+
+        final promptText = text.isEmpty
+            ? 'What do you see in this image? Please describe it in detail.'
+            : text;
+
+        final aiResponse = await getAiResponseWithImage(
+          sessionId: sessionId,
+          userId: userId,
+          message: promptText,
+          imagePath: filePath,
+          conversationHistory: conversationHistory,
+        );
+
+        print('✅ AI response received');
+
+        // Save AI response
+        final aiMessageId = const Uuid().v4();
+        final aiMessage = MessageModel(
+          id: aiMessageId,
+          text: aiResponse,
+          authorId: 'ai',
+          createdAt: DateTime.now(),
+          type: MessageType.text,
+          status: MessageStatus.sent,
+        );
+
+        await firestore
+            .collection('chat_sessions')
+            .doc(sessionId)
+            .collection('messages')
+            .doc(aiMessageId)
+            .set(aiMessage.toFirestore());
+
+        await _updateChatSession(sessionId, aiResponse, DateTime.now());
+      }
+
+      return MessageModel(
+        id: messageId,
+        text: text,
+        authorId: userId,
+        createdAt: now,
+        type: messageType,
+        status: MessageStatus.sent,
+        mediaUrl: downloadUrl,
+        mediaName: fileName,
+        mediaSize: await file.length(),
+      );
     } on FirebaseException catch (e) {
+      print('❌ Firebase error: ${e.message}');
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
+      print('❌ Error in sendMessageWithMedia: $e');
       throw ServerException(message: e.toString());
     }
   }
@@ -278,26 +339,39 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
   @override
   Future<void> deleteChatSession(String sessionId) async {
     try {
+      print('🗑️  Deleting session: $sessionId');
+
+      // Delete all messages
       final messagesSnapshot = await firestore
           .collection('chat_sessions')
           .doc(sessionId)
           .collection('messages')
           .get();
 
+      print('📝 Found ${messagesSnapshot.docs.length} messages to delete');
+
       for (var doc in messagesSnapshot.docs) {
         await doc.reference.delete();
       }
 
+      // Delete the session
       await firestore.collection('chat_sessions').doc(sessionId).delete();
+      print('✅ Session deleted from Firestore');
 
+      // Try to delete storage files
       try {
         final storageRef = storage.ref().child('chat_media/$sessionId');
         final listResult = await storageRef.listAll();
+
+        print('📁 Found ${listResult.items.length} storage items to delete');
+
         for (var item in listResult.items) {
           await item.delete();
         }
-      } catch (_) {
-        // Ignore storage errors
+        print('✅ Storage files deleted');
+      } catch (e) {
+        print('⚠️  Storage deletion warning: $e');
+        // Ignore storage errors - files might not exist
       }
     } on FirebaseException catch (e) {
       throw ServerException(message: e.message ?? 'Firebase error occurred');
@@ -312,10 +386,12 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
     required String title,
   }) async {
     try {
+      print('✏️  Updating session title: $sessionId -> $title');
       await firestore.collection('chat_sessions').doc(sessionId).update({
         'title': title,
         'updatedAt': Timestamp.now(),
       });
+      print('✅ Title updated successfully');
     } on FirebaseException catch (e) {
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
@@ -326,11 +402,15 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
   @override
   Future<void> clearMessages(String sessionId) async {
     try {
+      print('🧹 Clearing messages for session: $sessionId');
+
       final messagesSnapshot = await firestore
           .collection('chat_sessions')
           .doc(sessionId)
           .collection('messages')
           .get();
+
+      print('📝 Found ${messagesSnapshot.docs.length} messages to clear');
 
       for (var doc in messagesSnapshot.docs) {
         await doc.reference.delete();
@@ -341,6 +421,8 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         'messageCount': 0,
         'updatedAt': Timestamp.now(),
       });
+
+      print('✅ Messages cleared successfully');
     } on FirebaseException catch (e) {
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
@@ -373,12 +455,68 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         throw const ServerException(message: 'AI response is empty');
       }
 
-      print('✅ AI Response received: ${response.text!.substring(0, 50)}...');
+      print(
+        '✅ AI Response received: ${response.text!.substring(0, response.text!.length.clamp(0, 50))}...',
+      );
       return response.text!;
     } catch (e, stackTrace) {
       print('❌ AI Error: $e');
       print('📚 Stack trace: $stackTrace');
       throw ServerException(message: 'AI error: ${e.toString()}');
+    }
+  }
+
+  @override
+  Future<String> getAiResponseWithImage({
+    required String sessionId,
+    required String userId,
+    required String message,
+    required String imagePath,
+    List<MessageModel>? conversationHistory,
+  }) async {
+    try {
+      print('🤖 AI Request with Image - Starting...');
+      print('📝 Message: $message');
+      print('🖼️  Image: $imagePath');
+
+      // Read image file
+      final file = File(imagePath);
+      final Uint8List imageBytes = await file.readAsBytes();
+
+      print('✅ Image loaded: ${imageBytes.length} bytes');
+
+      // Build prompt with conversation history
+      final contextPrompt =
+          conversationHistory != null && conversationHistory.isNotEmpty
+          ? _buildPrompt(message, conversationHistory)
+          : message;
+
+      print('🔄 Calling Gemini API with image...');
+
+      // Create content with both text and image
+      final response = await geminiModel.generateContent([
+        Content.multi([
+          TextPart(contextPrompt),
+          // Gemini supports inline data for images
+          InlineDataPart('image/jpeg', imageBytes),
+        ]),
+      ]);
+
+      print('✅ Gemini API responded');
+
+      if (response.text == null || response.text!.isEmpty) {
+        print('❌ AI response is empty');
+        throw const ServerException(message: 'AI response is empty');
+      }
+
+      print(
+        '✅ AI Response received: ${response.text!.substring(0, response.text!.length.clamp(0, 50))}...',
+      );
+      return response.text!;
+    } catch (e, stackTrace) {
+      print('❌ AI Error with Image: $e');
+      print('📚 Stack trace: $stackTrace');
+      throw ServerException(message: 'AI error with image: ${e.toString()}');
     }
   }
 
