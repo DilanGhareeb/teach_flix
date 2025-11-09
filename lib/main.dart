@@ -15,6 +15,7 @@ import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart'
 import 'package:teach_flix/src/features/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/quiz/view/bloc/quiz_bloc.dart';
 import 'package:teach_flix/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProgressBloc>(create: (_) => sl<ProgressBloc>()),
         BlocProvider<AiChatBloc>(create: (_) => sl<AiChatBloc>()),
+        BlocProvider<QuizBloc>(create: (_) => sl<QuizBloc>()),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settings) {

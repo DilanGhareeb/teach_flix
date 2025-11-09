@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/question_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/question_entity.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class AddQuizPage extends StatefulWidget {

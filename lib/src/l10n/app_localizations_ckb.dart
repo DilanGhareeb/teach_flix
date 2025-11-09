@@ -1524,4 +1524,89 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get add_message_to_image => 'نامەیەک زیاد بکە بۆ وێنەکە...';
+
+  @override
+  String get quiz_loading => 'Loading quiz...';
+
+  @override
+  String get quiz_error_occurred => 'An error occurred';
+
+  @override
+  String get quiz_questions_count => 'Questions';
+
+  @override
+  String get quiz_time_limit => 'Time Limit';
+
+  @override
+  String get quiz_passing_score => 'Passing Score';
+
+  @override
+  String get quiz_previous_attempt => 'Previous Attempt';
+
+  @override
+  String get quiz_score => 'Score';
+
+  @override
+  String get quiz_percentage => 'Percentage';
+
+  @override
+  String get quiz_retake => 'Retake Quiz';
+
+  @override
+  String get quiz_start => 'Start Quiz';
+
+  @override
+  String get quiz_previous => 'Previous';
+
+  @override
+  String get quiz_next => 'Next';
+
+  @override
+  String get quiz_submit => 'Submit Quiz';
+
+  @override
+  String get quiz_submit_confirmation_title => 'Submit Quiz?';
+
+  @override
+  String quiz_submit_with_unanswered(int count) {
+    return 'You have $count unanswered questions. Are you sure you want to submit?';
+  }
+
+  @override
+  String get quiz_submit_all_answered =>
+      'You have answered all questions. Are you sure you want to submit?';
+
+  @override
+  String get quiz_passed => 'Congratulations!';
+
+  @override
+  String get quiz_failed => 'Keep Trying!';
+
+  @override
+  String get quiz_passed_message => 'You passed the quiz successfully!';
+
+  @override
+  String get quiz_failed_message =>
+      'You didn\'t pass this time, but you can try again.';
+
+  @override
+  String get quiz_time_taken => 'Time Taken';
+
+  @override
+  String get quiz_correct_answers => 'Correct';
+
+  @override
+  String get quiz_wrong_answers => 'Wrong';
+
+  @override
+  String get quiz_review_answers => 'Review Answers';
+
+  @override
+  String get quiz_explanation => 'Explanation';
+
+  @override
+  String get quiz_correct_answer => 'Correct Answer';
+
+  @override
+  String get quiz_your_answer => 'Your Answer';
 }

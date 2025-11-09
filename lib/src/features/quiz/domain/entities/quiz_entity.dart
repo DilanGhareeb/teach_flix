@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/question_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/question_entity.dart';
 
 class QuizEntity extends Equatable {
   final String id;

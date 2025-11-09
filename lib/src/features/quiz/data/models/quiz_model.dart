@@ -1,5 +1,5 @@
-import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
-import 'package:teach_flix/src/features/courses/data/models/question_model.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/quiz/data/models/question_model.dart';
 
 class QuizModel extends QuizEntity {
   const QuizModel({

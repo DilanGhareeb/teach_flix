@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/video_entity.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/add_video_page.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/add_quiz_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';

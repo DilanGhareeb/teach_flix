@@ -58,6 +58,13 @@ import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_ins
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_instructor_transactions.dart';
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/watch_instructor_stats.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/quiz/data/datasource/quiz_firebase_datasource.dart';
+import 'package:teach_flix/src/features/quiz/data/repository/quiz_repositroy_impl.dart';
+import 'package:teach_flix/src/features/quiz/domain/repository/quiz_repository.dart';
+import 'package:teach_flix/src/features/quiz/domain/usecases/get_quiz_by_id_usecase.dart';
+import 'package:teach_flix/src/features/quiz/domain/usecases/get_quiz_result_usecase.dart';
+import 'package:teach_flix/src/features/quiz/domain/usecases/submit_quiz_result_usecase.dart';
+import 'package:teach_flix/src/features/quiz/view/bloc/quiz_bloc.dart';
 
 // Settings
 import 'package:teach_flix/src/features/settings/data/datasources/app_prefernce_local.dart';
@@ -321,6 +328,33 @@ Future<void> setupServiceLocator() async {
       deleteChatSession: sl<DeleteChatSession>(),
       clearMessages: sl<ClearMessages>(),
       updateChatSessionTitle: sl<UpdateChatSessionTitle>(),
+    ),
+  );
+
+  sl.registerLazySingleton<QuizFirebaseDataSource>(
+    () => QuizFirebaseDataSourceImpl(firestore: sl<FirebaseFirestore>()),
+  );
+
+  sl.registerLazySingleton<QuizRepository>(
+    () => QuizRepositoryImpl(dataSource: sl<QuizFirebaseDataSource>()),
+  );
+
+  // Use Cases
+  sl.registerLazySingleton(
+    () => GetQuizByIdUseCase(repository: sl<QuizRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => SubmitQuizResultUseCase(repository: sl<QuizRepository>()),
+  );
+  sl.registerLazySingleton(
+    () => GetQuizResultUseCase(repository: sl<QuizRepository>()),
+  );
+
+  sl.registerFactory(
+    () => QuizBloc(
+      getQuizByIdUseCase: sl<GetQuizByIdUseCase>(),
+      submitQuizResultUseCase: sl<SubmitQuizResultUseCase>(),
+      getQuizResultUseCase: sl<GetQuizResultUseCase>(),
     ),
   );
 }

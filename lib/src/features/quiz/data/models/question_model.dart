@@ -1,4 +1,4 @@
-import 'package:teach_flix/src/features/courses/domain/entities/question_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/question_entity.dart';
 
 class QuestionModel extends QuestionEntity {
   const QuestionModel({

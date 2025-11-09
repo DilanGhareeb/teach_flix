@@ -1933,5 +1933,117 @@
   "add_message_to_image": "Add a message to go with your image...",
   "@add_message_to_image": {
     "description": "Placeholder text for adding a message along with an attached image in the chat"
+  },
+  "quiz_loading": "Loading quiz...",
+  "@quiz_loading": {
+    "description": "Status message indicating that the quiz is being loaded"
+  },
+  "quiz_error_occurred": "An error occurred",
+  "@quiz_error_occurred": {
+    "description": "Generic error message for quiz feature"
+  },
+  "quiz_questions_count": "Questions",
+  "@quiz_questions_count": {
+    "description": "Label for the number of questions in a quiz"
+  },
+  "quiz_time_limit": "Time Limit",
+  "@quiz_time_limit": {
+    "description": "Label for the time limit of a quiz"
+  },
+  "quiz_passing_score": "Passing Score",
+  "@quiz_passing_score": {
+    "description": "Label for the passing score of a quiz"
+  },
+  "quiz_previous_attempt": "Previous Attempt",
+  "@quiz_previous_attempt": {
+    "description": "Label for the previous attempt of a quiz"
+  },
+  "quiz_score": "Score",
+  "@quiz_score": {
+    "description": "Label for the score achieved in a quiz"
+  },
+  "quiz_percentage": "Percentage",
+  "@quiz_percentage": {
+    "description": "Label for the percentage score in a quiz"
+  },
+  "quiz_retake": "Retake Quiz",
+  "@quiz_retake": {
+    "description": "Button text for retaking a quiz"
+  },
+  "quiz_start": "Start Quiz",
+  "@quiz_start": {
+    "description": "Button text for starting a quiz"
+  },
+  "quiz_previous": "Previous",
+  "@quiz_previous": {
+    "description": "Button text for going to the previous question in a quiz"
+  },
+  "quiz_next": "Next",
+  "@quiz_next": {
+    "description": "Button text for going to the next question in a quiz"
+  },
+  "quiz_submit": "Submit Quiz",
+  "@quiz_submit": {
+    "description": "Button text for submitting a quiz"
+  },
+  "quiz_submit_confirmation_title": "Submit Quiz?",
+  "@quiz_submit_confirmation_title": {
+    "description": "Title for the quiz submission confirmation dialog"
+  },
+  "quiz_submit_with_unanswered": "You have {count} unanswered questions. Are you sure you want to submit?",
+  "@quiz_submit_with_unanswered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quiz_submit_all_answered": "You have answered all questions. Are you sure you want to submit?",
+  "@quiz_submit_all_answered": {
+    "description": "Confirmation message for submitting a quiz when all questions are answered"
+  },
+  "quiz_passed": "Congratulations!",
+  "@quiz_passed": {
+    "description": "Message displayed when the user passes the quiz"
+  },
+  "quiz_failed": "Keep Trying!",
+  "@quiz_failed": {
+    "description": "Message displayed when the user fails the quiz"
+  },
+  "quiz_passed_message": "You passed the quiz successfully!",
+  "@quiz_passed_message": {
+    "description": "Success message displayed when the user passes the quiz"
+  },
+  "quiz_failed_message": "You didn't pass this time, but you can try again.",
+  "@quiz_failed_message": {
+    "description": "Encouragement message displayed when the user fails the quiz"
+  },
+  "quiz_time_taken": "Time Taken",
+  "@quiz_time_taken": {
+    "description": "Label for the time taken to complete the quiz"
+  },
+  "quiz_correct_answers": "Correct",
+  "@quiz_correct_answers": {
+    "description": "Label for the number of correct answers in a quiz"
+  },
+  "quiz_wrong_answers": "Wrong",
+  "@quiz_wrong_answers": {
+    "description": "Label for the number of wrong answers in a quiz"
+  },
+  "quiz_review_answers": "Review Answers",
+  "@quiz_review_answers": {
+    "description": "Button text for reviewing quiz answers"
+  },
+  "quiz_explanation": "Explanation",
+  "@quiz_explanation": {
+    "description": "Label for the explanation of a quiz answer"
+  },
+  "quiz_correct_answer": "Correct Answer",
+  "@quiz_correct_answer": {
+    "description": "Label for the correct answer in a quiz"
+  },
+  "quiz_your_answer": "Your Answer",
+  "@quiz_your_answer": {
+    "description": "Label for the user's answer in a quiz"
   }
 }

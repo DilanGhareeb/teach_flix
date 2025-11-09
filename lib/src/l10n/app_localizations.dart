@@ -2989,6 +2989,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add a message to go with your image...'**
   String get add_message_to_image;
+
+  /// Status message indicating that the quiz is being loaded
+  ///
+  /// In en, this message translates to:
+  /// **'Loading quiz...'**
+  String get quiz_loading;
+
+  /// Generic error message for quiz feature
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get quiz_error_occurred;
+
+  /// Label for the number of questions in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Questions'**
+  String get quiz_questions_count;
+
+  /// Label for the time limit of a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Time Limit'**
+  String get quiz_time_limit;
+
+  /// Label for the passing score of a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Passing Score'**
+  String get quiz_passing_score;
+
+  /// Label for the previous attempt of a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Previous Attempt'**
+  String get quiz_previous_attempt;
+
+  /// Label for the score achieved in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Score'**
+  String get quiz_score;
+
+  /// Label for the percentage score in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Percentage'**
+  String get quiz_percentage;
+
+  /// Button text for retaking a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Retake Quiz'**
+  String get quiz_retake;
+
+  /// Button text for starting a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Start Quiz'**
+  String get quiz_start;
+
+  /// Button text for going to the previous question in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get quiz_previous;
+
+  /// Button text for going to the next question in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get quiz_next;
+
+  /// Button text for submitting a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Quiz'**
+  String get quiz_submit;
+
+  /// Title for the quiz submission confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Submit Quiz?'**
+  String get quiz_submit_confirmation_title;
+
+  /// No description provided for @quiz_submit_with_unanswered.
+  ///
+  /// In en, this message translates to:
+  /// **'You have {count} unanswered questions. Are you sure you want to submit?'**
+  String quiz_submit_with_unanswered(int count);
+
+  /// Confirmation message for submitting a quiz when all questions are answered
+  ///
+  /// In en, this message translates to:
+  /// **'You have answered all questions. Are you sure you want to submit?'**
+  String get quiz_submit_all_answered;
+
+  /// Message displayed when the user passes the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Congratulations!'**
+  String get quiz_passed;
+
+  /// Message displayed when the user fails the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Trying!'**
+  String get quiz_failed;
+
+  /// Success message displayed when the user passes the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'You passed the quiz successfully!'**
+  String get quiz_passed_message;
+
+  /// Encouragement message displayed when the user fails the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'You didn\'t pass this time, but you can try again.'**
+  String get quiz_failed_message;
+
+  /// Label for the time taken to complete the quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Time Taken'**
+  String get quiz_time_taken;
+
+  /// Label for the number of correct answers in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Correct'**
+  String get quiz_correct_answers;
+
+  /// Label for the number of wrong answers in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Wrong'**
+  String get quiz_wrong_answers;
+
+  /// Button text for reviewing quiz answers
+  ///
+  /// In en, this message translates to:
+  /// **'Review Answers'**
+  String get quiz_review_answers;
+
+  /// Label for the explanation of a quiz answer
+  ///
+  /// In en, this message translates to:
+  /// **'Explanation'**
+  String get quiz_explanation;
+
+  /// Label for the correct answer in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Correct Answer'**
+  String get quiz_correct_answer;
+
+  /// Label for the user's answer in a quiz
+  ///
+  /// In en, this message translates to:
+  /// **'Your Answer'**
+  String get quiz_your_answer;
 }
 
 class _AppLocalizationsDelegate

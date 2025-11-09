@@ -1,6 +1,6 @@
 import 'package:teach_flix/src/features/courses/domain/entities/chapter_entity.dart';
 import 'package:teach_flix/src/features/courses/data/models/video_model.dart';
-import 'package:teach_flix/src/features/courses/data/models/quiz_model.dart';
+import 'package:teach_flix/src/features/quiz/data/models/quiz_model.dart';
 
 class ChapterModel extends ChapterEntity {
   const ChapterModel({

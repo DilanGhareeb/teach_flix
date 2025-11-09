@@ -1,7 +1,12 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/course_entity.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:teach_flix/src/features/courses/presentation/widgets/progress_checkbox.dart';
+import 'package:teach_flix/src/features/quiz/view/bloc/quiz_bloc.dart';
+import 'package:teach_flix/src/features/quiz/view/bloc/quiz_event.dart';
+import 'package:teach_flix/src/features/quiz/view/pages/quiz_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class QuizzesList extends StatelessWidget {
@@ -19,11 +24,21 @@ class QuizzesList extends StatelessWidget {
   });
 
   void _navigateToQuiz(BuildContext context, QuizEntity quiz) {
-    // TODO: Navigate to quiz taking page
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Quiz: ${quiz.title}'),
-        duration: const Duration(seconds: 2),
+    Navigator.of(context).push(
+      CupertinoPageRoute(
+        builder: (_) {
+          return BlocProvider.value(
+            value: context.read<QuizBloc>()
+              ..add(
+                LoadQuizEvent(
+                  quizId: quiz.id,
+                  userId: userId!,
+                  courseId: course.id,
+                ),
+              ),
+            child: QuizPage(quiz: quiz, userId: userId!, courseId: course.id),
+          );
+        },
       ),
     );
   }

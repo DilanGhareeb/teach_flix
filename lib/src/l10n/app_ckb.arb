@@ -481,5 +481,39 @@
   "camera_cancelled": "کەمێرا هەڵوەشێنرایەوە",
   "failed_to_send_message": "شکستی هێنا لە ناردنی نامە",
   "image_attached": "وێنەکە لکێنرا",
-  "add_message_to_image": "نامەیەک زیاد بکە بۆ وێنەکە..."
+  "add_message_to_image": "نامەیەک زیاد بکە بۆ وێنەکە...",
+  "quiz_loading": "Loading quiz...",
+  "quiz_error_occurred": "An error occurred",
+  "quiz_questions_count": "Questions",
+  "quiz_time_limit": "Time Limit",
+  "quiz_passing_score": "Passing Score",
+  "quiz_previous_attempt": "Previous Attempt",
+  "quiz_score": "Score",
+  "quiz_percentage": "Percentage",
+  "quiz_retake": "Retake Quiz",
+  "quiz_start": "Start Quiz",
+  "quiz_previous": "Previous",
+  "quiz_next": "Next",
+  "quiz_submit": "Submit Quiz",
+  "quiz_submit_confirmation_title": "Submit Quiz?",
+  "quiz_submit_with_unanswered": "You have {count} unanswered questions. Are you sure you want to submit?",
+  "@quiz_submit_with_unanswered": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "quiz_submit_all_answered": "You have answered all questions. Are you sure you want to submit?",
+  "quiz_passed": "Congratulations!",
+  "quiz_failed": "Keep Trying!",
+  "quiz_passed_message": "You passed the quiz successfully!",
+  "quiz_failed_message": "You didn't pass this time, but you can try again.",
+  "quiz_time_taken": "Time Taken",
+  "quiz_correct_answers": "Correct",
+  "quiz_wrong_answers": "Wrong",
+  "quiz_review_answers": "Review Answers",
+  "quiz_explanation": "Explanation",
+  "quiz_correct_answer": "Correct Answer",
+  "quiz_your_answer": "Your Answer"
 }

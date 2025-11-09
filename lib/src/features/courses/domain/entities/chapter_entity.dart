@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:teach_flix/src/features/courses/domain/entities/quiz_entity.dart';
+import 'package:teach_flix/src/features/quiz/domain/entities/quiz_entity.dart';
 import 'package:teach_flix/src/features/courses/domain/entities/video_entity.dart';
 
 class ChapterEntity extends Equatable {
