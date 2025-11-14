@@ -6,6 +6,7 @@ import 'package:flutter_kurdish_localization/kurdish_cupertino_localization_dele
 import 'package:flutter_kurdish_localization/kurdish_material_localization_delegate.dart';
 import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:get/get.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/ai_assistnat/presentation/bloc/ai_chat_bloc.dart';
@@ -15,6 +16,7 @@ import 'package:teach_flix/src/features/auth/presentation/pages/login_page.dart'
 import 'package:teach_flix/src/features/common/presentation/pages/main_page.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/progress_bloc.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/bloc/live_conference_bloc.dart';
 import 'package:teach_flix/src/features/quiz/view/bloc/quiz_bloc.dart';
 import 'package:teach_flix/src/features/settings/presentation/bloc/settings_bloc.dart';
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
@@ -52,6 +54,9 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProgressBloc>(create: (_) => sl<ProgressBloc>()),
         BlocProvider<AiChatBloc>(create: (_) => sl<AiChatBloc>()),
         BlocProvider<QuizBloc>(create: (_) => sl<QuizBloc>()),
+        BlocProvider<LiveConferenceBloc>(
+          create: (_) => sl<LiveConferenceBloc>(),
+        ),
       ],
       child: BlocBuilder<SettingsBloc, SettingsState>(
         builder: (context, settings) {
@@ -71,6 +76,7 @@ class MyApp extends StatelessWidget {
               KurdishCupertinoLocalizations.delegate,
               KurdishWidgetLocalizations.delegate,
             ],
+            navigatorKey: Get.key,
             theme: isDarkMode
                 ? AppTheme.dark(settings.languageCode)
                 : AppTheme.light(settings.languageCode),
@@ -103,7 +109,6 @@ class _AuthGate extends StatelessWidget {
           case AuthStatus.guest:
             return const MainPage();
           case AuthStatus.unauthenticated:
-            // Automatically continue as guest
             WidgetsBinding.instance.addPostFrameCallback((_) {
               context.read<AuthBloc>().add(
                 const AuthContinueAsGuestRequested(),

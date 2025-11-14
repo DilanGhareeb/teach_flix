@@ -51,7 +51,7 @@ class QuizStartScreen extends StatelessWidget {
                     child: Icon(
                       Icons.quiz_rounded,
                       size: 50,
-                      color: colorScheme.primary,
+                      color: colorScheme.onPrimary,
                     ),
                   ),
                   const SizedBox(height: 24),
@@ -257,7 +257,7 @@ class _InfoCard extends StatelessWidget {
               color: colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: colorScheme.primary, size: 24),
+            child: Icon(icon, color: colorScheme.onPrimary, size: 24),
           ),
           const SizedBox(width: 16),
           Expanded(

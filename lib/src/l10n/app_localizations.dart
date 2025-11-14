@@ -3151,6 +3151,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your Answer'**
   String get quiz_your_answer;
+
+  /// Error when trying to join a conference that is not live
+  ///
+  /// In en, this message translates to:
+  /// **'Conference is not currently live'**
+  String get errConferenceNotLive;
+
+  /// Error when user tries to join without purchasing
+  ///
+  /// In en, this message translates to:
+  /// **'You have not purchased access to this conference'**
+  String get errAccessNotPurchased;
+
+  /// Error when user tries to join after the 10-minute window
+  ///
+  /// In en, this message translates to:
+  /// **'Join time limit exceeded. You can only join within 10 minutes of start time'**
+  String get errJoinTimeLimitExceeded;
+
+  /// Error when conference is at capacity
+  ///
+  /// In en, this message translates to:
+  /// **'Conference has reached maximum participants'**
+  String get errConferenceFull;
+
+  /// Title for live conferences page
+  ///
+  /// In en, this message translates to:
+  /// **'Live Conferences'**
+  String get liveConferences;
+
+  /// Button to create a new conference
+  ///
+  /// In en, this message translates to:
+  /// **'Create Conference'**
+  String get createConference;
+
+  /// Label for conference title field
+  ///
+  /// In en, this message translates to:
+  /// **'Conference Title'**
+  String get conferenceTitle;
+
+  /// Label for conference description field
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get conferenceDescription;
+
+  /// Label for conference price field
+  ///
+  /// In en, this message translates to:
+  /// **'Price'**
+  String get conferencePrice;
+
+  /// Label for maximum duration field
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Duration (minutes)'**
+  String get maxDuration;
+
+  /// Label for maximum participants field
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum Participants'**
+  String get maxParticipants;
+
+  /// Label for scheduled start time
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Start Time'**
+  String get scheduledStartTime;
+
+  /// Button to start a conference
+  ///
+  /// In en, this message translates to:
+  /// **'Start Conference'**
+  String get startConference;
+
+  /// Button to end a conference
+  ///
+  /// In en, this message translates to:
+  /// **'End Conference'**
+  String get endConference;
+
+  /// Button to join a conference
+  ///
+  /// In en, this message translates to:
+  /// **'Join Conference'**
+  String get joinConference;
+
+  /// Button to purchase conference access
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Access'**
+  String get purchaseAccess;
+
+  /// Badge indicating conference is live
+  ///
+  /// In en, this message translates to:
+  /// **'LIVE'**
+  String get conferenceLive;
+
+  /// Badge indicating conference is scheduled
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get conferenceScheduled;
+
+  /// Badge indicating conference has ended
+  ///
+  /// In en, this message translates to:
+  /// **'Ended'**
+  String get conferenceEnded;
+
+  /// Label for participants count
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participants;
+
+  /// Label for time until conference starts
+  ///
+  /// In en, this message translates to:
+  /// **'Starts in'**
+  String get startsIn;
+
+  /// Label for time since conference started
+  ///
+  /// In en, this message translates to:
+  /// **'Started {time} ago'**
+  String startedAgo(String time);
+
+  /// Message showing remaining time to join
+  ///
+  /// In en, this message translates to:
+  /// **'You can join for {minutes} more minutes'**
+  String youCanJoinFor(String minutes);
+
+  /// Message when join time limit exceeded
+  ///
+  /// In en, this message translates to:
+  /// **'Join window closed'**
+  String get joinWindowClosed;
+
+  /// Label when conference is full
+  ///
+  /// In en, this message translates to:
+  /// **'Full'**
+  String get conferenceFull;
+
+  /// Label when purchase is required
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Required'**
+  String get purchaseRequired;
+
+  /// Label when access is already purchased
+  ///
+  /// In en, this message translates to:
+  /// **'Access Purchased'**
+  String get alreadyPurchased;
+
+  /// Label for free conference
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// Success message for conference creation
+  ///
+  /// In en, this message translates to:
+  /// **'Conference created successfully'**
+  String get createConferenceSuccess;
+
+  /// Success message for purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Access purchased successfully'**
+  String get purchaseSuccess;
+
+  /// Success message for joining
+  ///
+  /// In en, this message translates to:
+  /// **'Joined conference successfully'**
+  String get joinSuccess;
+
+  /// Confirmation dialog for ending conference
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to end this conference?'**
+  String get endConferenceConfirm;
+
+  /// Yes button
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yes;
+
+  /// No button
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get no;
+
+  /// Message when no conferences are available
+  ///
+  /// In en, this message translates to:
+  /// **'No active conferences available'**
+  String get noActiveConferences;
+
+  /// Loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading conferences...'**
+  String get loadingConferences;
 }
 
 class _AppLocalizationsDelegate

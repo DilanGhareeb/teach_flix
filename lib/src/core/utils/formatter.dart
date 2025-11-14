@@ -166,4 +166,69 @@ class Formatter {
     final noDecimalCurrencies = {'IQD', 'JPY', 'KRW'};
     return !noDecimalCurrencies.contains(currencyCode.toUpperCase());
   }
+
+  static String formatConferenceTime(
+    DateTime? actualStartTime,
+    DateTime scheduledStartTime,
+    bool isLive,
+    bool hasEnded,
+    AppLocalizations localization,
+  ) {
+    if (isLive && actualStartTime != null) {
+      return _formatElapsedTime(actualStartTime, localization);
+    } else if (!hasEnded) {
+      return _formatScheduledTime(scheduledStartTime, localization);
+    }
+    return localization.conferenceEnded;
+  }
+
+  static String _formatElapsedTime(
+    DateTime startTime,
+    AppLocalizations localization,
+  ) {
+    final elapsed = DateTime.now().difference(startTime);
+
+    if (elapsed.isNegative) {
+      return localization.startedAgo('0m');
+    }
+
+    if (elapsed.inMinutes < 60) {
+      return localization.startedAgo('${elapsed.inMinutes}m');
+    }
+
+    final hours = elapsed.inHours;
+    final minutes = elapsed.inMinutes % 60;
+
+    return localization.startedAgo('${hours}h ${minutes}m');
+  }
+
+  static String _formatScheduledTime(
+    DateTime scheduledTime,
+    AppLocalizations localization,
+  ) {
+    final timeUntil = scheduledTime.difference(DateTime.now());
+    if (timeUntil.inHours < 24) {
+      final hours = timeUntil.inHours;
+      final minutes = timeUntil.inMinutes % 60;
+      return '${localization.startsIn} ${hours}h ${minutes}m';
+    } else {
+      return DateFormat('MMM dd, HH:mm').format(scheduledTime);
+    }
+  }
+
+  static int calculateRemainingJoinMinutes(DateTime? actualStartTime) {
+    if (actualStartTime == null) return 0;
+
+    final elapsed = DateTime.now().difference(actualStartTime);
+    final remainingMinutes = 10 - elapsed.inMinutes;
+    return remainingMinutes > 0 ? remainingMinutes : 0;
+  }
+
+  static String formatParticipants(
+    int current,
+    int max,
+    AppLocalizations localization,
+  ) {
+    return '$current/$max';
+  }
 }

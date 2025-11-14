@@ -2045,5 +2045,159 @@
   "quiz_your_answer": "Your Answer",
   "@quiz_your_answer": {
     "description": "Label for the user's answer in a quiz"
+  },
+  "errConferenceNotLive": "Conference is not currently live",
+  "@errConferenceNotLive": {
+    "description": "Error when trying to join a conference that is not live"
+  },
+  "errAccessNotPurchased": "You have not purchased access to this conference",
+  "@errAccessNotPurchased": {
+    "description": "Error when user tries to join without purchasing"
+  },
+  "errJoinTimeLimitExceeded": "Join time limit exceeded. You can only join within 10 minutes of start time",
+  "@errJoinTimeLimitExceeded": {
+    "description": "Error when user tries to join after the 10-minute window"
+  },
+  "errConferenceFull": "Conference has reached maximum participants",
+  "@errConferenceFull": {
+    "description": "Error when conference is at capacity"
+  },
+  "liveConferences": "Live Conferences",
+  "@liveConferences": {
+    "description": "Title for live conferences page"
+  },
+  "createConference": "Create Conference",
+  "@createConference": {
+    "description": "Button to create a new conference"
+  },
+  "conferenceTitle": "Conference Title",
+  "@conferenceTitle": {
+    "description": "Label for conference title field"
+  },
+  "conferenceDescription": "Description",
+  "@conferenceDescription": {
+    "description": "Label for conference description field"
+  },
+  "conferencePrice": "Price",
+  "@conferencePrice": {
+    "description": "Label for conference price field"
+  },
+  "maxDuration": "Maximum Duration (minutes)",
+  "@maxDuration": {
+    "description": "Label for maximum duration field"
+  },
+  "maxParticipants": "Maximum Participants",
+  "@maxParticipants": {
+    "description": "Label for maximum participants field"
+  },
+  "scheduledStartTime": "Scheduled Start Time",
+  "@scheduledStartTime": {
+    "description": "Label for scheduled start time"
+  },
+  "startConference": "Start Conference",
+  "@startConference": {
+    "description": "Button to start a conference"
+  },
+  "endConference": "End Conference",
+  "@endConference": {
+    "description": "Button to end a conference"
+  },
+  "joinConference": "Join Conference",
+  "@joinConference": {
+    "description": "Button to join a conference"
+  },
+  "purchaseAccess": "Purchase Access",
+  "@purchaseAccess": {
+    "description": "Button to purchase conference access"
+  },
+  "conferenceLive": "LIVE",
+  "@conferenceLive": {
+    "description": "Badge indicating conference is live"
+  },
+  "conferenceScheduled": "Scheduled",
+  "@conferenceScheduled": {
+    "description": "Badge indicating conference is scheduled"
+  },
+  "conferenceEnded": "Ended",
+  "@conferenceEnded": {
+    "description": "Badge indicating conference has ended"
+  },
+  "participants": "Participants",
+  "@participants": {
+    "description": "Label for participants count"
+  },
+  "startsIn": "Starts in",
+  "@startsIn": {
+    "description": "Label for time until conference starts"
+  },
+  "startedAgo": "Started {time} ago",
+  "@startedAgo": {
+    "description": "Label for time since conference started",
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "youCanJoinFor": "You can join for {minutes} more minutes",
+  "@youCanJoinFor": {
+    "description": "Message showing remaining time to join",
+    "placeholders": {
+      "minutes": {
+        "type": "String"
+      }
+    }
+  },
+  "joinWindowClosed": "Join window closed",
+  "@joinWindowClosed": {
+    "description": "Message when join time limit exceeded"
+  },
+  "conferenceFull": "Full",
+  "@conferenceFull": {
+    "description": "Label when conference is full"
+  },
+  "purchaseRequired": "Purchase Required",
+  "@purchaseRequired": {
+    "description": "Label when purchase is required"
+  },
+  "alreadyPurchased": "Access Purchased",
+  "@alreadyPurchased": {
+    "description": "Label when access is already purchased"
+  },
+  "free": "Free",
+  "@free": {
+    "description": "Label for free conference"
+  },
+  "createConferenceSuccess": "Conference created successfully",
+  "@createConferenceSuccess": {
+    "description": "Success message for conference creation"
+  },
+  "purchaseSuccess": "Access purchased successfully",
+  "@purchaseSuccess": {
+    "description": "Success message for purchase"
+  },
+  "joinSuccess": "Joined conference successfully",
+  "@joinSuccess": {
+    "description": "Success message for joining"
+  },
+  "endConferenceConfirm": "Are you sure you want to end this conference?",
+  "@endConferenceConfirm": {
+    "description": "Confirmation dialog for ending conference"
+  },
+  "yes": "Yes",
+  "@yes": {
+    "description": "Yes button"
+  },
+  "no": "No",
+  "@no": {
+    "description": "No button"
+  },
+  "noActiveConferences": "No active conferences available",
+  "@noActiveConferences": {
+    "description": "Message when no conferences are available"
+  },
+  "loadingConferences": "Loading conferences...",
+  "@loadingConferences": {
+    "description": "Loading message"
   }
 }

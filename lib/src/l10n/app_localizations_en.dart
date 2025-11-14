@@ -1602,4 +1602,119 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get quiz_your_answer => 'Your Answer';
+
+  @override
+  String get errConferenceNotLive => 'Conference is not currently live';
+
+  @override
+  String get errAccessNotPurchased =>
+      'You have not purchased access to this conference';
+
+  @override
+  String get errJoinTimeLimitExceeded =>
+      'Join time limit exceeded. You can only join within 10 minutes of start time';
+
+  @override
+  String get errConferenceFull => 'Conference has reached maximum participants';
+
+  @override
+  String get liveConferences => 'Live Conferences';
+
+  @override
+  String get createConference => 'Create Conference';
+
+  @override
+  String get conferenceTitle => 'Conference Title';
+
+  @override
+  String get conferenceDescription => 'Description';
+
+  @override
+  String get conferencePrice => 'Price';
+
+  @override
+  String get maxDuration => 'Maximum Duration (minutes)';
+
+  @override
+  String get maxParticipants => 'Maximum Participants';
+
+  @override
+  String get scheduledStartTime => 'Scheduled Start Time';
+
+  @override
+  String get startConference => 'Start Conference';
+
+  @override
+  String get endConference => 'End Conference';
+
+  @override
+  String get joinConference => 'Join Conference';
+
+  @override
+  String get purchaseAccess => 'Purchase Access';
+
+  @override
+  String get conferenceLive => 'LIVE';
+
+  @override
+  String get conferenceScheduled => 'Scheduled';
+
+  @override
+  String get conferenceEnded => 'Ended';
+
+  @override
+  String get participants => 'Participants';
+
+  @override
+  String get startsIn => 'Starts in';
+
+  @override
+  String startedAgo(String time) {
+    return 'Started $time ago';
+  }
+
+  @override
+  String youCanJoinFor(String minutes) {
+    return 'You can join for $minutes more minutes';
+  }
+
+  @override
+  String get joinWindowClosed => 'Join window closed';
+
+  @override
+  String get conferenceFull => 'Full';
+
+  @override
+  String get purchaseRequired => 'Purchase Required';
+
+  @override
+  String get alreadyPurchased => 'Access Purchased';
+
+  @override
+  String get free => 'Free';
+
+  @override
+  String get createConferenceSuccess => 'Conference created successfully';
+
+  @override
+  String get purchaseSuccess => 'Access purchased successfully';
+
+  @override
+  String get joinSuccess => 'Joined conference successfully';
+
+  @override
+  String get endConferenceConfirm =>
+      'Are you sure you want to end this conference?';
+
+  @override
+  String get yes => 'Yes';
+
+  @override
+  String get no => 'No';
+
+  @override
+  String get noActiveConferences => 'No active conferences available';
+
+  @override
+  String get loadingConferences => 'Loading conferences...';
 }

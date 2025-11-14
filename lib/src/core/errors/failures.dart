@@ -150,3 +150,19 @@ class InvalidRatingValueFailure extends Failure {
 class InstructorCannotRateOwnCourseFailure extends Failure {
   const InstructorCannotRateOwnCourseFailure({super.code});
 }
+
+class ConferenceNotLiveFailure extends Failure {
+  const ConferenceNotLiveFailure() : super();
+}
+
+class AccessNotPurchasedFailure extends Failure {
+  const AccessNotPurchasedFailure() : super();
+}
+
+class JoinTimeLimitExceededFailure extends Failure {
+  const JoinTimeLimitExceededFailure() : super();
+}
+
+class ConferenceFullFailure extends Failure {
+  const ConferenceFullFailure() : super();
+}

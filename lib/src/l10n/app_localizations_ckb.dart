@@ -1609,4 +1609,120 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get quiz_your_answer => 'Your Answer';
+
+  @override
+  String get errConferenceNotLive => 'کۆنفرانسەکە لە ئێستادا زیندوو نییە';
+
+  @override
+  String get errAccessNotPurchased =>
+      'تۆ دەستڕاگەیشتنت بۆ ئەم کۆنفرانسە نەکڕیوە';
+
+  @override
+  String get errJoinTimeLimitExceeded =>
+      'کاتی چوونە ژوورەوە تێپەڕیوە. تەنها دەتوانیت لە ماوەی ١٠ خولەکی یەکەمدا بچیتە ژوورەوە';
+
+  @override
+  String get errConferenceFull =>
+      'کۆنفرانسەکە گەیشتووەتە بەرزترین ژمارەی بەشداربووان';
+
+  @override
+  String get liveConferences => 'کۆنفرانسە زیندووەکان';
+
+  @override
+  String get createConference => 'دروستکردنی کۆنفرانس';
+
+  @override
+  String get conferenceTitle => 'ناونیشانی کۆنفرانس';
+
+  @override
+  String get conferenceDescription => 'پێناسە';
+
+  @override
+  String get conferencePrice => 'نرخ';
+
+  @override
+  String get maxDuration => 'درێژترین کات (خولەک)';
+
+  @override
+  String get maxParticipants => 'زۆرترین ژمارەی بەشداربووان';
+
+  @override
+  String get scheduledStartTime => 'کاتی دەستپێکردنی پلانکراو';
+
+  @override
+  String get startConference => 'دەستپێکردنی کۆنفرانس';
+
+  @override
+  String get endConference => 'کۆتایی پێهێنانی کۆنفرانس';
+
+  @override
+  String get joinConference => 'چوونە ناو کۆنفرانس';
+
+  @override
+  String get purchaseAccess => 'کڕینی دەستڕاگەیشتن';
+
+  @override
+  String get conferenceLive => 'زیندوو';
+
+  @override
+  String get conferenceScheduled => 'پلانکراو';
+
+  @override
+  String get conferenceEnded => 'کۆتایی هاتووە';
+
+  @override
+  String get participants => 'بەشداربووان';
+
+  @override
+  String get startsIn => 'دەستپێدەکات لە';
+
+  @override
+  String startedAgo(String time) {
+    return 'دەستی پێکردووە $time لەمەوپێش';
+  }
+
+  @override
+  String youCanJoinFor(String minutes) {
+    return 'دەتوانیت بچیتە ژوورەوە بۆ $minutes خولەکی دیکە';
+  }
+
+  @override
+  String get joinWindowClosed => 'کاتی چوونە ژوورەوە داخراوە';
+
+  @override
+  String get conferenceFull => 'پڕە';
+
+  @override
+  String get purchaseRequired => 'کڕین پێویستە';
+
+  @override
+  String get alreadyPurchased => 'دەستڕاگەیشتن کڕدراوە';
+
+  @override
+  String get free => 'بەخۆڕایی';
+
+  @override
+  String get createConferenceSuccess => 'کۆنفرانس بە سەرکەوتوویی دروست کرا';
+
+  @override
+  String get purchaseSuccess => 'دەستڕاگەیشتن بە سەرکەوتوویی کڕدرا';
+
+  @override
+  String get joinSuccess => 'بە سەرکەوتوویی چوویتە ناو کۆنفرانس';
+
+  @override
+  String get endConferenceConfirm =>
+      'دڵنیایت لە کۆتایی پێهێنانی ئەم کۆنفرانسە؟';
+
+  @override
+  String get yes => 'بەڵێ';
+
+  @override
+  String get no => 'نەخێر';
+
+  @override
+  String get noActiveConferences => 'هیچ کۆنفرانسێکی چالاک بەردەست نییە';
+
+  @override
+  String get loadingConferences => 'کۆنفرانسەکان بارکراوە...';
 }

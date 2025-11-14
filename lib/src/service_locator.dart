@@ -58,6 +58,7 @@ import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_ins
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_instructor_transactions.dart';
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/watch_instructor_stats.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/start_conference.dart';
 import 'package:teach_flix/src/features/quiz/data/datasource/quiz_firebase_datasource.dart';
 import 'package:teach_flix/src/features/quiz/data/repository/quiz_repositroy_impl.dart';
 import 'package:teach_flix/src/features/quiz/domain/repository/quiz_repository.dart';
@@ -94,6 +95,18 @@ import 'package:teach_flix/src/features/courses/domain/usecases/search_courses.d
 
 // Courses - Presentation Layer
 import 'package:teach_flix/src/features/courses/presentation/bloc/courses_bloc.dart';
+
+import 'package:teach_flix/src/features/live_conference/data/datasources/live_conference_firebase_datasource.dart';
+import 'package:teach_flix/src/features/live_conference/data/repositories/live_conference_repository_impl.dart';
+import 'package:teach_flix/src/features/live_conference/domain/repositories/live_conference_repository.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/create_conference.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/end_conference.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/get_all_active_conferences.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/get_conference_by_id.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/join_conference.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/purchase_conference_access.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/watch_active_conferences.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/bloc/live_conference_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -355,6 +368,42 @@ Future<void> setupServiceLocator() async {
       getQuizByIdUseCase: sl<GetQuizByIdUseCase>(),
       submitQuizResultUseCase: sl<SubmitQuizResultUseCase>(),
       getQuizResultUseCase: sl<GetQuizResultUseCase>(),
+    ),
+  );
+
+  sl.registerLazySingleton<LiveConferenceFirebaseDataSource>(
+    () => LiveConferenceFirebaseDataSourceImpl(
+      firestore: sl<FirebaseFirestore>(),
+    ),
+  );
+
+  sl.registerLazySingleton<LiveConferenceRepository>(
+    () => LiveConferenceRepositoryImpl(
+      dataSource: sl<LiveConferenceFirebaseDataSource>(),
+    ),
+  );
+
+  // ========== Live Conference feature - Use Cases ==========
+  sl.registerFactory(() => CreateConference(sl()));
+  sl.registerFactory(() => GetAllActiveConferences(sl()));
+  sl.registerFactory(() => WatchActiveConferences(sl()));
+  sl.registerFactory(() => GetConferenceById(sl()));
+  sl.registerFactory(() => PurchaseConferenceAccess(sl()));
+  sl.registerFactory(() => JoinConference(sl()));
+  sl.registerFactory(() => EndConference(sl()));
+  sl.registerFactory(() => StartConference(sl()));
+
+  // ========== Live Conference feature - Bloc ==========
+  sl.registerFactory(
+    () => LiveConferenceBloc(
+      getAllActiveConferences: sl<GetAllActiveConferences>(),
+      watchActiveConferences: sl<WatchActiveConferences>(),
+      createConference: sl<CreateConference>(),
+      purchaseConferenceAccess: sl<PurchaseConferenceAccess>(),
+      joinConference: sl<JoinConference>(),
+      endConference: sl<EndConference>(),
+      authBloc: sl<AuthBloc>(),
+      startConference: sl<StartConference>(),
     ),
   );
 }

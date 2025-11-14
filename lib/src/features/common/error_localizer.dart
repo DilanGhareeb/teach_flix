@@ -69,7 +69,16 @@ class ErrorLocalizer {
       return localization.invalid_rating_error;
     } else if (f is InstructorCannotRateOwnCourseFailure) {
       return localization.instructor_cannot_rate_error;
+    } else if (f is ConferenceNotLiveFailure) {
+      return localization.errConferenceNotLive;
+    } else if (f is AccessNotPurchasedFailure) {
+      return localization.errAccessNotPurchased;
+    } else if (f is JoinTimeLimitExceededFailure) {
+      return localization.errJoinTimeLimitExceeded;
+    } else if (f is ConferenceFullFailure) {
+      return localization.errConferenceFull;
     }
+
     final base = localization.errUnknown;
     return kDebugMode && f.code != null ? '$base (${f.code})' : base;
   }

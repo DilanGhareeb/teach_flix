@@ -7,6 +7,7 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.d
 import 'package:teach_flix/src/features/common/presentation/pages/dashboard_page.dart';
 import 'package:teach_flix/src/features/courses/presentation/pages/my_course_page.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/pages/teacher_dashboard_page.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/pages/active_conferences_page.dart';
 import 'package:teach_flix/src/features/settings/presentation/pages/settings_page.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
@@ -32,7 +33,7 @@ class _MainPageState extends State<MainPage> {
       return const [
         DashboardPage(),
         MyCoursesPage(),
-        _LivePage(),
+        ActiveConferencesPage(),
         TeacherDashboardPage(),
         SettingsPage(),
       ];
@@ -40,7 +41,7 @@ class _MainPageState extends State<MainPage> {
       return const [
         DashboardPage(),
         MyCoursesPage(),
-        _LivePage(),
+        ActiveConferencesPage(),
         SettingsPage(),
       ];
     }
@@ -181,112 +182,6 @@ class _MainPageState extends State<MainPage> {
           ),
         );
       },
-    );
-  }
-}
-
-// Live Page
-class _LivePage extends StatelessWidget {
-  const _LivePage();
-
-  @override
-  Widget build(BuildContext context) {
-    final t = AppLocalizations.of(context)!;
-    final cs = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Scaffold(
-      backgroundColor: cs.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                t.live_sessions,
-                style: textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: cs.onSurface,
-                ),
-              ),
-              const SizedBox(height: 20),
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(32),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.live_tv_rounded,
-                          size: 64,
-                          color: Colors.red,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Text(
-                        'No live sessions available',
-                        style: textTheme.titleMedium?.copyWith(
-                          color: cs.onSurface.withOpacity(0.7),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Live classes and webinars will appear here when available',
-                        style: textTheme.bodyMedium?.copyWith(
-                          color: cs.onSurface.withOpacity(0.5),
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 24),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.red.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.red.withOpacity(0.3),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              width: 8,
-                              height: 8,
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'LIVE',
-                              style: textTheme.bodySmall?.copyWith(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -15,4 +15,9 @@
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>
+
+    <style name="Theme.Material3.Light.BottomSheetDialog"
+        parent="@style/Theme.AppCompat.Dialog">
+        <!-- No extra items -->
+    </style>
 </resources>
