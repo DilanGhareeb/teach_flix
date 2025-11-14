@@ -91,4 +91,9 @@ class LiveConferenceRepositoryImpl implements LiveConferenceRepository {
   Future<Either<Failure, void>> startConference(String conferenceId) {
     return dataSource.startConference(conferenceId);
   }
+
+  @override
+  Future<Either<Failure, void>> deleteConference(String conferenceId) async {
+    return await dataSource.deleteConference(conferenceId);
+  }
 }

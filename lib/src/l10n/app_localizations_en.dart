@@ -1717,4 +1717,69 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingConferences => 'Loading conferences...';
+
+  @override
+  String get duration => 'Duration';
+
+  @override
+  String get roomId => 'Room ID';
+
+  @override
+  String get conferenceNotStarted => 'Conference has not started yet';
+
+  @override
+  String get conferenceNotAvailable => 'Conference is not available';
+
+  @override
+  String get enterConferenceTitle => 'Enter Conference Title';
+
+  @override
+  String get pleaseEnterTitle => 'Please enter a title';
+
+  @override
+  String get titleMinLength => 'Title must be at least 3 characters';
+
+  @override
+  String get enterConferenceDescription => 'Enter Conference Description';
+
+  @override
+  String get pleaseEnterDescription => 'Please enter a description';
+
+  @override
+  String get descriptionMinLength =>
+      'Description must be at least 10 characters';
+
+  @override
+  String get pleaseEnterPrice => 'Please enter a price';
+
+  @override
+  String get pleaseEnterValidPrice => 'Please enter a valid price';
+
+  @override
+  String get pleaseEnterMaxParticipants => 'Please enter maximum participants';
+
+  @override
+  String get participantsRange => 'Participants must be between 2 and 1000';
+
+  @override
+  String get scheduledTimeFuture => 'Scheduled time must be in the future';
+
+  @override
+  String get userNotAuthenticated => 'User is not authenticated';
+
+  @override
+  String get conferenceDeleted => 'Conference deleted successfully';
+
+  @override
+  String get deleteConference => 'Delete Conference';
+
+  @override
+  String get deleteConferenceConfirm =>
+      'Are you sure you want to delete this conference?';
+
+  @override
+  String get pleaseEnterMaxDuration => 'Please enter maximum duration';
+
+  @override
+  String get durationRange => 'Duration must be between 15 and 480 minutes';
 }

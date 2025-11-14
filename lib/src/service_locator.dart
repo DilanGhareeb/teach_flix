@@ -58,6 +58,7 @@ import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_ins
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/get_instructor_transactions.dart';
 import 'package:teach_flix/src/features/instructor_stats/domain/usecases/watch_instructor_stats.dart';
 import 'package:teach_flix/src/features/instructor_stats/presentation/bloc/instructor_stats_bloc.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/delete_conference.dart';
 import 'package:teach_flix/src/features/live_conference/domain/usecases/start_conference.dart';
 import 'package:teach_flix/src/features/quiz/data/datasource/quiz_firebase_datasource.dart';
 import 'package:teach_flix/src/features/quiz/data/repository/quiz_repositroy_impl.dart';
@@ -392,6 +393,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => JoinConference(sl()));
   sl.registerFactory(() => EndConference(sl()));
   sl.registerFactory(() => StartConference(sl()));
+  sl.registerFactory(() => DeleteConference(sl()));
 
   // ========== Live Conference feature - Bloc ==========
   sl.registerFactory(
@@ -404,6 +406,7 @@ Future<void> setupServiceLocator() async {
       endConference: sl<EndConference>(),
       authBloc: sl<AuthBloc>(),
       startConference: sl<StartConference>(),
+      deleteConference: sl<DeleteConference>(),
     ),
   );
 }

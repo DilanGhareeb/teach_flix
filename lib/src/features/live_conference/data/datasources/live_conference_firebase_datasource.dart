@@ -42,6 +42,7 @@ abstract class LiveConferenceFirebaseDataSource {
   });
 
   Future<Either<Failure, void>> startConference(String conferenceId);
+  Future<Either<Failure, void>> deleteConference(String conferenceId);
 }
 
 class LiveConferenceFirebaseDataSourceImpl
@@ -391,6 +392,21 @@ class LiveConferenceFirebaseDataSourceImpl
         'endTime': Timestamp.now(),
       });
 
+      return const Right(null);
+    } on FirebaseException catch (e) {
+      return Left(FirestoreFailure.fromFirebaseCode(e.code));
+    } catch (e) {
+      return const Left(UnknownFailure());
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> deleteConference(String conferenceId) async {
+    try {
+      await _firestore
+          .collection('live_conferences')
+          .doc(conferenceId)
+          .delete();
       return const Right(null);
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));

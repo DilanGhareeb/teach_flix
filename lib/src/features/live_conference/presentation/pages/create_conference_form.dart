@@ -1,3 +1,4 @@
+// create_conference_form.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,7 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _priceController = TextEditingController(text: '0.0');
+  final _priceController = TextEditingController(text: '0');
   final _maxDurationController = TextEditingController(text: '60');
   final _maxParticipantsController = TextEditingController(text: '50');
 
@@ -76,16 +77,16 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
       controller: _titleController,
       decoration: InputDecoration(
         labelText: l10n.conferenceTitle,
-        hintText: 'Enter conference title',
+        hintText: l10n.enterConferenceTitle ?? 'Enter conference title',
         prefixIcon: const Icon(Icons.title),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Please enter a title';
+          return l10n.pleaseEnterTitle ?? 'Please enter a title';
         }
         if (value.trim().length < 3) {
-          return 'Title must be at least 3 characters';
+          return l10n.titleMinLength ?? 'Title must be at least 3 characters';
         }
         return null;
       },
@@ -98,17 +99,19 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
       controller: _descriptionController,
       decoration: InputDecoration(
         labelText: l10n.conferenceDescription,
-        hintText: 'Enter conference description',
+        hintText:
+            l10n.enterConferenceDescription ?? 'Enter conference description',
         prefixIcon: const Icon(Icons.description),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       maxLines: 4,
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
-          return 'Please enter a description';
+          return l10n.pleaseEnterDescription ?? 'Please enter a description';
         }
         if (value.trim().length < 10) {
-          return 'Description must be at least 10 characters';
+          return l10n.descriptionMinLength ??
+              'Description must be at least 10 characters';
         }
         return null;
       },
@@ -121,22 +124,20 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
       controller: _priceController,
       decoration: InputDecoration(
         labelText: l10n.conferencePrice,
-        hintText: '0.0',
-        prefixIcon: const Icon(Icons.attach_money),
-        suffixText: 'USD',
+        hintText: '0',
+        prefixIcon: const Icon(Icons.monetization_on),
+        suffixText: 'IQD',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
-      ],
+      keyboardType: TextInputType.number,
+      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter a price';
+          return l10n.pleaseEnterPrice ?? 'Please enter a price';
         }
         final price = double.tryParse(value);
         if (price == null || price < 0) {
-          return 'Please enter a valid price';
+          return l10n.pleaseEnterValidPrice ?? 'Please enter a valid price';
         }
         return null;
       },
@@ -151,18 +152,19 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
         labelText: l10n.maxDuration,
         hintText: '60',
         prefixIcon: const Icon(Icons.timer),
-        suffixText: 'minutes',
+        suffixText: l10n.minutes ?? 'minutes',
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
       ),
       keyboardType: TextInputType.number,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter max duration';
+          return l10n.pleaseEnterMaxDuration ?? 'Please enter max duration';
         }
         final duration = int.tryParse(value);
         if (duration == null || duration < 15 || duration > 300) {
-          return 'Duration must be between 15 and 300 minutes';
+          return l10n.durationRange ??
+              'Duration must be between 15 and 300 minutes';
         }
         return null;
       },
@@ -183,11 +185,13 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter max participants';
+          return l10n.pleaseEnterMaxParticipants ??
+              'Please enter max participants';
         }
         final participants = int.tryParse(value);
         if (participants == null || participants < 2 || participants > 500) {
-          return 'Participants must be between 2 and 500';
+          return l10n.participantsRange ??
+              'Participants must be between 2 and 500';
         }
         return null;
       },
@@ -231,8 +235,11 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
     // Check if scheduled time is in the future
     if (_scheduledStartTime.isBefore(DateTime.now())) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Scheduled time must be in the future'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.scheduledTimeFuture ??
+                'Scheduled time must be in the future',
+          ),
           backgroundColor: Colors.red,
         ),
       );
@@ -244,8 +251,11 @@ class _CreateConferenceFormState extends State<CreateConferenceForm> {
 
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('User not authenticated'),
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context)!.userNotAuthenticated ??
+                'User not authenticated',
+          ),
           backgroundColor: Colors.red,
         ),
       );

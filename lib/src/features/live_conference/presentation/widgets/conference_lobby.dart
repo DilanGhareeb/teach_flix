@@ -1,3 +1,4 @@
+// conference_lobby.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:teach_flix/src/core/utils/formatter.dart';
@@ -92,14 +93,23 @@ class ConferenceLobby extends StatelessWidget {
                   const Divider(height: 24),
                   _buildDetailRow(
                     Icons.timer,
-                    'Duration',
-                    '${conference.maxDuration} minutes',
+                    l10n.duration ?? 'Duration',
+                    '${conference.maxDuration} ${l10n.minutes ?? "minutes"}',
+                    theme,
+                  ),
+                  const Divider(height: 24),
+                  _buildDetailRow(
+                    Icons.monetization_on,
+                    l10n.conferencePrice ?? 'Price',
+                    conference.price > 0
+                        ? Formatter.formatIqd(conference.price)
+                        : l10n.free ?? 'Free',
                     theme,
                   ),
                   const Divider(height: 24),
                   _buildDetailRow(
                     Icons.meeting_room,
-                    'Room ID',
+                    l10n.roomId ?? 'Room ID',
                     conference.roomId,
                     theme,
                   ),
@@ -134,16 +144,11 @@ class ConferenceLobby extends StatelessWidget {
             const SizedBox(height: 24),
           ],
 
-          // Action Button
-          if (conference.isLive) ...[
-            if (isInstructor)
-              _buildInstructorButtons(context, l10n)
-            else
-              _buildStudentButton(context, l10n),
-          ] else if (conference.isScheduled && isInstructor) ...[
-            _buildStartButton(context, l10n),
+          // Action Buttons
+          if (isInstructor) ...[
+            _buildInstructorButtons(context, l10n),
           ] else ...[
-            _buildNotLiveMessage(context, l10n),
+            _buildStudentButton(context, l10n),
           ],
         ],
       ),
@@ -184,62 +189,104 @@ class ConferenceLobby extends StatelessWidget {
   }
 
   Widget _buildInstructorButtons(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      children: [
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton.icon(
-            onPressed: isJoining ? null : onJoinConference,
-            icon: isJoining
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : const Icon(Icons.video_call, size: 28),
-            label: Text(
-              l10n.joinConference,
-              style: const TextStyle(fontSize: 18),
-            ),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
+    // Show different buttons based on conference status
+    if (!conference.isLive && conference.isScheduled) {
+      // Conference not started yet - show Start button
+      return SizedBox(
+        width: double.infinity,
+        height: 56,
+        child: ElevatedButton.icon(
+          onPressed: isJoining ? null : onStartConference,
+          icon: isJoining
+              ? const SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                )
+              : const Icon(Icons.play_circle, size: 28),
+          label: Text(
+            l10n.startConference,
+            style: const TextStyle(fontSize: 18),
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.blue,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
             ),
           ),
         ),
-        const SizedBox(height: 16),
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: OutlinedButton.icon(
-            onPressed: isJoining
-                ? null
-                : () => _showEndConferenceDialog(context, l10n),
-            icon: const Icon(Icons.stop_circle, size: 28),
-            label: Text(
-              l10n.endConference,
-              style: const TextStyle(fontSize: 18),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red, width: 2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+      );
+    }
+
+    if (conference.isLive) {
+      // Conference is live - show Join and End buttons
+      return Column(
+        children: [
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: ElevatedButton.icon(
+              onPressed: isJoining ? null : onJoinConference,
+              icon: isJoining
+                  ? const SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ),
+                    )
+                  : const Icon(Icons.video_call, size: 28),
+              label: Text(
+                l10n.joinConference,
+                style: const TextStyle(fontSize: 18),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
-        ),
-      ],
-    );
+          const SizedBox(height: 16),
+          SizedBox(
+            width: double.infinity,
+            height: 56,
+            child: OutlinedButton.icon(
+              onPressed: isJoining
+                  ? null
+                  : () => _showEndConferenceDialog(context, l10n),
+              icon: const Icon(Icons.stop_circle, size: 28),
+              label: Text(
+                l10n.endConference,
+                style: const TextStyle(fontSize: 18),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: Colors.red,
+                side: const BorderSide(color: Colors.red, width: 2),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      );
+    }
+
+    // Conference has ended
+    return _buildNotLiveMessage(context, l10n);
   }
 
   Widget _buildStudentButton(BuildContext context, AppLocalizations l10n) {
+    if (!conference.isLive) {
+      return _buildNotLiveMessage(context, l10n);
+    }
+
     if (!conference.canJoin) {
       return Container(
         padding: const EdgeInsets.all(16),
@@ -318,34 +365,21 @@ class ConferenceLobby extends StatelessWidget {
     );
   }
 
-  Widget _buildStartButton(BuildContext context, AppLocalizations l10n) {
-    return SizedBox(
-      width: double.infinity,
-      height: 56,
-      child: ElevatedButton.icon(
-        onPressed: isJoining ? null : onStartConference,
-        icon: isJoining
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : const Icon(Icons.play_circle, size: 28),
-        label: Text(l10n.startConference, style: const TextStyle(fontSize: 18)),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.blue,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget _buildNotLiveMessage(BuildContext context, AppLocalizations l10n) {
+    String message;
+    IconData icon;
+
+    if (conference.hasEnded) {
+      message = l10n.conferenceEnded;
+      icon = Icons.stop_circle;
+    } else if (conference.isScheduled) {
+      message = l10n.conferenceNotStarted ?? 'Conference has not started yet';
+      icon = Icons.schedule;
+    } else {
+      message = l10n.conferenceNotAvailable ?? 'Conference is not available';
+      icon = Icons.info_outline;
+    }
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -355,13 +389,11 @@ class ConferenceLobby extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: Colors.grey[700]),
+          Icon(icon, color: Colors.grey[700]),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              conference.hasEnded
-                  ? l10n.conferenceEnded
-                  : 'Conference is not live yet',
+              message,
               style: TextStyle(
                 color: Colors.grey[800],
                 fontWeight: FontWeight.w600,
@@ -378,7 +410,10 @@ class ConferenceLobby extends StatelessWidget {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.endConference),
-        content: Text(l10n.endConferenceConfirm),
+        content: Text(
+          l10n.endConferenceConfirm ??
+              'Are you sure you want to end this conference? This will disconnect all participants.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext),

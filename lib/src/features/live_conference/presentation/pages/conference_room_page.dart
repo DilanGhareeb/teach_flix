@@ -1,3 +1,4 @@
+// conference_room_page.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tencent_conference_uikit/tencent_conference_uikit.dart';
@@ -21,33 +22,13 @@ class ConferenceRoomPage extends StatefulWidget {
 class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
   bool _isJoining = false;
   String? _errorMessage;
+  LiveConference? _currentConference;
 
   @override
   void initState() {
     super.initState();
-
-    // ✅ After first frame, auto-start for instructor
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final authBloc = context.read<AuthBloc>();
-      final user = authBloc.state.user;
-
-      if (user == null) {
-        setState(() {
-          _errorMessage = 'User not authenticated';
-        });
-        return;
-      }
-
-      final isInstructor = user.id == widget.conference.instructorId;
-
-      // 1) Make sure TUIRoomEngine is logged in for this user
-      await TencentRtcInitializer.ensureLoggedIn();
-
-      // 2) Only auto-start if this user is the instructor
-      if (isInstructor) {
-        await _startConference(context, user.id, user.name);
-      }
-    });
+    _currentConference = widget.conference;
+    // REMOVED auto-start logic - instructor needs to manually start/join
   }
 
   @override
@@ -57,18 +38,105 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     final user = authBloc.state.user;
     final userId = user?.id;
     final userName = user?.name ?? 'User';
-    final isInstructor = userId == widget.conference.instructorId;
+    final isInstructor = userId == _currentConference!.instructorId;
 
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.conference.title), elevation: 0),
-      body: ConferenceLobby(
-        conference: widget.conference,
-        isInstructor: isInstructor,
-        isJoining: _isJoining,
-        errorMessage: _errorMessage,
-        onJoinConference: () =>
-            _joinConference(context, userId, userName, isInstructor),
-        onStartConference: () => _startConference(context, userId, userName),
+    return BlocListener<LiveConferenceBloc, LiveConferenceState>(
+      listener: (context, state) {
+        // Update conference when it changes
+        if (state.activeConferences.isNotEmpty) {
+          final updated = state.activeConferences.firstWhere(
+            (conf) => conf.id == _currentConference!.id,
+            orElse: () => _currentConference!,
+          );
+          if (mounted && updated != _currentConference) {
+            setState(() {
+              _currentConference = updated;
+            });
+          }
+        }
+
+        // Handle deletion
+        if (state.status == LiveConferenceStatus.deleted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                l10n.conferenceDeleted ?? 'Conference deleted successfully',
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(_currentConference!.title),
+          elevation: 0,
+          actions: [
+            if (isInstructor && !_currentConference!.isLive) ...[
+              PopupMenuButton<String>(
+                onSelected: (value) {
+                  if (value == 'delete') {
+                    _showDeleteConfirmation(context, l10n);
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  PopupMenuItem<String>(
+                    value: 'delete',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.delete, color: Colors.red),
+                        const SizedBox(width: 8),
+                        Text(
+                          l10n.deleteConference ?? 'Delete Conference',
+                          style: const TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+        body: ConferenceLobby(
+          conference: _currentConference!,
+          isInstructor: isInstructor,
+          isJoining: _isJoining,
+          errorMessage: _errorMessage,
+          onJoinConference: () =>
+              _joinConference(context, userId, userName, isInstructor),
+          onStartConference: () => _startConference(context, userId, userName),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.deleteConference ?? 'Delete Conference'),
+        content: Text(
+          l10n.deleteConferenceConfirm ??
+              'Are you sure you want to delete this conference? This action cannot be undone.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.no),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.pop(dialogContext);
+              context.read<LiveConferenceBloc>().add(
+                DeleteConferenceRequested(_currentConference!.id),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(l10n.yes),
+          ),
+        ],
       ),
     );
   }
@@ -95,13 +163,15 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     });
 
     try {
-      // ✅ Ensure TUIRoomEngine is logged in
+      // Ensure TUIRoomEngine is logged in
       await TencentRtcInitializer.ensureLoggedIn();
 
       // Join the conference via bloc
-      context.read<LiveConferenceBloc>().add(
-        JoinConferenceRequested(widget.conference.id),
-      );
+      if (!isInstructor) {
+        context.read<LiveConferenceBloc>().add(
+          JoinConferenceRequested(_currentConference!.id),
+        );
+      }
 
       // Wait a bit for the backend to update
       await Future.delayed(const Duration(milliseconds: 500));
@@ -147,16 +217,16 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     });
 
     try {
-      // ✅ Ensure TUIRoomEngine is logged in
+      // Ensure TUIRoomEngine is logged in
       await TencentRtcInitializer.ensureLoggedIn();
 
       // Start the conference - update status to 'live'
       context.read<LiveConferenceBloc>().add(
-        StartConferenceRequested(widget.conference.id),
+        StartConferenceRequested(_currentConference!.id),
       );
 
       // Wait for status update
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(const Duration(seconds: 1));
 
       // Navigate to Tencent Conference UI
       await _navigateToTencentConference(
@@ -185,7 +255,7 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     bool isInstructor,
   ) async {
     try {
-      // ✅ 1) Make sure Tencent is logged in
+      // 1) Make sure Tencent is logged in
       final ok = await TencentRtcInitializer.ensureLoggedIn();
       if (!ok) {
         if (mounted) {
@@ -196,11 +266,11 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
         return;
       }
 
-      // ✅ 2) Set user info (after login)
+      // 2) Set user info (after login)
       await TUIRoomEngine.setSelfInfo(userName, '');
 
-      // ✅ 3) Create session
-      final session = ConferenceSession.newInstance(widget.conference.roomId)
+      // 3) Create session
+      final session = ConferenceSession.newInstance(_currentConference!.roomId)
         ..onActionSuccess = () {
           debugPrint('Conference session created successfully');
         }
@@ -213,14 +283,14 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
           }
         };
 
-      // ✅ 4) Start or join
+      // 4) Start or join
       if (isInstructor) {
         session.quickStart();
       } else {
         session.join();
       }
 
-      // ✅ 5) Navigate to Tencent UI
+      // 5) Navigate to Tencent UI
       if (mounted) {
         await Navigator.push(
           context,

@@ -1,3 +1,4 @@
+// live_conference_bloc.dart
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
@@ -6,6 +7,7 @@ import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
 import 'package:teach_flix/src/features/live_conference/domain/usecases/create_conference.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/delete_conference.dart';
 import 'package:teach_flix/src/features/live_conference/domain/usecases/end_conference.dart';
 import 'package:teach_flix/src/features/live_conference/domain/usecases/get_all_active_conferences.dart';
 import 'package:teach_flix/src/features/live_conference/domain/usecases/join_conference.dart';
@@ -24,6 +26,7 @@ class LiveConferenceBloc
   final PurchaseConferenceAccess purchaseConferenceAccess;
   final JoinConference joinConference;
   final EndConference endConference;
+  final DeleteConference deleteConference;
   final AuthBloc authBloc;
   final StartConference startConference;
 
@@ -36,6 +39,7 @@ class LiveConferenceBloc
     required this.purchaseConferenceAccess,
     required this.joinConference,
     required this.endConference,
+    required this.deleteConference,
     required this.authBloc,
     required this.startConference,
   }) : super(const LiveConferenceState()) {
@@ -45,6 +49,7 @@ class LiveConferenceBloc
     on<PurchaseConferenceAccessRequested>(_onPurchaseAccess);
     on<JoinConferenceRequested>(_onJoinConference);
     on<EndConferenceRequested>(_onEndConference);
+    on<DeleteConferenceRequested>(_onDeleteConference);
     on<_ActiveConferencesUpdated>(_onActiveConferencesUpdated);
     on<_ActiveConferencesFailed>(_onActiveConferencesFailed);
     on<StartConferenceRequested>(_onStartConference);
@@ -241,6 +246,36 @@ class LiveConferenceBloc
         state.copyWith(status: LiveConferenceStatus.error, failure: failure),
       ),
       (_) => emit(state.copyWith(status: LiveConferenceStatus.ended)),
+    );
+  }
+
+  Future<void> _onDeleteConference(
+    DeleteConferenceRequested event,
+    Emitter<LiveConferenceState> emit,
+  ) async {
+    emit(
+      state.copyWith(status: LiveConferenceStatus.deleting, clearFailure: true),
+    );
+
+    final result = await deleteConference(event.conferenceId);
+
+    result.fold(
+      (failure) => emit(
+        state.copyWith(status: LiveConferenceStatus.error, failure: failure),
+      ),
+      (_) {
+        // Remove from active conferences list
+        final updatedList = state.activeConferences
+            .where((conf) => conf.id != event.conferenceId)
+            .toList();
+
+        emit(
+          state.copyWith(
+            status: LiveConferenceStatus.deleted,
+            activeConferences: updatedList,
+          ),
+        );
+      },
     );
   }
 

@@ -1725,4 +1725,68 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get loadingConferences => 'کۆنفرانسەکان بارکراوە...';
+
+  @override
+  String get duration => 'ماوە';
+
+  @override
+  String get roomId => 'ناسنامەی ژوور';
+
+  @override
+  String get conferenceNotStarted => 'کۆنفرانس هێشتا دەستی پێنەکردووە';
+
+  @override
+  String get conferenceNotAvailable => 'کۆنفرانس بەردەست نییە';
+
+  @override
+  String get enterConferenceTitle => 'ناونیشانی کۆنفرانس بنووسە';
+
+  @override
+  String get pleaseEnterTitle => 'تکایە ناونیشانێک بنووسە';
+
+  @override
+  String get titleMinLength => 'ناونیشان دەبێت لانیکەم ٣ پیت بێت';
+
+  @override
+  String get enterConferenceDescription => 'وەسفی کۆنفرانس بنووسە';
+
+  @override
+  String get pleaseEnterDescription => 'تکایە وەسفێک بنووسە';
+
+  @override
+  String get descriptionMinLength => 'وەسف دەبێت لانیکەم ١٠ پیت بێت';
+
+  @override
+  String get pleaseEnterPrice => 'تکایە نرخێک بنووسە';
+
+  @override
+  String get pleaseEnterValidPrice => 'تکایە نرخێکی دروست بنووسە';
+
+  @override
+  String get pleaseEnterMaxParticipants =>
+      'تکایە زۆرترین ژمارەی بەشداربووان بنووسە';
+
+  @override
+  String get participantsRange => 'بەشداربووان دەبێت لە نێوان ٢ و ١٠٠٠ بێت';
+
+  @override
+  String get scheduledTimeFuture => 'کاتی دیاریکراو دەبێت لە داهاتوودا بێت';
+
+  @override
+  String get userNotAuthenticated => 'بەکارهێنەر چوونەژوورەوەی نەکردووە';
+
+  @override
+  String get conferenceDeleted => 'کۆنفرانس بە سەرکەوتوویی سڕایەوە';
+
+  @override
+  String get deleteConference => 'سڕینەوەی کۆنفرانس';
+
+  @override
+  String get deleteConferenceConfirm => 'دڵنیایت لە سڕینەوەی ئەم کۆنفرانسە?';
+
+  @override
+  String get pleaseEnterMaxDuration => 'تکایە زۆرترین ماوە بنووسە';
+
+  @override
+  String get durationRange => 'ماوە دەبێت لە نێوان ١٥ و ٤٨٠ خولەک بێت';
 }

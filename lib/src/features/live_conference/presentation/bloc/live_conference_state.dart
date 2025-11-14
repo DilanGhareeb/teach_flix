@@ -15,6 +15,8 @@ enum LiveConferenceStatus {
   error,
   starting,
   started,
+  deleting,
+  deleted,
 }
 
 class LiveConferenceState extends Equatable {

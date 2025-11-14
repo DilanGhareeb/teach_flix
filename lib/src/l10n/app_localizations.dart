@@ -3367,6 +3367,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Loading conferences...'**
   String get loadingConferences;
+
+  /// Conference duration label
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get duration;
+
+  /// Conference room identifier
+  ///
+  /// In en, this message translates to:
+  /// **'Room ID'**
+  String get roomId;
+
+  /// Message when conference hasn't started
+  ///
+  /// In en, this message translates to:
+  /// **'Conference has not started yet'**
+  String get conferenceNotStarted;
+
+  /// Message when conference is unavailable
+  ///
+  /// In en, this message translates to:
+  /// **'Conference is not available'**
+  String get conferenceNotAvailable;
+
+  /// Label for conference title input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Conference Title'**
+  String get enterConferenceTitle;
+
+  /// Validation message for empty title
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get pleaseEnterTitle;
+
+  /// Validation message for title minimum length
+  ///
+  /// In en, this message translates to:
+  /// **'Title must be at least 3 characters'**
+  String get titleMinLength;
+
+  /// Label for conference description input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Conference Description'**
+  String get enterConferenceDescription;
+
+  /// Validation message for empty description
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a description'**
+  String get pleaseEnterDescription;
+
+  /// Validation message for description minimum length
+  ///
+  /// In en, this message translates to:
+  /// **'Description must be at least 10 characters'**
+  String get descriptionMinLength;
+
+  /// Validation message for empty price
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a price'**
+  String get pleaseEnterPrice;
+
+  /// Validation message for invalid price format
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid price'**
+  String get pleaseEnterValidPrice;
+
+  /// Validation message for empty max participants
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter maximum participants'**
+  String get pleaseEnterMaxParticipants;
+
+  /// Validation message for participants range
+  ///
+  /// In en, this message translates to:
+  /// **'Participants must be between 2 and 1000'**
+  String get participantsRange;
+
+  /// Validation message for past scheduled time
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled time must be in the future'**
+  String get scheduledTimeFuture;
+
+  /// Error message when user is not logged in
+  ///
+  /// In en, this message translates to:
+  /// **'User is not authenticated'**
+  String get userNotAuthenticated;
+
+  /// Success message for conference deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Conference deleted successfully'**
+  String get conferenceDeleted;
+
+  /// Delete conference button label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Conference'**
+  String get deleteConference;
+
+  /// Confirmation dialog for deleting conference
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this conference?'**
+  String get deleteConferenceConfirm;
+
+  /// Validation message for empty max duration
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter maximum duration'**
+  String get pleaseEnterMaxDuration;
+
+  /// Validation message for duration range
+  ///
+  /// In en, this message translates to:
+  /// **'Duration must be between 15 and 480 minutes'**
+  String get durationRange;
 }
 
 class _AppLocalizationsDelegate

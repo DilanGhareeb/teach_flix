@@ -110,7 +110,9 @@ class ConferenceCard extends StatelessWidget {
           color: conference.isFull ? Colors.red : Colors.blue,
         ),
         ConferenceInfoChip(
-          icon: conference.price > 0 ? Icons.attach_money : Icons.card_giftcard,
+          icon: conference.price > 0
+              ? Icons.account_balance
+              : Icons.card_giftcard,
           label: Formatter.formatIqd(conference.price),
           color: conference.price > 0 ? Colors.purple : Colors.teal,
         ),

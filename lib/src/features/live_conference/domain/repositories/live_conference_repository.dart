@@ -40,4 +40,5 @@ abstract class LiveConferenceRepository {
   });
 
   Future<Either<Failure, void>> startConference(String conferenceId);
+  Future<Either<Failure, void>> deleteConference(String conferenceId);
 }

@@ -73,3 +73,12 @@ class StartConferenceRequested extends LiveConferenceEvent {
   @override
   List<Object?> get props => [conferenceId];
 }
+
+class DeleteConferenceRequested extends LiveConferenceEvent {
+  final String conferenceId;
+
+  const DeleteConferenceRequested(this.conferenceId);
+
+  @override
+  List<Object?> get props => [conferenceId];
+}

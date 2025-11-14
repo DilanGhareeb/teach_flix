@@ -2199,5 +2199,89 @@
   "loadingConferences": "Loading conferences...",
   "@loadingConferences": {
     "description": "Loading message"
+  },
+  "duration": "Duration",
+  "@duration": {
+    "description": "Conference duration label"
+  },
+  "roomId": "Room ID",
+  "@roomId": {
+    "description": "Conference room identifier"
+  },
+  "conferenceNotStarted": "Conference has not started yet",
+  "@conferenceNotStarted": {
+    "description": "Message when conference hasn't started"
+  },
+  "conferenceNotAvailable": "Conference is not available",
+  "@conferenceNotAvailable": {
+    "description": "Message when conference is unavailable"
+  },
+  "enterConferenceTitle": "Enter Conference Title",
+  "@enterConferenceTitle": {
+    "description": "Label for conference title input"
+  },
+  "pleaseEnterTitle": "Please enter a title",
+  "@pleaseEnterTitle": {
+    "description": "Validation message for empty title"
+  },
+  "titleMinLength": "Title must be at least 3 characters",
+  "@titleMinLength": {
+    "description": "Validation message for title minimum length"
+  },
+  "enterConferenceDescription": "Enter Conference Description",
+  "@enterConferenceDescription": {
+    "description": "Label for conference description input"
+  },
+  "pleaseEnterDescription": "Please enter a description",
+  "@pleaseEnterDescription": {
+    "description": "Validation message for empty description"
+  },
+  "descriptionMinLength": "Description must be at least 10 characters",
+  "@descriptionMinLength": {
+    "description": "Validation message for description minimum length"
+  },
+  "pleaseEnterPrice": "Please enter a price",
+  "@pleaseEnterPrice": {
+    "description": "Validation message for empty price"
+  },
+  "pleaseEnterValidPrice": "Please enter a valid price",
+  "@pleaseEnterValidPrice": {
+    "description": "Validation message for invalid price format"
+  },
+  "pleaseEnterMaxParticipants": "Please enter maximum participants",
+  "@pleaseEnterMaxParticipants": {
+    "description": "Validation message for empty max participants"
+  },
+  "participantsRange": "Participants must be between 2 and 1000",
+  "@participantsRange": {
+    "description": "Validation message for participants range"
+  },
+  "scheduledTimeFuture": "Scheduled time must be in the future",
+  "@scheduledTimeFuture": {
+    "description": "Validation message for past scheduled time"
+  },
+  "userNotAuthenticated": "User is not authenticated",
+  "@userNotAuthenticated": {
+    "description": "Error message when user is not logged in"
+  },
+  "conferenceDeleted": "Conference deleted successfully",
+  "@conferenceDeleted": {
+    "description": "Success message for conference deletion"
+  },
+  "deleteConference": "Delete Conference",
+  "@deleteConference": {
+    "description": "Delete conference button label"
+  },
+  "deleteConferenceConfirm": "Are you sure you want to delete this conference?",
+  "@deleteConferenceConfirm": {
+    "description": "Confirmation dialog for deleting conference"
+  },
+  "pleaseEnterMaxDuration": "Please enter maximum duration",
+  "@pleaseEnterMaxDuration": {
+    "description": "Validation message for empty max duration"
+  },
+  "durationRange": "Duration must be between 15 and 480 minutes",
+  "@durationRange": {
+    "description": "Validation message for duration range"
   }
 }

@@ -173,7 +173,7 @@ class ConferenceActionButtons extends StatelessWidget {
                   )
                 : const Icon(Icons.shopping_cart),
             label: Text(
-              '${l10n.purchaseAccess} - ${Formatter.formatIqd(conference.price)}',
+              '${l10n.purchaseAccess} - ${Formatter.formatIqd(conference.price)}', // Already using IQD
             ),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),
