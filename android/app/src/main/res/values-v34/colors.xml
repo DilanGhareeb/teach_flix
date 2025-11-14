@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- System colors for API 34 compatibility -->
+    <color name="system_background_dark">#1C1B1F</color>
+    <color name="system_error_dark">#F2B8B5</color>
+    <color name="system_error_container_dark">#8C1D18</color>
+    <color name="system_on_surface_light">#1C1B1F</color>
+    <color name="system_primary_light">#6750A4</color>
+    <color name="system_surface_light">#FFFBFE</color>
+    <color name="system_on_background_dark">#E6E1E5</color>
+    <color name="system_on_error_dark">#601410</color>
+    <color name="system_on_error_container_dark">#F9DEDC</color>
+    <color name="system_on_primary_dark">#381E72</color>
+    <color name="system_on_primary_container_dark">#EADDFF</color>
+    <color name="system_on_secondary_dark">#332D41</color>
+    <color name="system_on_secondary_container_dark">#E8DEF8</color>
+    <color name="system_on_surface_dark">#E6E1E5</color>
+    <color name="system_on_surface_variant_dark">#CAC4D0</color>
+    <color name="system_on_tertiary_dark">#492532</color>
+    <color name="system_on_tertiary_container_dark">#FFD8E4</color>
+    <color name="system_outline_dark">#938F99</color>
+    <color name="system_outline_variant_dark">#49454F</color>
+    <color name="system_primary_dark">#D0BCFF</color>
+</resources>

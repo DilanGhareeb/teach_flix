@@ -6,7 +6,6 @@ import 'package:flutter_kurdish_localization/kurdish_cupertino_localization_dele
 import 'package:flutter_kurdish_localization/kurdish_material_localization_delegate.dart';
 import 'package:flutter_kurdish_localization/kurdish_widget_localization_delegate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:get/get.dart';
 import 'package:teach_flix/firebase_options.dart';
 import 'package:teach_flix/src/config/app_theme.dart';
 import 'package:teach_flix/src/features/ai_assistnat/presentation/bloc/ai_chat_bloc.dart';
@@ -76,7 +75,6 @@ class MyApp extends StatelessWidget {
               KurdishCupertinoLocalizations.delegate,
               KurdishWidgetLocalizations.delegate,
             ],
-            navigatorKey: Get.key,
             theme: isDarkMode
                 ? AppTheme.dark(settings.languageCode)
                 : AppTheme.light(settings.languageCode),
