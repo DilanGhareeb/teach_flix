@@ -16,7 +16,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  final _passingScoreController = TextEditingController();
   final _timeLimitController = TextEditingController();
 
   List<QuestionEntity> _questions = [];
@@ -28,8 +27,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
     super.initState();
     if (isEditMode) {
       _titleController.text = widget.existingQuiz!.title;
-      _passingScoreController.text = widget.existingQuiz!.passingScore
-          .toString();
       _timeLimitController.text = widget.existingQuiz!.timeLimit.inMinutes
           .toString();
       _questions = List.from(widget.existingQuiz!.questions);
@@ -40,7 +37,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
-    _passingScoreController.dispose();
     _timeLimitController.dispose();
     super.dispose();
   }
@@ -87,36 +83,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
               validator: (value) {
                 if (value?.isEmpty ?? true) {
                   return t.title_required;
-                }
-                return null;
-              },
-            ),
-
-            const SizedBox(height: 16),
-
-            // Passing Score
-            TextFormField(
-              controller: _passingScoreController,
-              decoration: InputDecoration(
-                labelText: t.passing_score,
-                hintText: t.enter_passing_score,
-                prefixIcon: Icon(
-                  Icons.grade_rounded,
-                  color: colorScheme.primary,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                filled: true,
-                fillColor: colorScheme.surfaceContainerHighest,
-              ),
-              keyboardType: TextInputType.number,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return t.passing_score_required;
-                }
-                if (int.tryParse(value!) == null) {
-                  return t.invalid_passing_score;
                 }
                 return null;
               },
@@ -465,7 +431,6 @@ class _AddQuizPageState extends State<AddQuizPage> {
             : DateTime.now().millisecondsSinceEpoch.toString(),
         title: _titleController.text,
         questions: _questions,
-        passingScore: int.parse(_passingScoreController.text),
         timeLimit: Duration(minutes: int.parse(_timeLimitController.text)),
       );
 

@@ -185,15 +185,6 @@ class QuizResultScreen extends StatelessWidget {
                           colorScheme: colorScheme,
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _StatCard(
-                          icon: Icons.school_outlined,
-                          title: t.quiz_passing_score,
-                          value: '${quiz.passingScore}',
-                          colorScheme: colorScheme,
-                        ),
-                      ),
                     ],
                   ),
 

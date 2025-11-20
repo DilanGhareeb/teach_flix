@@ -6,7 +6,6 @@ class QuizModel extends QuizEntity {
     required super.id,
     required super.title,
     required super.questions,
-    required super.passingScore,
     required super.timeLimit,
   });
 
@@ -15,7 +14,6 @@ class QuizModel extends QuizEntity {
       id: entity.id,
       title: entity.title,
       questions: entity.questions,
-      passingScore: entity.passingScore,
       timeLimit: entity.timeLimit,
     );
   }
@@ -27,7 +25,6 @@ class QuizModel extends QuizEntity {
       questions: (map['questions'] as List<dynamic>)
           .map((q) => QuestionModel.fromMap(q as Map<String, dynamic>))
           .toList(),
-      passingScore: map['passingScore'] as int,
       timeLimit: Duration(minutes: map['timeLimitMinutes'] as int),
     );
   }
@@ -39,7 +36,6 @@ class QuizModel extends QuizEntity {
       'questions': questions
           .map((q) => QuestionModel.fromEntity(q).toMap())
           .toList(),
-      'passingScore': passingScore,
       'timeLimitMinutes': timeLimit.inMinutes,
     };
   }
