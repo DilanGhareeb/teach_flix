@@ -34,9 +34,15 @@ class QuizzesList extends StatelessWidget {
                   quizId: quiz.id,
                   userId: userId!,
                   courseId: course.id,
+                  totalItems: totalItems, // ✅ Pass totalItems
                 ),
               ),
-            child: QuizPage(quiz: quiz, userId: userId!, courseId: course.id),
+            child: QuizPage(
+              quiz: quiz,
+              userId: userId!,
+              courseId: course.id,
+              totalItems: totalItems,
+            ),
           );
         },
       ),

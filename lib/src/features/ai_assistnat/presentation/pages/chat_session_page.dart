@@ -185,13 +185,13 @@ class ChatSessionsPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     if (difference.inDays == 0) {
-      return DateFormat('HH:mm').format(date);
+      return DateFormat('HH:mm', 'en').format(date);
     } else if (difference.inDays == 1) {
       return l10n.yesterday ?? 'yesterday';
     } else if (difference.inDays < 7) {
-      return DateFormat('EEEE').format(date);
+      return DateFormat('EEEE', 'en').format(date);
     } else {
-      return DateFormat('MMM dd').format(date);
+      return DateFormat('MMM dd', 'en').format(date);
     }
   }
 }

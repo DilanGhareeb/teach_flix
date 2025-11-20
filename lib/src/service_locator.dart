@@ -369,6 +369,7 @@ Future<void> setupServiceLocator() async {
       getQuizByIdUseCase: sl<GetQuizByIdUseCase>(),
       submitQuizResultUseCase: sl<SubmitQuizResultUseCase>(),
       getQuizResultUseCase: sl<GetQuizResultUseCase>(),
+      toggleQuizCompletion: sl<ToggleQuizCompletion>(),
     ),
   );
 

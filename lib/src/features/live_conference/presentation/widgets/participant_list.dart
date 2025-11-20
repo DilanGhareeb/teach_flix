@@ -8,12 +8,18 @@ class ParticipantList extends StatelessWidget {
   final bool isInstructor;
   final VoidCallback onClose;
 
+  // NEW: currently selected main participant & callback to change it
+  final int? selectedUid;
+  final ValueChanged<int>? onSelectParticipant;
+
   const ParticipantList({
     super.key,
     required this.participants,
     required this.localUid,
     required this.isInstructor,
     required this.onClose,
+    this.selectedUid,
+    this.onSelectParticipant,
   });
 
   @override
@@ -100,10 +106,19 @@ class ParticipantList extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final participant = sortedParticipants[index];
                       final isYou = participant.agoraUid == localUid;
+                      final isSelected =
+                          selectedUid != null &&
+                          selectedUid == participant.agoraUid;
 
-                      return _ParticipantTile(
-                        participant: participant,
-                        isYou: isYou,
+                      return InkWell(
+                        onTap: isInstructor && onSelectParticipant != null
+                            ? () => onSelectParticipant!(participant.agoraUid)
+                            : null,
+                        child: _ParticipantTile(
+                          participant: participant,
+                          isYou: isYou,
+                          isSelected: isSelected,
+                        ),
                       );
                     },
                   ),
@@ -149,8 +164,13 @@ class ParticipantList extends StatelessWidget {
 class _ParticipantTile extends StatelessWidget {
   final ParticipantData participant;
   final bool isYou;
+  final bool isSelected;
 
-  const _ParticipantTile({required this.participant, required this.isYou});
+  const _ParticipantTile({
+    required this.participant,
+    required this.isYou,
+    required this.isSelected,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -158,11 +178,15 @@ class _ParticipantTile extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: isYou ? Colors.white.withOpacity(0.1) : Colors.transparent,
+        color: isSelected
+            ? Colors.white.withOpacity(0.18)
+            : (isYou ? Colors.white.withOpacity(0.1) : Colors.transparent),
         borderRadius: BorderRadius.circular(8),
         border: participant.isInstructor
             ? Border.all(color: Colors.orange.withOpacity(0.5), width: 1)
-            : null,
+            : (isSelected
+                  ? Border.all(color: Colors.blueAccent, width: 1)
+                  : null),
       ),
       child: Row(
         children: [

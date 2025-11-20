@@ -1,11 +1,11 @@
+import 'dart:async';
+
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
 import 'package:teach_flix/src/features/live_conference/data/services/agora_service.dart';
-import 'dart:async';
-
+import 'package:teach_flix/src/features/live_conference/data/services/conference_participant_sync.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/call_controls.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/call_header.dart';
-import 'package:teach_flix/src/features/live_conference/data/services/conference_participant_sync.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/participant_list.dart';
 
 /// Zoom-like video call with instructor prominence and real names
@@ -41,6 +41,9 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
   bool _cameraOn = true;
   bool _showParticipants = false;
   bool _isFullScreen = false;
+
+  // Who is shown in the main big view (for instructor)
+  int? _selectedMainUid;
 
   String _debugInfo = 'Initializing...';
   String? _errorText;
@@ -289,6 +292,14 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
                   localUid: _agoraService.localUid ?? 0,
                   isInstructor: widget.isInstructor,
                   onClose: () => setState(() => _showParticipants = false),
+                  selectedUid: _selectedMainUid,
+                  onSelectParticipant: widget.isInstructor
+                      ? (uid) {
+                          setState(() {
+                            _selectedMainUid = uid;
+                          });
+                        }
+                      : null,
                 ),
               ),
             ],
@@ -308,13 +319,20 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
       return _buildWaitingView();
     }
 
-    // Instructor is always prominent if present
-    if (_instructorUid != null && remoteParticipants.isNotEmpty) {
-      return _buildInstructorProminentView(remoteParticipants);
+    // Decide who is in the main view
+    int prominentUid;
+    if (widget.isInstructor) {
+      // Instructor can choose anyone; default to self
+      prominentUid = _selectedMainUid ?? (_agoraService.localUid ?? 0);
+    } else if (_instructorUid != null) {
+      // Students: see instructor by default
+      prominentUid = _selectedMainUid ?? _instructorUid!;
+    } else {
+      // Fallback
+      prominentUid = _selectedMainUid ?? remoteParticipants.first.key;
     }
 
-    // Grid view for multiple participants
-    return _buildGridView(remoteParticipants);
+    return _buildInstructorProminentView(prominentUid, remoteParticipants);
   }
 
   Widget _buildWaitingView() {
@@ -337,8 +355,9 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
                     AgoraVideoView(
                       controller: VideoViewController(
                         rtcEngine: _agoraService.engine,
-                        canvas: VideoCanvas(
-                          uid: _agoraService.localUid ?? 0,
+                        // Local preview: always uid 0
+                        canvas: const VideoCanvas(
+                          uid: 0,
                           renderMode: RenderModeType.renderModeHidden,
                         ),
                       ),
@@ -414,18 +433,14 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
   }
 
   Widget _buildInstructorProminentView(
+    int prominentUid,
     List<MapEntry<int, ParticipantData>> remoteParticipants,
   ) {
-    // Determine who should be prominent (instructor if in call, otherwise first remote)
-    final prominentUid = widget.isInstructor
-        ? (_agoraService.localUid ?? 0)
-        : (_instructorUid ?? remoteParticipants.first.key);
-
     final prominentParticipant = _participants[prominentUid];
     final isProminentLocal = prominentUid == _agoraService.localUid;
 
-    // Get other participants for thumbnail strip
-    final otherParticipants = [
+    // Other participants thumbnails
+    final otherParticipants = <MapEntry<int, ParticipantData>>[
       if (_agoraService.localUid != null &&
           _participants.containsKey(_agoraService.localUid) &&
           !isProminentLocal)
@@ -438,7 +453,7 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
 
     return Column(
       children: [
-        // Prominent speaker (larger view)
+        // Main big view
         Expanded(
           child: Container(
             margin: const EdgeInsets.all(8),
@@ -453,29 +468,30 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
               borderRadius: BorderRadius.circular(12),
               child: Stack(
                 children: [
-                  // Video
-                  isProminentLocal
-                      ? AgoraVideoView(
-                          controller: VideoViewController(
-                            rtcEngine: _agoraService.engine,
-                            canvas: VideoCanvas(
-                              uid: prominentUid,
-                              renderMode: RenderModeType.renderModeHidden,
-                            ),
-                          ),
-                        )
-                      : AgoraVideoView(
-                          controller: VideoViewController.remote(
-                            rtcEngine: _agoraService.engine,
-                            canvas: VideoCanvas(
-                              uid: prominentUid,
-                              renderMode: RenderModeType.renderModeHidden,
-                            ),
-                            connection: RtcConnection(
-                              channelId: widget.channelId,
-                            ),
-                          ),
+                  if (isProminentLocal)
+                    // Local main view: uid 0, camera source
+                    AgoraVideoView(
+                      controller: VideoViewController(
+                        rtcEngine: _agoraService.engine,
+                        canvas: const VideoCanvas(
+                          uid: 0,
+                          renderMode: RenderModeType.renderModeHidden,
                         ),
+                      ),
+                    )
+                  else
+                    // Remote user
+                    AgoraVideoView(
+                      controller: VideoViewController.remote(
+                        rtcEngine: _agoraService.engine,
+                        canvas: VideoCanvas(
+                          uid: prominentUid,
+                          renderMode: RenderModeType.renderModeHidden,
+                        ),
+                        connection: RtcConnection(channelId: widget.channelId),
+                      ),
+                    ),
+
                   // Name overlay
                   Positioned(
                     bottom: 16,
@@ -496,7 +512,7 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
           ),
         ),
 
-        // Thumbnail strip
+        // Thumbnails strip
         if (otherParticipants.isNotEmpty)
           Container(
             height: 120,
@@ -512,10 +528,11 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
 
                 return GestureDetector(
                   onTap: () {
-                    // Switch prominent view (optional logic)
-                    setState(() {
-                      // For now, tap does nothing; you can extend this to swap.
-                    });
+                    if (widget.isInstructor) {
+                      setState(() {
+                        _selectedMainUid = uid;
+                      });
+                    }
                   },
                   child: _buildThumbnail(
                     uid: uid,
@@ -582,11 +599,12 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
               children: [
                 // Video
                 isLocal
+                    // Local in grid: uid 0
                     ? AgoraVideoView(
                         controller: VideoViewController(
                           rtcEngine: _agoraService.engine,
-                          canvas: VideoCanvas(
-                            uid: uid,
+                          canvas: const VideoCanvas(
+                            uid: 0,
                             renderMode: RenderModeType.renderModeHidden,
                           ),
                         ),
@@ -648,11 +666,12 @@ class _AgoraCallPageState extends State<AgoraCallPage> {
           children: [
             // Video
             isLocal
+                // Local thumb: uid 0
                 ? AgoraVideoView(
                     controller: VideoViewController(
                       rtcEngine: _agoraService.engine,
-                      canvas: VideoCanvas(
-                        uid: uid,
+                      canvas: const VideoCanvas(
+                        uid: 0,
                         renderMode: RenderModeType.renderModeHidden,
                       ),
                     ),

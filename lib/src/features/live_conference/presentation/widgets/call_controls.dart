@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-/// Zoom-like call control buttons with screen sharing for instructors
+/// Zoom-like call control buttons
 class CallControls extends StatefulWidget {
   final bool muted;
   final bool cameraOn;
@@ -12,8 +12,6 @@ class CallControls extends StatefulWidget {
   final VoidCallback onToggleParticipants;
   final VoidCallback onEndCall;
   final bool isInstructor;
-  final bool isSharingScreen;
-  final VoidCallback? onToggleScreenShare;
 
   const CallControls({
     super.key,
@@ -26,8 +24,6 @@ class CallControls extends StatefulWidget {
     required this.onToggleParticipants,
     required this.onEndCall,
     this.isInstructor = false,
-    this.isSharingScreen = false,
-    this.onToggleScreenShare,
   });
 
   @override
@@ -83,37 +79,17 @@ class _CallControlsState extends State<CallControls> {
 
             const SizedBox(width: 12),
 
-            // Camera On/Off (disabled during screen share)
+            // Camera On/Off (everyone can toggle, including instructor)
             _ZoomControlButton(
               icon: widget.cameraOn ? Icons.videocam : Icons.videocam_off,
               label: widget.cameraOn ? 'Stop Video' : 'Start Video',
               isActive: widget.cameraOn,
               color: widget.cameraOn ? Colors.white : Colors.red,
-              onTap: widget.isSharingScreen
-                  ? null
-                  : () => _handleAction('camera', widget.onToggleCamera),
+              onTap: () => _handleAction('camera', widget.onToggleCamera),
               isProcessing: _processingActions.contains('camera'),
-              isDisabled: widget.isSharingScreen,
             ),
 
             const SizedBox(width: 12),
-
-            // Screen Share (instructor only)
-            if (widget.isInstructor && widget.onToggleScreenShare != null) ...[
-              _ZoomControlButton(
-                icon: widget.isSharingScreen
-                    ? Icons.stop_screen_share
-                    : Icons.screen_share,
-                label: widget.isSharingScreen ? 'Stop Share' : 'Share Screen',
-                isActive: widget.isSharingScreen,
-                color: widget.isSharingScreen ? Colors.green : Colors.white,
-                backgroundColor: widget.isSharingScreen ? Colors.green : null,
-                onTap: () =>
-                    _handleAction('screenShare', widget.onToggleScreenShare!),
-                isProcessing: _processingActions.contains('screenShare'),
-              ),
-              const SizedBox(width: 12),
-            ],
 
             // Participants
             _ZoomControlButton(
@@ -132,7 +108,7 @@ class _CallControlsState extends State<CallControls> {
             _ZoomControlButton(
               icon: Icons.call_end,
               label: 'Leave',
-              color: Colors.red,
+              color: Colors.white,
               backgroundColor: Colors.red,
               onTap: () => _handleAction('endCall', widget.onEndCall),
               isProcessing: _processingActions.contains('endCall'),
@@ -153,7 +129,6 @@ class _ZoomControlButton extends StatelessWidget {
   final String? badge;
   final VoidCallback? onTap;
   final bool isProcessing;
-  final bool isDisabled;
 
   const _ZoomControlButton({
     required this.icon,
@@ -164,13 +139,11 @@ class _ZoomControlButton extends StatelessWidget {
     this.badge,
     required this.onTap,
     this.isProcessing = false,
-    this.isDisabled = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    final bool canTap = onTap != null && !isProcessing && !isDisabled;
-    final effectiveColor = isDisabled ? Colors.grey : color;
+    final bool canTap = onTap != null && !isProcessing;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -178,43 +151,40 @@ class _ZoomControlButton extends StatelessWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            Opacity(
-              opacity: isDisabled ? 0.5 : 1.0,
-              child: Material(
-                color:
-                    backgroundColor ??
-                    (isActive
-                        ? Colors.white.withOpacity(0.2)
-                        : Colors.white.withOpacity(0.1)),
+            Material(
+              color:
+                  backgroundColor ??
+                  (isActive
+                      ? Colors.white.withOpacity(0.2)
+                      : Colors.white.withOpacity(0.1)),
+              borderRadius: BorderRadius.circular(28),
+              child: InkWell(
+                onTap: canTap ? onTap : null,
                 borderRadius: BorderRadius.circular(28),
-                child: InkWell(
-                  onTap: canTap ? onTap : null,
-                  borderRadius: BorderRadius.circular(28),
-                  child: Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(28),
-                      border: isActive
-                          ? Border.all(
-                              color: Colors.white.withOpacity(0.3),
-                              width: 2,
-                            )
-                          : null,
-                    ),
-                    child: isProcessing
-                        ? const Center(
-                            child: SizedBox(
-                              width: 24,
-                              height: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            ),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(28),
+                    border: isActive
+                        ? Border.all(
+                            color: Colors.white.withOpacity(0.3),
+                            width: 2,
                           )
-                        : Icon(icon, color: effectiveColor, size: 28),
+                        : null,
                   ),
+                  child: isProcessing
+                      ? const Center(
+                          child: SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: Colors.white,
+                            ),
+                          ),
+                        )
+                      : Icon(icon, color: color, size: 28),
                 ),
               ),
             ),
@@ -248,8 +218,8 @@ class _ZoomControlButton extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           label,
-          style: TextStyle(
-            color: isDisabled ? Colors.grey : Colors.white,
+          style: const TextStyle(
+            color: Colors.white,
             fontSize: 12,
             fontWeight: FontWeight.w500,
           ),

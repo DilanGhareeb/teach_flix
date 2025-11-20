@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:io' show Platform;
 
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:agora_token_generator/agora_token_generator.dart';
@@ -38,7 +37,7 @@ class ParticipantInfo {
   }
 }
 
-/// Service to handle all Agora RTC operations with participant tracking and screen sharing
+/// Service to handle all Agora RTC operations with participant tracking
 class AgoraService {
   static const String _appId = '41e8cb47fddf46febef585956ebb10e4';
   static const String _appCertificate = '615b0e10dc6545cc8a125000e07357da';
@@ -48,7 +47,6 @@ class AgoraService {
   int? _localUid;
   String? _agoraToken;
   bool _isInitialized = false;
-  bool _isSharingScreen = false;
 
   // Participant tracking
   final Map<int, ParticipantInfo> _participants = {};
@@ -58,7 +56,6 @@ class AgoraService {
   RtcEngine get engine => _engine;
   int? get localUid => _localUid;
   bool get isInitialized => _isInitialized;
-  bool get isSharingScreen => _isSharingScreen;
   Map<int, ParticipantInfo> get participants => Map.unmodifiable(_participants);
   String? get localUserName => _localUserName;
   bool get isLocalInstructor => _isLocalInstructor;
@@ -74,8 +71,6 @@ class AgoraService {
     onUserOffline,
     required Function(String error) onError,
     required Function(String info) onDebugInfo,
-    Function(int uid)? onScreenShareStarted,
-    Function(int uid)? onScreenShareStopped,
   }) async {
     try {
       _localUserName = userName;
@@ -106,8 +101,6 @@ class AgoraService {
         onUserJoined: onUserJoined,
         onUserOffline: onUserOffline,
         onError: onError,
-        onScreenShareStarted: onScreenShareStarted,
-        onScreenShareStopped: onScreenShareStopped,
       );
       onDebugInfo('Engine initialized');
 
@@ -153,8 +146,6 @@ class AgoraService {
     required Function(int remoteUid, UserOfflineReasonType reason)
     onUserOffline,
     required Function(String error) onError,
-    Function(int uid)? onScreenShareStarted,
-    Function(int uid)? onScreenShareStopped,
   }) async {
     _engine = createAgoraRtcEngine();
 
@@ -171,8 +162,6 @@ class AgoraService {
       onUserJoined: onUserJoined,
       onUserOffline: onUserOffline,
       onError: onError,
-      onScreenShareStarted: onScreenShareStarted,
-      onScreenShareStopped: onScreenShareStopped,
     );
 
     await _engine.enableVideo();
@@ -186,15 +175,19 @@ class AgoraService {
     required Function(int remoteUid, UserOfflineReasonType reason)
     onUserOffline,
     required Function(String error) onError,
-    Function(int uid)? onScreenShareStarted,
-    Function(int uid)? onScreenShareStopped,
   }) {
     _engine.registerEventHandler(
       RtcEngineEventHandler(
         onJoinChannelSuccess: (RtcConnection connection, int elapsed) {
+          debugPrint(
+            '[AgoraService] Joined channel ${connection.channelId} '
+            'as ${connection.localUid}',
+          );
           onJoinSuccess(connection.localUid!, elapsed);
         },
         onUserJoined: (RtcConnection connection, int remoteUid, int elapsed) {
+          debugPrint('[AgoraService] User joined: $remoteUid');
+
           final participant = ParticipantInfo(
             uid: remoteUid,
             name: 'User $remoteUid',
@@ -209,11 +202,16 @@ class AgoraService {
               int remoteUid,
               UserOfflineReasonType reason,
             ) {
+              debugPrint(
+                '[AgoraService] User offline: $remoteUid, reason: $reason',
+              );
               _participants.remove(remoteUid);
               onUserOffline(remoteUid, reason);
             },
         onError: (ErrorCodeType error, String msg) {
-          onError('Agora error: $error - $msg');
+          final message = 'Agora error: $error - $msg';
+          debugPrint('[AgoraService] $message');
+          onError(message);
         },
         onUserInfoUpdated: (int uid, UserInfo info) {
           debugPrint(
@@ -227,38 +225,6 @@ class AgoraService {
             }
           }
         },
-        // Screen sharing events
-        onLocalVideoStateChanged:
-            (
-              VideoSourceType source,
-              LocalVideoStreamState state,
-              LocalVideoStreamReason error,
-            ) {
-              if (source == VideoSourceType.videoSourceScreen) {
-                if (state ==
-                    LocalVideoStreamState.localVideoStreamStateCapturing) {
-                  onScreenShareStarted?.call(_localUid ?? 0);
-                } else if (state ==
-                    LocalVideoStreamState.localVideoStreamStateStopped) {
-                  onScreenShareStopped?.call(_localUid ?? 0);
-                }
-              }
-            },
-        onRemoteVideoStateChanged:
-            (
-              RtcConnection connection,
-              int remoteUid,
-              RemoteVideoState state,
-              RemoteVideoStateReason reason,
-              int elapsed,
-            ) {
-              // Detect when remote user starts/stops screen sharing
-              if (state == RemoteVideoState.remoteVideoStateDecoding) {
-                onScreenShareStarted?.call(remoteUid);
-              } else if (state == RemoteVideoState.remoteVideoStateStopped) {
-                onScreenShareStopped?.call(remoteUid);
-              }
-            },
       ),
     );
   }
@@ -286,81 +252,6 @@ class AgoraService {
       );
     } catch (e) {
       debugPrint('[AgoraService] Failed to register user account: $e');
-    }
-  }
-
-  /// Start screen sharing (only instructor is allowed)
-  Future<void> startScreenShare() async {
-    if (!_isInitialized) {
-      throw Exception('Engine not initialized');
-    }
-
-    if (!_isLocalInstructor) {
-      // Student should not be able to share screen
-      const msg = 'Only the instructor can share their screen.';
-      debugPrint('[AgoraService] $msg');
-      throw Exception(msg);
-    }
-
-    try {
-      if (Platform.isAndroid) {
-        // Android screen share
-        await _engine.startScreenCapture(
-          const ScreenCaptureParameters2(
-            captureAudio: true,
-            captureVideo: true,
-          ),
-        );
-
-        // Update channel to publish screen track
-        await _engine.updateChannelMediaOptions(
-          const ChannelMediaOptions(
-            publishScreenTrack: true,
-            publishSecondaryScreenTrack: false,
-            publishCameraTrack: false,
-            publishMicrophoneTrack: true,
-          ),
-        );
-
-        _isSharingScreen = true;
-        debugPrint('[AgoraService] Screen sharing started');
-      } else if (Platform.isIOS) {
-        // iOS requires Broadcast Upload Extension
-        throw Exception(
-          'iOS screen sharing requires Broadcast Upload Extension setup',
-        );
-      } else {
-        throw Exception('Screen sharing not supported on this platform');
-      }
-    } catch (e) {
-      debugPrint('[AgoraService] Failed to start screen share: $e');
-      rethrow;
-    }
-  }
-
-  /// Stop screen sharing
-  Future<void> stopScreenShare() async {
-    if (!_isInitialized || !_isSharingScreen) {
-      return;
-    }
-
-    try {
-      await _engine.stopScreenCapture();
-
-      // Revert to camera publishing
-      await _engine.updateChannelMediaOptions(
-        const ChannelMediaOptions(
-          publishScreenTrack: false,
-          publishCameraTrack: true,
-          publishMicrophoneTrack: true,
-        ),
-      );
-
-      _isSharingScreen = false;
-      debugPrint('[AgoraService] Screen sharing stopped');
-    } catch (e) {
-      debugPrint('[AgoraService] Failed to stop screen share: $e');
-      rethrow;
     }
   }
 
@@ -422,9 +313,6 @@ class AgoraService {
     if (!_isInitialized) return;
 
     try {
-      if (_isSharingScreen) {
-        await stopScreenShare();
-      }
       await _engine.leaveChannel();
       await _engine.release();
       _isInitialized = false;

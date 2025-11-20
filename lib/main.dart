@@ -68,12 +68,12 @@ class MyApp extends StatelessWidget {
             supportedLocales: const [Locale('en'), Locale('ckb')],
             localizationsDelegates: const [
               AppLocalizations.delegate,
+              KurdishMaterialLocalizations.delegate,
+              KurdishWidgetLocalizations.delegate,
+              KurdishCupertinoLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
-              KurdishMaterialLocalizations.delegate,
-              KurdishCupertinoLocalizations.delegate,
-              KurdishWidgetLocalizations.delegate,
             ],
             theme: isDarkMode
                 ? AppTheme.dark(settings.languageCode)

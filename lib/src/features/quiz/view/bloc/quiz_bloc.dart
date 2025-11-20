@@ -6,20 +6,24 @@ import 'package:teach_flix/src/features/quiz/domain/usecases/get_quiz_result_use
 import 'package:teach_flix/src/features/quiz/domain/usecases/submit_quiz_result_usecase.dart';
 import 'package:teach_flix/src/features/quiz/view/bloc/quiz_event.dart';
 import 'package:teach_flix/src/features/quiz/view/bloc/quiz_state.dart';
+import 'package:teach_flix/src/features/courses/domain/usecases/toggle_quiz_completion_usecase.dart';
 
 class QuizBloc extends Bloc<QuizEvent, QuizState> {
   final GetQuizByIdUseCase getQuizByIdUseCase;
   final SubmitQuizResultUseCase submitQuizResultUseCase;
   final GetQuizResultUseCase getQuizResultUseCase;
+  final ToggleQuizCompletion toggleQuizCompletion;
 
   Timer? _timer;
   String? _currentUserId;
   String? _currentCourseId;
+  int? _totalItems;
 
   QuizBloc({
     required this.getQuizByIdUseCase,
     required this.submitQuizResultUseCase,
     required this.getQuizResultUseCase,
+    required this.toggleQuizCompletion,
   }) : super(const QuizState()) {
     on<LoadQuizEvent>(_onLoadQuiz);
     on<StartQuizEvent>(_onStartQuiz);
@@ -28,15 +32,16 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     on<PreviousQuestionEvent>(_onPreviousQuestion);
     on<SubmitQuizEvent>(_onSubmitQuiz);
     on<ReviewQuizEvent>(_onReviewQuiz);
-    on<_UpdateTimerEvent>(_onUpdateTimer); // ✅ REGISTER THE HANDLER
+    on<_UpdateTimerEvent>(_onUpdateTimer);
   }
 
   Future<void> _onLoadQuiz(LoadQuizEvent event, Emitter<QuizState> emit) async {
     emit(state.copyWith(status: QuizStatus.loading));
 
-    // Store userId and courseId for auto-submit
+    // Store userId, courseId, and totalItems for auto-submit and progress marking
     _currentUserId = event.userId;
     _currentCourseId = event.courseId;
+    _totalItems = event.totalItems;
 
     final quizResult = await getQuizByIdUseCase(event.quizId);
 
@@ -172,7 +177,10 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
     }
 
     final timeTaken = DateTime.now().difference(state.startTime!);
-    final passed = score >= state.quiz!.passingScore;
+
+    // ✅ Use 50% as passing score instead of teacher-defined
+    final percentage = (score / state.quiz!.questions.length) * 100;
+    final passed = percentage >= 50.0;
 
     final result = QuizResultEntity(
       id: '',
@@ -189,13 +197,24 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     final submitResult = await submitQuizResultUseCase(result);
 
-    submitResult.fold(
-      (failure) {
+    await submitResult.fold(
+      (failure) async {
         emit(
           state.copyWith(status: QuizStatus.error, errorMessage: failure.code),
         );
       },
-      (savedResult) {
+      (savedResult) async {
+        // ✅ Mark quiz as completed in progress if passed
+        if (savedResult.passed && _totalItems != null) {
+          await toggleQuizCompletion(
+            userId: event.userId,
+            courseId: event.courseId,
+            quizId: state.quiz!.id,
+            isCompleted: true,
+            totalItems: _totalItems!,
+          );
+        }
+
         emit(state.copyWith(status: QuizStatus.completed, result: savedResult));
       },
     );
