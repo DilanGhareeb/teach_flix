@@ -15,7 +15,9 @@ class DateTimePickerField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dateFormat = DateFormat('MMM dd, yyyy - hh:mm a');
+    final dateFormat = DateFormat.yMd(
+      Localizations.localeOf(context).toString(),
+    );
 
     return InkWell(
       onTap: () => _showDateTimePicker(context),
