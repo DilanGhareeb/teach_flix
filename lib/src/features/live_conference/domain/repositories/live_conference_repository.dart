@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/purchase_conference_access.dart';
 
 abstract class LiveConferenceRepository {
   Future<Either<Failure, LiveConference>> createConference({
@@ -23,8 +24,7 @@ abstract class LiveConferenceRepository {
   );
 
   Future<Either<Failure, void>> purchaseConferenceAccess({
-    required String userId,
-    required String conferenceId,
+    required PurchaseConferenceParams params,
   });
 
   Future<Either<Failure, void>> joinConference({

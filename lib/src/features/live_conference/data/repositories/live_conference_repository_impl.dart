@@ -3,6 +3,7 @@ import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/live_conference/data/datasources/live_conference_firebase_datasource.dart';
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
 import 'package:teach_flix/src/features/live_conference/domain/repositories/live_conference_repository.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/purchase_conference_access.dart';
 
 class LiveConferenceRepositoryImpl implements LiveConferenceRepository {
   final LiveConferenceFirebaseDataSource dataSource;
@@ -51,13 +52,9 @@ class LiveConferenceRepositoryImpl implements LiveConferenceRepository {
 
   @override
   Future<Either<Failure, void>> purchaseConferenceAccess({
-    required String userId,
-    required String conferenceId,
+    required PurchaseConferenceParams params,
   }) {
-    return dataSource.purchaseConferenceAccess(
-      userId: userId,
-      conferenceId: conferenceId,
-    );
+    return dataSource.purchaseConferenceAccess(params: params);
   }
 
   @override

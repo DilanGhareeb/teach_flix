@@ -5,12 +5,12 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.da
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_state.dart';
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/bloc/live_conference_bloc.dart';
-import 'package:teach_flix/src/features/live_conference/presentation/pages/conference_room_page.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/pages/agora_call_page.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/join_time_warning.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 import 'dart:async';
 
-/// Conference action buttons with spam prevention
+/// Conference action buttons with spam prevention and purchase flow
 class ConferenceActionButtons extends StatefulWidget {
   final LiveConference conference;
   final bool isInstructor;
@@ -107,7 +107,10 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
       child: ElevatedButton.icon(
         onPressed: _isProcessing
             ? null
-            : () => _handleAction('navigate', () => _navigateToRoom(context)),
+            : () => _handleAction('start', () {
+                // Instructor can start/join directly
+                _navigateToCall(context);
+              }),
         icon: _isProcessing
             ? const SizedBox(
                 width: 20,
@@ -118,7 +121,9 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
                 ),
               )
             : const Icon(Icons.video_call),
-        label: Text(l10n.joinConference),
+        label: Text(
+          widget.conference.isLive ? l10n.joinConference : l10n.startConference,
+        ),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12),
           backgroundColor: Colors.green,
@@ -159,31 +164,36 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
     final userId = authState.user?.id;
 
     if (authState.status != AuthStatus.authenticated || userId == null) {
-      return _buildLoginButton(context);
+      return _buildLoginButton(context, l10n);
     }
 
+    // Check if user already purchased or enrolled
     final hasPurchased = widget.conference.enrolledStudentIds.contains(userId);
 
+    // If already purchased or conference is free, show join button
     if (hasPurchased || widget.conference.price == 0) {
       return _buildJoinButton(context, l10n);
     }
 
+    // Otherwise, show purchase button
     return _buildPurchaseButton(context, l10n);
   }
 
-  Widget _buildLoginButton(BuildContext context) {
+  Widget _buildLoginButton(BuildContext context, AppLocalizations l10n) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please login to join the conference'),
+            SnackBar(
+              content: Text(
+                l10n.pleaseLoginToJoin ?? 'Please login to join the conference',
+              ),
             ),
           );
         },
         icon: const Icon(Icons.login),
-        label: const Text('Login to Join'),
+        label: Text(l10n.loginToJoin ?? 'Login to Join'),
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.symmetric(vertical: 12),
         ),
@@ -197,12 +207,7 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
       child: ElevatedButton.icon(
         onPressed: _isProcessing
             ? null
-            : () => _handleAction('join', () {
-                context.read<LiveConferenceBloc>().add(
-                  JoinConferenceRequested(widget.conference.id),
-                );
-                _navigateToRoom(context);
-              }),
+            : () => _handleAction('join', () => _navigateToCall(context)),
         icon: _isProcessing
             ? const SizedBox(
                 width: 20,
@@ -266,7 +271,7 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
 
     showDialog(
       context: context,
-      barrierDismissible: false, // Prevent accidental dismissal
+      barrierDismissible: false,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.purchaseAccess),
         content: Column(
@@ -308,7 +313,6 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
           TextButton(
             onPressed: () {
               Navigator.pop(dialogContext);
-              // Reset processing state when dialog is cancelled
               setState(() {
                 _isProcessing = false;
                 _lastAction = null;
@@ -320,6 +324,8 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
             onPressed: userBalance >= widget.conference.price
                 ? () {
                     Navigator.pop(dialogContext);
+                    // Dispatch purchase event
+                    print('🛒 Purchasing conference: ${widget.conference.id}');
                     context.read<LiveConferenceBloc>().add(
                       PurchaseConferenceAccessRequested(widget.conference.id),
                     );
@@ -332,13 +338,46 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
     );
   }
 
-  void _navigateToRoom(BuildContext context) {
-    Navigator.push(
+  Future<void> _navigateToCall(BuildContext context) async {
+    final authBloc = context.read<AuthBloc>();
+    final userId = authBloc.state.user?.id;
+    final userName = authBloc.state.user?.name ?? 'User';
+
+    if (userId == null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('User not authenticated')));
+      return;
+    }
+
+    // Mark as joining/starting in backend
+    if (widget.isInstructor) {
+      print('🎬 Starting conference: ${widget.conference.id}');
+      context.read<LiveConferenceBloc>().add(
+        StartConferenceRequested(widget.conference.id),
+      );
+    } else {
+      print('👥 Joining conference: ${widget.conference.id}');
+      context.read<LiveConferenceBloc>().add(
+        JoinConferenceRequested(widget.conference.id),
+      );
+    }
+
+    // Wait a moment for backend to process
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!context.mounted) return;
+
+    // Navigate to call page
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
-          value: context.read<LiveConferenceBloc>(),
-          child: ConferenceRoomPage(conference: widget.conference),
+        builder: (_) => AgoraCallPage(
+          conferenceId: widget.conference.id,
+          channelId: widget.conference.roomId,
+          userId: userId,
+          userName: userName,
+          isInstructor: widget.isInstructor,
         ),
       ),
     );

@@ -2283,5 +2283,37 @@
   "durationRange": "Duration must be between 15 and 480 minutes",
   "@durationRange": {
     "description": "Validation message for duration range"
+  },
+  "viewDetails": "View Details",
+  "@viewDetails": {
+    "description": "Button to view conference details"
+  },
+  "manageConference": "Manage Conference",
+  "@manageConference": {
+    "description": "Button to manage the conference"
+  },
+  "pleaseLoginToJoin": "Please login to join the conference",
+  "@pleaseLoginToJoin": {
+    "description": "Prompt asking the user to log in before joining a conference"
+  },
+  "loginToJoin": "Login to Join",
+  "@loginToJoin": {
+    "description": "Button text for logging in to join a conference"
+  },
+  "conferenceDetails": "Conference Details",
+  "@conferenceDetails": {
+    "description": "Title for the conference details section"
+  },
+  "scheduledTime": "Scheduled Time",
+  "@scheduledTime": {
+    "description": "Label for the scheduled time of the conference"
+  },
+  "actualStartTime": "Actual Start Time",
+  "@actualStartTime": {
+    "description": "Label for the actual start time of the conference"
+  },
+  "errorOccurred": "An error occurred",
+  "@errorOccurred": {
+    "description": "Generic error message"
   }
 }

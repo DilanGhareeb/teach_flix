@@ -5,7 +5,6 @@ import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.da
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/bloc/live_conference_bloc.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/pages/conference_room_page.dart';
-import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_action_buttons.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_info_chip.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_status_badge.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/widgets/instructor_info_row.dart';
@@ -44,11 +43,7 @@ class ConferenceCard extends StatelessWidget {
               const SizedBox(height: 12),
               _buildInfoChips(l10n),
               const SizedBox(height: 16),
-              if (conference.isLive)
-                ConferenceActionButtons(
-                  conference: conference,
-                  isInstructor: isInstructor,
-                ),
+              _buildViewDetailsButton(context, l10n, isInstructor),
             ],
           ),
         ),
@@ -117,6 +112,28 @@ class ConferenceCard extends StatelessWidget {
           color: conference.price > 0 ? Colors.purple : Colors.teal,
         ),
       ],
+    );
+  }
+
+  Widget _buildViewDetailsButton(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isInstructor,
+  ) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton.icon(
+        onPressed: () => _navigateToRoom(context),
+        icon: Icon(isInstructor ? Icons.video_call : Icons.info_outline),
+        label: Text(
+          isInstructor ? l10n.manageConference : l10n.viewDetails,
+          style: const TextStyle(fontSize: 16),
+        ),
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          backgroundColor: isInstructor ? Colors.green : Colors.blue,
+        ),
+      ),
     );
   }
 

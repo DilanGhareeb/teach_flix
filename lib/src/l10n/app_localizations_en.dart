@@ -1782,4 +1782,28 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get durationRange => 'Duration must be between 15 and 480 minutes';
+
+  @override
+  String get viewDetails => 'View Details';
+
+  @override
+  String get manageConference => 'Manage Conference';
+
+  @override
+  String get pleaseLoginToJoin => 'Please login to join the conference';
+
+  @override
+  String get loginToJoin => 'Login to Join';
+
+  @override
+  String get conferenceDetails => 'Conference Details';
+
+  @override
+  String get scheduledTime => 'Scheduled Time';
+
+  @override
+  String get actualStartTime => 'Actual Start Time';
+
+  @override
+  String get errorOccurred => 'An error occurred';
 }

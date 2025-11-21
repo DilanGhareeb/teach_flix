@@ -3493,6 +3493,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Duration must be between 15 and 480 minutes'**
   String get durationRange;
+
+  /// Button to view conference details
+  ///
+  /// In en, this message translates to:
+  /// **'View Details'**
+  String get viewDetails;
+
+  /// Button to manage the conference
+  ///
+  /// In en, this message translates to:
+  /// **'Manage Conference'**
+  String get manageConference;
+
+  /// Prompt asking the user to log in before joining a conference
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to join the conference'**
+  String get pleaseLoginToJoin;
+
+  /// Button text for logging in to join a conference
+  ///
+  /// In en, this message translates to:
+  /// **'Login to Join'**
+  String get loginToJoin;
+
+  /// Title for the conference details section
+  ///
+  /// In en, this message translates to:
+  /// **'Conference Details'**
+  String get conferenceDetails;
+
+  /// Label for the scheduled time of the conference
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled Time'**
+  String get scheduledTime;
+
+  /// Label for the actual start time of the conference
+  ///
+  /// In en, this message translates to:
+  /// **'Actual Start Time'**
+  String get actualStartTime;
+
+  /// Generic error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred'**
+  String get errorOccurred;
 }
 
 class _AppLocalizationsDelegate

@@ -1,4 +1,6 @@
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/widgets.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
 class Formatter {
@@ -79,10 +81,11 @@ class Formatter {
 
   static String formatDateTime(
     DateTime dateTime, {
+    required BuildContext context,
     AppLocalizations? localization,
   }) {
     final formatter = DateFormat.yMMMd(
-      localization?.localeName ?? 'en',
+      Localizations.localeOf(context).toString(),
     ).add_jm();
     return formatter.format(dateTime);
   }

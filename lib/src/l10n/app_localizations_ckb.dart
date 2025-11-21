@@ -1789,4 +1789,29 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get durationRange => 'ماوە دەبێت لە نێوان ١٥ و ٤٨٠ خولەک بێت';
+
+  @override
+  String get viewDetails => 'بینینی وردەکاریەکان';
+
+  @override
+  String get manageConference => 'بەڕێوەبردنی کۆنفرانس';
+
+  @override
+  String get pleaseLoginToJoin =>
+      'تکایە چوونەژوورەوە بۆ بەشداریکردن لە کۆنفرانس';
+
+  @override
+  String get loginToJoin => 'چوونەژوورەوە بۆ بەشداریکردن';
+
+  @override
+  String get conferenceDetails => 'وردەکاریەکانی کۆنفرانس';
+
+  @override
+  String get scheduledTime => 'کاتی دیاریکراو';
+
+  @override
+  String get actualStartTime => 'کاتی دەستپێکردنی ڕاستەقینە';
+
+  @override
+  String get errorOccurred => 'هەڵەیەک ڕوویدا';
 }

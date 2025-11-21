@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:teach_flix/src/core/errors/failures.dart';
+import 'package:teach_flix/src/core/utils/formatter.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
 import 'package:teach_flix/src/features/live_conference/domain/entities/live_conference.dart';
 import 'package:teach_flix/src/features/live_conference/presentation/bloc/live_conference_bloc.dart';
-import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_lobby.dart';
-import 'package:teach_flix/src/features/live_conference/presentation/pages/agora_call_page.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_action_buttons.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/widgets/conference_status_badge.dart';
+import 'package:teach_flix/src/features/live_conference/presentation/widgets/instructor_info_row.dart';
 import 'package:teach_flix/src/l10n/app_localizations.dart';
 
-/// Conference room page that displays lobby and handles conference lifecycle
+/// Conference room page that displays conference details and handles purchase/join flow
 class ConferenceRoomPage extends StatefulWidget {
   final LiveConference conference;
 
@@ -19,8 +21,6 @@ class ConferenceRoomPage extends StatefulWidget {
 }
 
 class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
-  bool _isJoining = false;
-  String? _errorMessage;
   LiveConference? _currentConference;
 
   @override
@@ -33,9 +33,7 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final authBloc = context.read<AuthBloc>();
-    final user = authBloc.state.user;
-    final userId = user?.id;
-    final userName = user?.name ?? 'User';
+    final userId = authBloc.state.user?.id;
     final isInstructor = userId == _currentConference!.instructorId;
 
     return BlocListener<LiveConferenceBloc, LiveConferenceState>(
@@ -43,15 +41,28 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
           _handleConferenceStateChanges(context, state, l10n),
       child: Scaffold(
         appBar: _buildAppBar(context, l10n, isInstructor),
-        body: ConferenceLobby(
-          conference: _currentConference!,
-          isInstructor: isInstructor,
-          isJoining: _isJoining,
-          errorMessage: _errorMessage,
-          onJoinConference: () =>
-              _handleJoinConference(context, userId, userName, isInstructor),
-          onStartConference: () =>
-              _handleStartConference(context, userId, userName),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildHeader(context, l10n),
+              const SizedBox(height: 24),
+              _buildDescription(context, l10n),
+              const SizedBox(height: 24),
+              _buildInstructorInfo(context, l10n),
+              const SizedBox(height: 24),
+              _buildDetailsSection(context, l10n),
+              const SizedBox(height: 32),
+              // Action buttons with purchase flow
+              // Key ensures widget rebuilds when enrolled students change
+              ConferenceActionButtons(
+                key: ValueKey(_currentConference!.enrolledStudentIds.length),
+                conference: _currentConference!,
+                isInstructor: isInstructor,
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -63,12 +74,9 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     bool isInstructor,
   ) {
     return AppBar(
-      title: Text(_currentConference!.title),
+      title: Text(AppLocalizations.of(context)!.viewDetails),
       elevation: 0,
-      actions: [
-        if (isInstructor && !(_currentConference!.isLive ?? false))
-          _buildDeleteMenu(context, l10n),
-      ],
+      actions: [if (isInstructor) _buildDeleteMenu(context, l10n)],
     );
   }
 
@@ -97,6 +105,155 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
     );
   }
 
+  Widget _buildHeader(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: Text(
+            _currentConference!.title,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(width: 8),
+        ConferenceStatusBadge(conference: _currentConference!),
+      ],
+    );
+  }
+
+  Widget _buildDescription(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.conferenceDescription,
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Text(_currentConference!.description, style: theme.textTheme.bodyLarge),
+      ],
+    );
+  }
+
+  Widget _buildInstructorInfo(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.instructor ?? 'Instructor',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 8),
+        InstructorInfoRow(instructorName: _currentConference!.instructorName),
+      ],
+    );
+  }
+
+  Widget _buildDetailsSection(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.conferenceDetails ?? 'Conference Details',
+          style: theme.textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 16),
+        _buildDetailRow(
+          context,
+          icon: Icons.access_time,
+          label: l10n.scheduledTime ?? 'Scheduled Time',
+          value: Formatter.formatDateTime(
+            context: context,
+            _currentConference!.scheduledStartTime,
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (_currentConference!.actualStartTime != null)
+          _buildDetailRow(
+            context,
+            icon: Icons.play_circle,
+            label: l10n.actualStartTime ?? 'Actual Start Time',
+            value: Formatter.formatDateTime(
+              context: context,
+              _currentConference!.actualStartTime!,
+            ),
+          ),
+        if (_currentConference!.actualStartTime != null)
+          const SizedBox(height: 12),
+        _buildDetailRow(
+          context,
+          icon: Icons.timer,
+          label: l10n.maxDuration,
+          value:
+              '${_currentConference!.maxDuration} ${l10n.minutes ?? "minutes"}',
+        ),
+        const SizedBox(height: 12),
+        _buildDetailRow(
+          context,
+          icon: Icons.people,
+          label: l10n.participants ?? 'Participants',
+          value:
+              '${_currentConference!.currentParticipants} / ${_currentConference!.maxParticipants}',
+        ),
+        const SizedBox(height: 12),
+        _buildDetailRow(
+          context,
+          icon: Icons.monetization_on,
+          label: l10n.conferencePrice,
+          value: _currentConference!.price == 0
+              ? l10n.free ?? 'Free'
+              : Formatter.formatIqd(_currentConference!.price),
+          valueColor: _currentConference!.price > 0
+              ? Colors.purple
+              : Colors.green,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(icon, size: 20, color: theme.colorScheme.primary),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            label,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: Colors.grey[600],
+            ),
+          ),
+        ),
+        Text(
+          value,
+          style: theme.textTheme.bodyMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: valueColor,
+          ),
+        ),
+      ],
+    );
+  }
+
   void _handleConferenceStateChanges(
     BuildContext context,
     LiveConferenceState state,
@@ -104,25 +261,60 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
   ) {
     // Keep local conference in sync with bloc
     if (state.activeConferences.isNotEmpty) {
-      final updated = state.activeConferences.firstWhere(
-        (conf) => conf.id == _currentConference!.id,
-        orElse: () => _currentConference!,
-      );
-      if (mounted && updated != _currentConference) {
-        setState(() {
-          _currentConference = updated;
-        });
+      try {
+        final updated = state.activeConferences.firstWhere(
+          (conf) => conf.id == _currentConference!.id,
+        );
+        if (mounted && updated != _currentConference) {
+          setState(() {
+            _currentConference = updated;
+          });
+        }
+      } catch (e) {
+        // Conference not found in list (might be deleted or ended)
+        // Keep using current conference data
       }
     }
 
+    // Handle purchase success
+    if (state.status == LiveConferenceStatus.purchased) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.purchaseSuccess),
+          backgroundColor: Colors.green,
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      // The conference data will be updated through the stream
+      // No need to manually trigger refresh since we're watching active conferences
+    }
+
     // Handle deleted status
-    if (state.status.toString().contains('deleted')) {
+    if (state.status == LiveConferenceStatus.deleted) {
       _showSuccessMessage(
         context,
         l10n.conferenceDeleted ?? 'Conference deleted successfully',
       );
       Navigator.pop(context);
     }
+
+    // Handle errors
+    if (state.status == LiveConferenceStatus.error && state.failure != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(_getErrorMessage(state.failure!, l10n)),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  String _getErrorMessage(Failure failure, AppLocalizations l10n) {
+    // You can use your ErrorLocalizer here if you have one
+    if (failure.toString().contains('insufficient')) {
+      return l10n.errInsufficientBalance;
+    }
+    return l10n.errorOccurred ?? 'An error occurred';
   }
 
   void _showDeleteConfirmationDialog(
@@ -156,135 +348,6 @@ class _ConferenceRoomPageState extends State<ConferenceRoomPage> {
         ],
       ),
     );
-  }
-
-  Future<void> _handleJoinConference(
-    BuildContext context,
-    String? userId,
-    String userName,
-    bool isInstructor,
-  ) async {
-    if (!_validateUser(userId)) return;
-    if (!_validateRoomId()) return;
-
-    setState(() {
-      _isJoining = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // Students mark joined in backend
-      if (!isInstructor) {
-        context.read<LiveConferenceBloc>().add(
-          JoinConferenceRequested(_currentConference!.id),
-        );
-      }
-
-      await Future.delayed(const Duration(milliseconds: 300));
-
-      if (!mounted) return;
-
-      debugPrint(
-        '[JOIN] user=$userName, isInstructor=$isInstructor, '
-        'roomId=${_currentConference!.roomId}',
-      );
-
-      await _navigateToCall(
-        context,
-        userId: userId!,
-        userName: userName,
-        isInstructor: isInstructor,
-      );
-    } catch (e) {
-      _setError('Failed to join conference: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isJoining = false);
-      }
-    }
-  }
-
-  Future<void> _handleStartConference(
-    BuildContext context,
-    String? userId,
-    String userName,
-  ) async {
-    if (!_validateUser(userId)) return;
-    if (!_validateRoomId()) return;
-
-    setState(() {
-      _isJoining = true;
-      _errorMessage = null;
-    });
-
-    try {
-      // Instructor marks conference as live
-      context.read<LiveConferenceBloc>().add(
-        StartConferenceRequested(_currentConference!.id),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      if (!mounted) return;
-
-      debugPrint(
-        '[START] Instructor $userName starting live, '
-        'roomId=${_currentConference!.roomId}',
-      );
-
-      await _navigateToCall(
-        context,
-        userId: userId!,
-        userName: userName,
-        isInstructor: true,
-      );
-    } catch (e) {
-      _setError('Failed to start conference: $e');
-    } finally {
-      if (mounted) {
-        setState(() => _isJoining = false);
-      }
-    }
-  }
-
-  Future<void> _navigateToCall(
-    BuildContext context, {
-    required String userId,
-    required String userName,
-    required bool isInstructor,
-  }) async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AgoraCallPage(
-          conferenceId: _currentConference!.id, // Pass conference ID
-          channelId: _currentConference!.roomId,
-          userId: userId, // Pass user ID
-          userName: userName,
-          isInstructor: isInstructor,
-        ),
-      ),
-    );
-  }
-
-  bool _validateUser(String? userId) {
-    if (userId == null) {
-      _setError('User not authenticated');
-      return false;
-    }
-    return true;
-  }
-
-  bool _validateRoomId() {
-    if (_currentConference!.roomId.isEmpty) {
-      _setError('Conference room is not configured (empty roomId).');
-      return false;
-    }
-    return true;
-  }
-
-  void _setError(String message) {
-    setState(() => _errorMessage = message);
   }
 
   void _showSuccessMessage(BuildContext context, String message) {

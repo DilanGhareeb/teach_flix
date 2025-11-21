@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/live_conference/data/models/live_conference_model.dart';
+import 'package:teach_flix/src/features/live_conference/domain/usecases/purchase_conference_access.dart';
 
 abstract class LiveConferenceFirebaseDataSource {
   Future<Either<Failure, LiveConferenceModel>> createConference({
@@ -25,8 +26,7 @@ abstract class LiveConferenceFirebaseDataSource {
   );
 
   Future<Either<Failure, void>> purchaseConferenceAccess({
-    required String userId,
-    required String conferenceId,
+    required PurchaseConferenceParams params,
   });
 
   Future<Either<Failure, void>> joinConference({
@@ -189,109 +189,133 @@ class LiveConferenceFirebaseDataSourceImpl
 
   @override
   Future<Either<Failure, void>> purchaseConferenceAccess({
-    required String userId,
-    required String conferenceId,
+    required PurchaseConferenceParams params,
   }) async {
     try {
-      return await _firestore.runTransaction<Either<Failure, void>>((
-        transaction,
-      ) async {
-        // Get conference
-        final conferenceDoc = await transaction.get(
-          _firestore.collection('live_conferences').doc(conferenceId),
-        );
+      // 1. Get conference details - FIXED: Use correct collection name
+      final conferenceDoc = await _firestore
+          .collection('live_conferences')
+          .doc(params.conferenceId)
+          .get();
 
-        if (!conferenceDoc.exists) {
-          return const Left(NotFoundFailure());
-        }
+      if (!conferenceDoc.exists) {
+        return const Left(NotFoundFailure());
+      }
 
-        final conferenceData = conferenceDoc.data()!;
-        final conferencePrice = (conferenceData['price'] as num).toDouble();
-        final instructorId = conferenceData['instructorId'] as String;
+      final conferenceData = conferenceDoc.data()!;
+      final price = (conferenceData['price'] as num).toDouble();
+      final instructorId = conferenceData['instructorId'] as String;
+      final conferenceTitle = conferenceData['title'] as String;
 
-        // Check if user is the instructor
-        if (userId == instructorId) {
-          return const Left(InstructorCannotPurchaseOwnCourseFailure());
-        }
+      // Check if already enrolled
+      final enrolledStudents = List<String>.from(
+        conferenceData['enrolledStudentIds'] ?? [],
+      );
 
-        // Check if already purchased
-        final accessQuery = await _firestore
-            .collection('conference_access')
-            .where('userId', isEqualTo: userId)
-            .where('conferenceId', isEqualTo: conferenceId)
-            .get();
-
-        if (accessQuery.docs.isNotEmpty) {
-          return const Left(AlreadyEnrolledFailure());
-        }
-
-        // Get user balance
-        final userDoc = await transaction.get(
-          _firestore.collection('users').doc(userId),
-        );
-
-        if (!userDoc.exists) {
-          return const Left(NotFoundFailure());
-        }
-
-        final currentBalance = (userDoc.data()!['balance'] as num).toDouble();
-
-        // Check if user has enough balance
-        if (currentBalance < conferencePrice) {
-          return const Left(InsufficientBalanceFailure());
-        }
-
-        // Get instructor's current balance
-        final instructorDoc = await transaction.get(
-          _firestore.collection('users').doc(instructorId),
-        );
-
-        if (!instructorDoc.exists) {
-          return const Left(NotFoundFailure());
-        }
-
-        final currentInstructorBalance =
-            (instructorDoc.data()!['balance'] as num).toDouble();
-
-        // Calculate instructor's share (50% of conference price)
-        final instructorProfit = conferencePrice * 0.5;
-
-        // Deduct balance from user
-        transaction.update(_firestore.collection('users').doc(userId), {
-          'balance': currentBalance - conferencePrice,
-        });
-
-        // Add profit to instructor's balance
-        transaction.update(_firestore.collection('users').doc(instructorId), {
-          'balance': currentInstructorBalance + instructorProfit,
-        });
-
-        // Add access record
-        transaction.set(_firestore.collection('conference_access').doc(), {
-          'userId': userId,
-          'conferenceId': conferenceId,
-          'purchasedAt': Timestamp.now(),
-          'instructorProfit': instructorProfit,
-          'conferencePriceAtPurchase': conferencePrice,
-        });
-
-        // Add transaction record
-        transaction.set(_firestore.collection('transactions').doc(), {
-          'userId': userId,
-          'conferenceId': conferenceId,
-          'instructorId': instructorId,
-          'amount': conferencePrice,
-          'instructorProfit': instructorProfit,
-          'platformProfit': conferencePrice - instructorProfit,
-          'type': 'conference_purchase',
-          'createdAt': Timestamp.now(),
-        });
-
+      if (enrolledStudents.contains(params.userId)) {
+        // User already has access - return success
         return const Right(null);
+      }
+
+      // 2. Get user details
+      final userDoc = await _firestore
+          .collection('users')
+          .doc(params.userId)
+          .get();
+
+      if (!userDoc.exists) {
+        return const Left(NotFoundFailure());
+      }
+
+      final userData = userDoc.data()!;
+      final currentBalance = (userData['balance'] as num?)?.toDouble() ?? 0.0;
+      final userName = userData['name'] as String? ?? 'Unknown';
+
+      // 3. Check balance
+      if (currentBalance < price) {
+        return const Left(InsufficientBalanceFailure());
+      }
+
+      // 4. Use Firestore transaction to ensure atomicity
+      await _firestore.runTransaction((transaction) async {
+        // Re-check conference in transaction
+        final conferenceSnapshot = await transaction.get(
+          _firestore.collection('live_conferences').doc(params.conferenceId),
+        );
+
+        if (!conferenceSnapshot.exists) {
+          throw Exception('Conference not found');
+        }
+
+        final currentEnrolled = List<String>.from(
+          conferenceSnapshot.data()!['enrolledStudentIds'] ?? [],
+        );
+
+        // Double-check not already enrolled
+        if (currentEnrolled.contains(params.userId)) {
+          return; // Already enrolled, skip transaction
+        }
+
+        // Re-check user balance in transaction
+        final userSnapshot = await transaction.get(
+          _firestore.collection('users').doc(params.userId),
+        );
+
+        if (!userSnapshot.exists) {
+          throw Exception('User not found');
+        }
+
+        final userBalance =
+            (userSnapshot.data()!['balance'] as num?)?.toDouble() ?? 0.0;
+
+        if (userBalance < price) {
+          throw Exception('Insufficient balance');
+        }
+
+        // Deduct from user balance
+        transaction.update(_firestore.collection('users').doc(params.userId), {
+          'balance': FieldValue.increment(-price),
+        });
+
+        // Add to instructor balance (50% commission)
+        transaction.update(_firestore.collection('users').doc(instructorId), {
+          'balance': FieldValue.increment(price * 0.50),
+        });
+
+        // Add user to enrolled students - FIXED: Use correct collection name
+        transaction.update(
+          _firestore.collection('live_conferences').doc(params.conferenceId),
+          {
+            'enrolledStudentIds': FieldValue.arrayUnion([params.userId]),
+          },
+        );
+
+        // Create transaction record for instructor stats
+        final transactionRef = _firestore.collection('transactions').doc();
+        transaction.set(transactionRef, {
+          'id': transactionRef.id,
+          'type': 'conference_purchase',
+          'userId': params.userId,
+          'userName': userName,
+          'instructorId': instructorId,
+          'conferenceId': params.conferenceId,
+          'conferenceTitle': conferenceTitle,
+          'amount': price,
+          'platformFee': price * 0.50, // 50% platform fee
+          'instructorProfit': price * 0.50, // 50% to instructor
+          'createdAt': FieldValue.serverTimestamp(),
+          'status': 'completed',
+        });
       });
+
+      return const Right(null);
     } on FirebaseException catch (e) {
+      // Log the actual error for debugging
+      print('FirebaseException during purchase: ${e.code} - ${e.message}');
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {
+      // Log unexpected errors
+      print('Unexpected error during purchase: $e');
       return const Left(UnknownFailure());
     }
   }
@@ -320,6 +344,7 @@ class LiveConferenceFirebaseDataSourceImpl
         final currentParticipants =
             conferenceData['currentParticipants'] as int;
         final actualStartTime = conferenceData['actualStartTime'] as Timestamp?;
+        final price = (conferenceData['price'] as num?)?.toDouble() ?? 0.0;
 
         // Check if conference is live
         if (status != 'live') {
@@ -330,15 +355,15 @@ class LiveConferenceFirebaseDataSourceImpl
         final isInstructor = userId == instructorId;
 
         if (!isInstructor) {
-          // Check if user has purchased access
-          final accessQuery = await _firestore
-              .collection('conference_access')
-              .where('userId', isEqualTo: userId)
-              .where('conferenceId', isEqualTo: conferenceId)
-              .get();
+          // For paid conferences, check if user has purchased access
+          if (price > 0) {
+            final enrolledStudents = List<String>.from(
+              conferenceData['enrolledStudentIds'] ?? [],
+            );
 
-          if (accessQuery.docs.isEmpty) {
-            return const Left(AccessNotPurchasedFailure());
+            if (!enrolledStudents.contains(userId)) {
+              return const Left(AccessNotPurchasedFailure());
+            }
           }
 
           // Check join time limit (10 minutes)
@@ -358,22 +383,11 @@ class LiveConferenceFirebaseDataSourceImpl
           }
         }
 
-        // Update participant count and add to enrolled list
-        final enrolledStudentIds = List<String>.from(
-          conferenceData['enrolledStudentIds'] ?? [],
+        // Update participant count
+        transaction.update(
+          _firestore.collection('live_conferences').doc(conferenceId),
+          {'currentParticipants': FieldValue.increment(1)},
         );
-
-        if (!enrolledStudentIds.contains(userId)) {
-          enrolledStudentIds.add(userId);
-
-          transaction.update(
-            _firestore.collection('live_conferences').doc(conferenceId),
-            {
-              'currentParticipants': currentParticipants + 1,
-              'enrolledStudentIds': enrolledStudentIds,
-            },
-          );
-        }
 
         return const Right(null);
       });
@@ -421,13 +435,21 @@ class LiveConferenceFirebaseDataSourceImpl
     required String conferenceId,
   }) async {
     try {
-      final querySnapshot = await _firestore
-          .collection('conference_access')
-          .where('userId', isEqualTo: userId)
-          .where('conferenceId', isEqualTo: conferenceId)
+      // Check enrolledStudentIds in the conference document
+      final conferenceDoc = await _firestore
+          .collection('live_conferences')
+          .doc(conferenceId)
           .get();
 
-      return Right(querySnapshot.docs.isNotEmpty);
+      if (!conferenceDoc.exists) {
+        return const Left(NotFoundFailure());
+      }
+
+      final enrolledStudents = List<String>.from(
+        conferenceDoc.data()!['enrolledStudentIds'] ?? [],
+      );
+
+      return Right(enrolledStudents.contains(userId));
     } on FirebaseException catch (e) {
       return Left(FirestoreFailure.fromFirebaseCode(e.code));
     } catch (e) {

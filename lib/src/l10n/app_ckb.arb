@@ -572,5 +572,13 @@
   "deleteConference": "سڕینەوەی کۆنفرانس",
   "deleteConferenceConfirm": "دڵنیایت لە سڕینەوەی ئەم کۆنفرانسە?",
   "pleaseEnterMaxDuration": "تکایە زۆرترین ماوە بنووسە",
-  "durationRange": "ماوە دەبێت لە نێوان ١٥ و ٤٨٠ خولەک بێت"
+  "durationRange": "ماوە دەبێت لە نێوان ١٥ و ٤٨٠ خولەک بێت",
+  "viewDetails": "بینینی وردەکاریەکان",
+  "manageConference": "بەڕێوەبردنی کۆنفرانس",
+  "pleaseLoginToJoin": "تکایە چوونەژوورەوە بۆ بەشداریکردن لە کۆنفرانس",
+  "loginToJoin": "چوونەژوورەوە بۆ بەشداریکردن",
+  "conferenceDetails": "وردەکاریەکانی کۆنفرانس",
+  "scheduledTime": "کاتی دیاریکراو",
+  "actualStartTime": "کاتی دەستپێکردنی ڕاستەقینە",
+  "errorOccurred": "هەڵەیەک ڕوویدا"
 }

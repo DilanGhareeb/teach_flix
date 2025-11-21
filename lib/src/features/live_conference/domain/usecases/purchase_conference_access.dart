@@ -8,11 +8,8 @@ class PurchaseConferenceAccess {
 
   PurchaseConferenceAccess(this.repository);
 
-  Future<Either<Failure, void>> call(PurchaseConferenceParams params) {
-    return repository.purchaseConferenceAccess(
-      userId: params.userId,
-      conferenceId: params.conferenceId,
-    );
+  Future<Either<Failure, void>> call(PurchaseConferenceParams params) async {
+    return await repository.purchaseConferenceAccess(params: params);
   }
 }
 
