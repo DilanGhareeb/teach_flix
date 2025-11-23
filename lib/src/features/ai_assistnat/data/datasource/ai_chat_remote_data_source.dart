@@ -42,14 +42,15 @@ abstract class AiChatRemoteDataSource {
 
   Future<void> clearMessages(String sessionId);
 
-  Future<String> getAiResponse({
+  // NEW: Streaming AI response
+  Stream<String> getAiResponseStream({
     required String sessionId,
     required String userId,
     required String message,
     List<MessageModel>? conversationHistory,
   });
 
-  Future<String> getAiResponseWithImage({
+  Stream<String> getAiResponseWithImageStream({
     required String sessionId,
     required String userId,
     required String message,
@@ -109,22 +110,15 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .doc(messageId)
           .update({'status': MessageStatus.sent.name});
 
-      final conversationHistory = await _getConversationHistory(sessionId);
-      final aiResponse = await getAiResponse(
-        sessionId: sessionId,
-        userId: userId,
-        message: text,
-        conversationHistory: conversationHistory,
-      );
-
+      // Create AI message placeholder
       final aiMessageId = const Uuid().v4();
       final aiMessage = MessageModel(
         id: aiMessageId,
-        text: aiResponse,
+        text: '',
         authorId: 'ai',
         createdAt: DateTime.now(),
         type: MessageType.text,
-        status: MessageStatus.sent,
+        status: MessageStatus.sending,
       );
 
       await firestore
@@ -134,7 +128,43 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .doc(aiMessageId)
           .set(aiMessage.toFirestore());
 
-      await _updateChatSession(sessionId, aiResponse, DateTime.now());
+      // Stream AI response
+      final conversationHistory = await _getConversationHistory(sessionId);
+      final fullResponse = StringBuffer();
+
+      await for (final chunk in getAiResponseStream(
+        sessionId: sessionId,
+        userId: userId,
+        message: text,
+        conversationHistory: conversationHistory,
+      )) {
+        fullResponse.write(chunk);
+
+        // Update AI message in real-time
+        await firestore
+            .collection('chat_sessions')
+            .doc(sessionId)
+            .collection('messages')
+            .doc(aiMessageId)
+            .update({
+              'text': fullResponse.toString(),
+              'status': MessageStatus.sending.name,
+            });
+      }
+
+      // Mark as complete
+      await firestore
+          .collection('chat_sessions')
+          .doc(sessionId)
+          .collection('messages')
+          .doc(aiMessageId)
+          .update({'status': MessageStatus.sent.name});
+
+      await _updateChatSession(
+        sessionId,
+        fullResponse.toString(),
+        DateTime.now(),
+      );
 
       return userMessage.copyWith(status: MessageStatus.sent) as MessageModel;
     } on FirebaseException catch (e) {
@@ -208,7 +238,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         now,
       );
 
-      // If it's an image, get AI response with image analysis
+      // If it's an image, get AI response with image analysis (streaming)
       if (messageType == MessageType.image) {
         print('🤖 Requesting AI analysis of image...');
         final conversationHistory = await _getConversationHistory(sessionId);
@@ -217,25 +247,15 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
             ? 'What do you see in this image? Please describe it in detail.'
             : text;
 
-        final aiResponse = await getAiResponseWithImage(
-          sessionId: sessionId,
-          userId: userId,
-          message: promptText,
-          imagePath: filePath,
-          conversationHistory: conversationHistory,
-        );
-
-        print('✅ AI response received');
-
-        // Save AI response
+        // Create AI message placeholder
         final aiMessageId = const Uuid().v4();
         final aiMessage = MessageModel(
           id: aiMessageId,
-          text: aiResponse,
+          text: '',
           authorId: 'ai',
           createdAt: DateTime.now(),
           type: MessageType.text,
-          status: MessageStatus.sent,
+          status: MessageStatus.sending,
         );
 
         await firestore
@@ -245,7 +265,45 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
             .doc(aiMessageId)
             .set(aiMessage.toFirestore());
 
-        await _updateChatSession(sessionId, aiResponse, DateTime.now());
+        // Stream AI response
+        final fullResponse = StringBuffer();
+
+        await for (final chunk in getAiResponseWithImageStream(
+          sessionId: sessionId,
+          userId: userId,
+          message: promptText,
+          imagePath: filePath,
+          conversationHistory: conversationHistory,
+        )) {
+          fullResponse.write(chunk);
+
+          // Update AI message in real-time
+          await firestore
+              .collection('chat_sessions')
+              .doc(sessionId)
+              .collection('messages')
+              .doc(aiMessageId)
+              .update({
+                'text': fullResponse.toString(),
+                'status': MessageStatus.sending.name,
+              });
+        }
+
+        // Mark as complete
+        await firestore
+            .collection('chat_sessions')
+            .doc(sessionId)
+            .collection('messages')
+            .doc(aiMessageId)
+            .update({'status': MessageStatus.sent.name});
+
+        await _updateChatSession(
+          sessionId,
+          fullResponse.toString(),
+          DateTime.now(),
+        );
+
+        print('✅ AI response complete');
       }
 
       return MessageModel(
@@ -430,52 +488,54 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
     }
   }
 
+  // NEW: Streaming AI response
   @override
-  Future<String> getAiResponse({
+  Stream<String> getAiResponseStream({
     required String sessionId,
     required String userId,
     required String message,
     List<MessageModel>? conversationHistory,
-  }) async {
+  }) async* {
     try {
-      print('🤖 AI Request - Starting...');
+      print('🤖 AI Streaming Request - Starting...');
       print('📝 Message: $message');
 
       final prompt = _buildPrompt(message, conversationHistory);
       print('📋 Prompt built successfully');
 
-      print('🔄 Calling Gemini API...');
-      final response = await geminiModel.generateContent([
+      print('🔄 Calling Gemini API with streaming...');
+
+      final response = geminiModel.generateContentStream([
         Content.text(prompt),
       ]);
-      print('✅ Gemini API responded');
 
-      if (response.text == null || response.text!.isEmpty) {
-        print('❌ AI response is empty');
-        throw const ServerException(message: 'AI response is empty');
+      await for (final chunk in response) {
+        if (chunk.text != null && chunk.text!.isNotEmpty) {
+          print(
+            '📦 Chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
+          );
+          yield chunk.text!;
+        }
       }
 
-      print(
-        '✅ AI Response received: ${response.text!.substring(0, response.text!.length.clamp(0, 50))}...',
-      );
-      return response.text!;
+      print('✅ AI Streaming complete');
     } catch (e, stackTrace) {
-      print('❌ AI Error: $e');
+      print('❌ AI Streaming Error: $e');
       print('📚 Stack trace: $stackTrace');
-      throw ServerException(message: 'AI error: ${e.toString()}');
+      throw ServerException(message: 'AI streaming error: ${e.toString()}');
     }
   }
 
   @override
-  Future<String> getAiResponseWithImage({
+  Stream<String> getAiResponseWithImageStream({
     required String sessionId,
     required String userId,
     required String message,
     required String imagePath,
     List<MessageModel>? conversationHistory,
-  }) async {
+  }) async* {
     try {
-      print('🤖 AI Request with Image - Starting...');
+      print('🤖 AI Streaming Request with Image - Starting...');
       print('📝 Message: $message');
       print('🖼️  Image: $imagePath');
 
@@ -491,32 +551,32 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           ? _buildPrompt(message, conversationHistory)
           : message;
 
-      print('🔄 Calling Gemini API with image...');
+      print('🔄 Calling Gemini API with image streaming...');
 
       // Create content with both text and image
-      final response = await geminiModel.generateContent([
+      final response = geminiModel.generateContentStream([
         Content.multi([
           TextPart(contextPrompt),
-          // Gemini supports inline data for images
           InlineDataPart('image/jpeg', imageBytes),
         ]),
       ]);
 
-      print('✅ Gemini API responded');
-
-      if (response.text == null || response.text!.isEmpty) {
-        print('❌ AI response is empty');
-        throw const ServerException(message: 'AI response is empty');
+      await for (final chunk in response) {
+        if (chunk.text != null && chunk.text!.isNotEmpty) {
+          print(
+            '📦 Image chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
+          );
+          yield chunk.text!;
+        }
       }
 
-      print(
-        '✅ AI Response received: ${response.text!.substring(0, response.text!.length.clamp(0, 50))}...',
-      );
-      return response.text!;
+      print('✅ AI Image Streaming complete');
     } catch (e, stackTrace) {
-      print('❌ AI Error with Image: $e');
+      print('❌ AI Streaming Error with Image: $e');
       print('📚 Stack trace: $stackTrace');
-      throw ServerException(message: 'AI error with image: ${e.toString()}');
+      throw ServerException(
+        message: 'AI streaming error with image: ${e.toString()}',
+      );
     }
   }
 

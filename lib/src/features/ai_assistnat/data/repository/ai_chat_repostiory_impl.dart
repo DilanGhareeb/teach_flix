@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:teach_flix/src/core/errors/failures.dart';
 import 'package:teach_flix/src/features/ai_assistnat/data/datasource/ai_chat_remote_data_source.dart';
+import 'package:teach_flix/src/features/ai_assistnat/data/models/message_model.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/chat_session.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/message.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/repository/chat_ai_repository.dart';
@@ -59,9 +60,13 @@ class AiChatRepositoryImpl implements AiChatRepository {
     try {
       return remoteDataSource
           .watchMessages(sessionId)
-          .map((messages) => Right<Failure, List<Message>>(messages));
-    } on ServerException catch (e) {
-      return Stream.value(Left(ServerFailure()));
+          .map((messages) => Right<Failure, List<Message>>(messages))
+          .handleError((error) {
+            if (error is ServerException) {
+              return Left<Failure, List<Message>>(ServerFailure());
+            }
+            return Left<Failure, List<Message>>(UnknownFailure());
+          });
     } catch (e) {
       return Stream.value(Left(UnknownFailure()));
     }
@@ -90,9 +95,13 @@ class AiChatRepositoryImpl implements AiChatRepository {
     try {
       return remoteDataSource
           .watchChatSessions(userId)
-          .map((sessions) => Right<Failure, List<ChatSession>>(sessions));
-    } on ServerException catch (e) {
-      return Stream.value(Left(ServerFailure()));
+          .map((sessions) => Right<Failure, List<ChatSession>>(sessions))
+          .handleError((error) {
+            if (error is ServerException) {
+              return Left<Failure, List<ChatSession>>(ServerFailure());
+            }
+            return Left<Failure, List<ChatSession>>(UnknownFailure());
+          });
     } catch (e) {
       return Stream.value(Left(UnknownFailure()));
     }
@@ -140,24 +149,64 @@ class AiChatRepositoryImpl implements AiChatRepository {
     }
   }
 
+  // NEW: Streaming AI response methods
   @override
-  Future<Either<Failure, String>> getAiResponse({
+  Stream<Either<Failure, String>> getAiResponseStream({
     required String sessionId,
     required String userId,
     required String message,
     List<Message>? conversationHistory,
-  }) async {
+  }) {
     try {
-      final result = await remoteDataSource.getAiResponse(
-        sessionId: sessionId,
-        userId: userId,
-        message: message,
-      );
-      return Right(result);
-    } on ServerException catch (e) {
-      return Left(ServerFailure());
+      return remoteDataSource
+          .getAiResponseStream(
+            sessionId: sessionId,
+            userId: userId,
+            message: message,
+            conversationHistory: conversationHistory
+                ?.map((msg) => msg as MessageModel)
+                .toList(),
+          )
+          .map((chunk) => Right<Failure, String>(chunk))
+          .handleError((error) {
+            if (error is ServerException) {
+              return Left<Failure, String>(ServerFailure());
+            }
+            return Left<Failure, String>(UnknownFailure());
+          });
     } catch (e) {
-      return Left(UnknownFailure());
+      return Stream.value(Left(UnknownFailure()));
+    }
+  }
+
+  @override
+  Stream<Either<Failure, String>> getAiResponseWithImageStream({
+    required String sessionId,
+    required String userId,
+    required String message,
+    required String imagePath,
+    List<Message>? conversationHistory,
+  }) {
+    try {
+      return remoteDataSource
+          .getAiResponseWithImageStream(
+            sessionId: sessionId,
+            userId: userId,
+            message: message,
+            imagePath: imagePath,
+            conversationHistory: conversationHistory
+                ?.map((msg) => msg as MessageModel)
+                .toList(),
+          )
+          .map((chunk) => Right<Failure, String>(chunk))
+          .handleError((error) {
+            if (error is ServerException) {
+              return Left<Failure, String>(ServerFailure());
+            }
+            return Left<Failure, String>(UnknownFailure());
+          });
+    } catch (e) {
+      return Stream.value(Left(UnknownFailure()));
     }
   }
 }

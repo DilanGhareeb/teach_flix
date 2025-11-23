@@ -9,7 +9,6 @@ class SendMessage {
 
   SendMessage(this.repository);
 
-  @override
   Future<Either<Failure, Message>> call({required SendMessageParams params}) {
     return repository.sendMessage(
       sessionId: params.sessionId,

@@ -21,10 +21,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   final _scrollController = ScrollController();
   final _imagePicker = ImagePicker();
 
-  // Key for accessing ScaffoldMessenger
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
-      GlobalKey<ScaffoldMessengerState>();
-
   // Selected image state
   String? _selectedImagePath;
 
@@ -40,70 +36,68 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     final l10n = AppLocalizations.of(context)!;
     final chatState = context.watch<AiChatBloc>().state;
 
-    return ScaffoldMessenger(
-      key: _scaffoldMessengerKey,
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          title: Text(chatState.currentSession?.title ?? l10n.chat ?? 'Chat'),
-          actions: [
-            PopupMenuButton(
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'clear',
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.clear_all),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          l10n.clear_messages ?? 'clear_messages',
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-              onSelected: (value) {
-                if (value == 'clear' && chatState.currentSession != null) {
-                  _showClearDialog(context, chatState.currentSession!.id);
-                }
-              },
-            ),
-          ],
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: BlocListener<AiChatBloc, AiChatState>(
-          listenWhen: (previous, current) =>
-              previous.status != current.status &&
-              current.status == AiChatStatus.failure &&
-              current.failure != null,
-          listener: (context, state) {
+        title: Text(chatState.currentSession?.title ?? l10n.chat ?? 'Chat'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) => [
+              PopupMenuItem(
+                value: 'clear',
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.clear_all),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        l10n.clear_messages ?? 'clear_messages',
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            onSelected: (value) {
+              if (value == 'clear' && chatState.currentSession != null) {
+                _showClearDialog(context, chatState.currentSession!.id);
+              }
+            },
+          ),
+        ],
+      ),
+      body: BlocListener<AiChatBloc, AiChatState>(
+        // FIXED: Only show error snackbar when there's actually a failure
+        listenWhen: (previous, current) =>
+            previous.failure != current.failure && current.failure != null,
+        listener: (context, state) {
+          if (state.failure != null) {
             final errorMessage = ErrorLocalizer.of(state.failure!, l10n);
-            _scaffoldMessengerKey.currentState?.showSnackBar(
+            ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(errorMessage),
                 backgroundColor: Colors.red,
                 duration: const Duration(seconds: 3),
               ),
             );
-          },
-          child: Column(
-            children: [
-              Expanded(
-                child: chatState.messages.isEmpty
-                    ? _buildEmptyState(context)
-                    : _buildMessageList(context, chatState),
-              ),
-              if (chatState.isSending)
-                const LinearProgressIndicator(minHeight: 2),
-              _buildMessageInput(context, chatState),
-            ],
-          ),
+          }
+        },
+        child: Column(
+          children: [
+            Expanded(
+              child: chatState.messages.isEmpty
+                  ? _buildEmptyState(context)
+                  : _buildMessageList(context, chatState),
+            ),
+            if (chatState.isSending)
+              const LinearProgressIndicator(minHeight: 2),
+            _buildMessageInput(context, chatState),
+          ],
         ),
       ),
     );
@@ -326,7 +320,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       }
     } catch (e) {
       debugPrint('Error sending message: $e');
-      _scaffoldMessengerKey.currentState?.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to send message: ${e.toString()}'),
           backgroundColor: Colors.red,
@@ -377,7 +371,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
     // Check if we have a current session
     final currentSession = context.read<AiChatBloc>().state.currentSession;
     if (currentSession == null) {
-      _scaffoldMessengerKey.currentState?.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('No active chat session'),
           backgroundColor: Colors.red,
@@ -409,7 +403,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
       }
     } catch (e) {
       debugPrint('Error picking image: $e');
-      _scaffoldMessengerKey.currentState?.showSnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Failed to pick image: ${e.toString()}'),
           backgroundColor: Colors.red,

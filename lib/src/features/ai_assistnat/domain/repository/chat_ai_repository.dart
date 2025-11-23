@@ -36,10 +36,18 @@ abstract class AiChatRepository {
 
   Future<Either<Failure, void>> clearMessages(String sessionId);
 
-  Future<Either<Failure, String>> getAiResponse({
+  Stream<Either<Failure, String>> getAiResponseStream({
     required String sessionId,
     required String userId,
     required String message,
+    List<Message>? conversationHistory,
+  });
+
+  Stream<Either<Failure, String>> getAiResponseWithImageStream({
+    required String sessionId,
+    required String userId,
+    required String message,
+    required String imagePath,
     List<Message>? conversationHistory,
   });
 }
