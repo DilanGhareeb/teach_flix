@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart' as material;
@@ -46,7 +45,6 @@ class CertificateGenerator {
     required String instructorId,
     required Future<String> Function(String) getInstructorName,
     String? completionDate,
-    bool isKurdish = true, // Add this parameter for language selection
   }) async {
     try {
       final instructorName = await getInstructorName(instructorId);
@@ -55,7 +53,6 @@ class CertificateGenerator {
         courseName: courseName,
         instructorName: instructorName,
         completionDate: completionDate,
-        isKurdish: isKurdish,
       );
       return filePath;
     } catch (e) {
@@ -69,7 +66,6 @@ class CertificateGenerator {
     required String courseName,
     required String instructorName,
     String? completionDate,
-    bool isKurdish = true,
   }) async {
     await _initializeFonts();
 
@@ -85,7 +81,6 @@ class CertificateGenerator {
           courseName: courseName,
           instructorName: instructorName,
           completionDate: date,
-          isKurdish: isKurdish,
         ),
       ),
     );
@@ -119,38 +114,42 @@ class CertificateGenerator {
     return months[month - 1];
   }
 
-  // Helper method to create RTL text with proper Kurdish support
-  pw.Widget _buildKurdishText(
-    String text, {
-    double fontSize = 16,
-    bool isBold = false,
-  }) {
-    return pw.Directionality(
-      textDirection: pw.TextDirection.rtl,
-      child: pw.Text(
-        text,
-        style: pw.TextStyle(
-          font: isBold ? _fontBold : _fontRegular,
-          fontSize: fontSize,
-        ),
-        textAlign: pw.TextAlign.center,
-      ),
-    );
+  // Helper method to detect if text contains Kurdish/Arabic characters
+  bool _containsKurdishText(String text) {
+    // Check for Arabic/Kurdish Unicode range
+    return text.runes.any((rune) => rune >= 0x0600 && rune <= 0x06FF);
   }
 
-  // Helper method to create English text
-  pw.Widget _buildEnglishText(
+  // Helper method to create text with automatic RTL detection for course names
+  pw.Widget _buildText(
     String text, {
     double fontSize = 16,
     bool isBold = false,
+    pw.TextAlign textAlign = pw.TextAlign.center,
   }) {
+    // If text contains Kurdish characters, use RTL direction
+    if (_containsKurdishText(text)) {
+      return pw.Directionality(
+        textDirection: pw.TextDirection.rtl,
+        child: pw.Text(
+          text,
+          style: pw.TextStyle(
+            font: isBold ? _fontBold : _fontRegular,
+            fontSize: fontSize,
+          ),
+          textAlign: textAlign,
+        ),
+      );
+    }
+
+    // Otherwise use LTR (standard English)
     return pw.Text(
       text,
       style: pw.TextStyle(
         font: isBold ? _fontBold : _fontRegular,
         fontSize: fontSize,
       ),
-      textAlign: pw.TextAlign.center,
+      textAlign: textAlign,
     );
   }
 
@@ -159,7 +158,6 @@ class CertificateGenerator {
     required String courseName,
     required String instructorName,
     required String completionDate,
-    required bool isKurdish,
   }) {
     return pw.Container(
       decoration: pw.BoxDecoration(
@@ -175,22 +173,16 @@ class CertificateGenerator {
         child: pw.Column(
           mainAxisAlignment: pw.MainAxisAlignment.center,
           children: [
-            // Certificate Title - Bilingual
-            isKurdish
-                ? _buildKurdishText(
-                    'بڕوانامەی تەواوکردن',
-                    fontSize: 32,
-                    isBold: true,
-                  )
-                : pw.Text(
-                    'CERTIFICATE OF COMPLETION',
-                    style: pw.TextStyle(
-                      font: _fontBold,
-                      fontSize: 32,
-                      letterSpacing: 2,
-                      color: PdfColors.blue900,
-                    ),
-                  ),
+            // Certificate Title - English Only
+            pw.Text(
+              'CERTIFICATE OF COMPLETION',
+              style: pw.TextStyle(
+                font: _fontBold,
+                fontSize: 32,
+                letterSpacing: 2,
+                color: PdfColors.blue900,
+              ),
+            ),
 
             pw.SizedBox(height: 10),
             pw.Container(
@@ -209,46 +201,42 @@ class CertificateGenerator {
             pw.SizedBox(height: 30),
 
             // "This certifies that" text
-            isKurdish
-                ? _buildKurdishText('ئەم بڕوانامەیە پێشکەشە بە')
-                : pw.Text(
-                    'This certifies that',
-                    style: pw.TextStyle(
-                      font: _fontRegular,
-                      fontSize: 16,
-                      fontStyle: pw.FontStyle.italic,
-                      color: PdfColors.grey700,
-                    ),
-                  ),
+            pw.Text(
+              'This certifies that',
+              style: pw.TextStyle(
+                font: _fontRegular,
+                fontSize: 16,
+                fontStyle: pw.FontStyle.italic,
+                color: PdfColors.grey700,
+              ),
+            ),
 
             pw.SizedBox(height: 15),
 
-            // User Name - Always RTL for Kurdish names
-            _buildKurdishText(userName, fontSize: 36, isBold: true),
+            // User Name - Supports both English and Kurdish
+            _buildText(userName, fontSize: 36, isBold: true),
 
             pw.SizedBox(height: 15),
             pw.Container(width: 400, height: 2, color: PdfColors.blue700),
             pw.SizedBox(height: 25),
 
             // "has successfully completed the course"
-            isKurdish
-                ? _buildKurdishText('بە سەرکەوتوویی ئەم کۆرسەی تەواو کردووە')
-                : pw.Text(
-                    'has successfully completed the course',
-                    style: pw.TextStyle(
-                      font: _fontRegular,
-                      fontSize: 16,
-                      fontStyle: pw.FontStyle.italic,
-                      color: PdfColors.grey700,
-                    ),
-                  ),
+            pw.Text(
+              'has successfully completed the course',
+              style: pw.TextStyle(
+                font: _fontRegular,
+                fontSize: 16,
+                fontStyle: pw.FontStyle.italic,
+                color: PdfColors.grey700,
+              ),
+            ),
 
             pw.SizedBox(height: 15),
 
-            // Course Name - Always RTL for Kurdish course names
+            // Course Name - Supports both English and Kurdish
             pw.Container(
               width: 500,
-              child: _buildKurdishText(courseName, fontSize: 24, isBold: true),
+              child: _buildText(courseName, fontSize: 24, isBold: true),
             ),
 
             pw.SizedBox(height: 30),
@@ -257,33 +245,21 @@ class CertificateGenerator {
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
               children: [
-                _buildSignatureSection(
-                  isKurdish ? 'بەروار' : 'Date',
-                  completionDate,
-                  isKurdish: isKurdish,
-                ),
+                _buildSignatureSection('Date', completionDate),
                 pw.SizedBox(width: 50),
-                _buildSignatureSection(
-                  isKurdish ? 'مامۆستا' : 'Instructor',
-                  instructorName,
-                  isKurdish: isKurdish,
-                ),
+                _buildSignatureSection('Instructor', instructorName),
               ],
             ),
 
             pw.SizedBox(height: 20),
-            _buildDecorativeSeal(isKurdish: isKurdish),
+            _buildDecorativeSeal(),
           ],
         ),
       ),
     );
   }
 
-  pw.Widget _buildSignatureSection(
-    String title,
-    String value, {
-    bool isKurdish = true,
-  }) {
+  pw.Widget _buildSignatureSection(String title, String value) {
     return pw.Column(
       children: [
         pw.Container(
@@ -294,35 +270,23 @@ class CertificateGenerator {
               bottom: pw.BorderSide(color: PdfColors.grey700, width: 1.5),
             ),
           ),
-          child: isKurdish
-              ? _buildKurdishText(value, fontSize: 14, isBold: true)
-              : pw.Text(
-                  value,
-                  style: pw.TextStyle(
-                    font: _fontBold,
-                    fontSize: 14,
-                    color: PdfColors.grey800,
-                  ),
-                  textAlign: pw.TextAlign.center,
-                ),
+          child: _buildText(value, fontSize: 14, isBold: true),
         ),
         pw.SizedBox(height: 5),
-        isKurdish
-            ? _buildKurdishText(title, fontSize: 12)
-            : pw.Text(
-                title,
-                style: pw.TextStyle(
-                  font: _fontRegular,
-                  fontSize: 12,
-                  color: PdfColors.grey600,
-                  fontStyle: pw.FontStyle.italic,
-                ),
-              ),
+        pw.Text(
+          title,
+          style: pw.TextStyle(
+            font: _fontRegular,
+            fontSize: 12,
+            color: PdfColors.grey600,
+            fontStyle: pw.FontStyle.italic,
+          ),
+        ),
       ],
     );
   }
 
-  pw.Widget _buildDecorativeSeal({bool isKurdish = true}) {
+  pw.Widget _buildDecorativeSeal() {
     return pw.Container(
       width: 80,
       height: 80,
@@ -335,65 +299,26 @@ class CertificateGenerator {
         child: pw.Column(
           mainAxisAlignment: pw.MainAxisAlignment.center,
           children: [
-            isKurdish
-                ? _buildKurdishText('*', fontSize: 20, isBold: true)
-                : pw.Text(
-                    'Star',
-                    style: pw.TextStyle(
-                      font: _fontBold,
-                      fontSize: 20,
-                      color: PdfColors.blue900,
-                    ),
-                  ),
-            isKurdish
-                ? _buildKurdishText('بڕوانامە', fontSize: 8, isBold: true)
-                : pw.Text(
-                    'CERTIFIED',
-                    style: pw.TextStyle(
-                      font: _fontBold,
-                      fontSize: 8,
-                      color: PdfColors.blue900,
-                    ),
-                  ),
+            pw.Text(
+              '★',
+              style: pw.TextStyle(
+                font: _fontBold,
+                fontSize: 24,
+                color: PdfColors.blue900,
+              ),
+            ),
+            pw.Text(
+              'CERTIFIED',
+              style: pw.TextStyle(
+                font: _fontBold,
+                fontSize: 8,
+                color: PdfColors.blue900,
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  // Alternative method using TextPainter for complex text layout (if needed)
-  Future<pw.MemoryImage> _createTextImage(
-    String text, {
-    double fontSize = 16,
-    bool isBold = false,
-  }) async {
-    final paragraph = pw.Paragraph(
-      text: text,
-      textAlign: pw.TextAlign.center,
-      style: pw.TextStyle(
-        font: isBold ? _fontBold : _fontRegular,
-        fontSize: fontSize,
-      ),
-    );
-
-    // This is a simplified approach - for more complex text rendering,
-    // you might need to use Flutter's TextPainter and convert to image
-    return _textToImage(text, fontSize: fontSize, isBold: isBold);
-  }
-
-  // Method to convert text to image using Flutter's TextPainter
-  Future<pw.MemoryImage> _textToImage(
-    String text, {
-    double fontSize = 16,
-    bool isBold = false,
-  }) async {
-    // This would require rendering the text as an image in Flutter
-    // and then converting to PDF image. This is more complex but
-    // provides better control over text rendering.
-
-    // For now, we'll use the direct text approach which works well
-    // with proper RTL support in the pdf package
-    throw UnimplementedError('Text to image conversion not implemented');
   }
 
   Future<String> _savePdfToFile(

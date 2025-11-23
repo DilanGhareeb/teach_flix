@@ -183,15 +183,16 @@ class ChatSessionsPage extends StatelessWidget {
     final now = DateTime.now();
     final difference = now.difference(date);
     final l10n = AppLocalizations.of(context)!;
+    final locale = Localizations.localeOf(context).languageCode;
 
     if (difference.inDays == 0) {
-      return DateFormat('HH:mm', 'en').format(date);
+      return DateFormat('HH:mm', locale).format(date);
     } else if (difference.inDays == 1) {
       return l10n.yesterday ?? 'yesterday';
     } else if (difference.inDays < 7) {
-      return DateFormat('EEEE', 'en').format(date);
+      return DateFormat('EEEE', locale).format(date);
     } else {
-      return DateFormat('MMM dd', 'en').format(date);
+      return DateFormat('MMM dd', locale).format(date);
     }
   }
 }

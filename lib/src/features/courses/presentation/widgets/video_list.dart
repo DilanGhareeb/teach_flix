@@ -85,7 +85,7 @@ class VideosList extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.folder_outlined,
-                  color: colorScheme.primary,
+                  color: colorScheme.onPrimaryContainer,
                   size: 24,
                 ),
               ),

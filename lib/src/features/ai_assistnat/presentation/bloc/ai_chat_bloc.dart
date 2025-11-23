@@ -158,13 +158,28 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
   ) async {
     if (state.currentSession == null) {
       debugPrint('❌ Cannot send message: No current session');
+      emit(
+        state.copyWith(
+          status: AiChatStatus.failure,
+          failure: NotFoundFailure(),
+          isSending: false,
+        ),
+      );
       return;
     }
 
     debugPrint(
       '📤 Sending text message: ${event.text.substring(0, event.text.length.clamp(0, 50))}...',
     );
-    emit(state.copyWith(isSending: true, failure: null));
+
+    // 👉 mark as sending & clear previous failure
+    emit(
+      state.copyWith(
+        status: AiChatStatus.sending,
+        isSending: true,
+        failure: null,
+      ),
+    );
 
     final result = await sendMessage(
       params: SendMessageParams(
@@ -187,7 +202,14 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
       },
       (_) {
         debugPrint('✅ Message sent successfully');
-        emit(state.copyWith(isSending: false));
+        // 👉 back to normal chat state, no failure
+        emit(
+          state.copyWith(
+            status: AiChatStatus.chatLoaded,
+            isSending: false,
+            failure: null,
+          ),
+        );
       },
     );
   }
@@ -213,7 +235,14 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
     debugPrint('   Type: ${event.messageType}');
     debugPrint('   Session: ${state.currentSession!.id}');
 
-    emit(state.copyWith(isSending: true, failure: null));
+    // 👉 mark as sending & clear previous failure
+    emit(
+      state.copyWith(
+        status: AiChatStatus.sending,
+        isSending: true,
+        failure: null,
+      ),
+    );
 
     final result = await sendMessageWithMedia(
       params: SendMessageWithMediaParams(
@@ -238,7 +267,14 @@ class AiChatBloc extends Bloc<AiChatEvent, AiChatState> {
       },
       (_) {
         debugPrint('✅ Media message sent successfully');
-        emit(state.copyWith(isSending: false));
+        // 👉 back to normal chat state, no failure
+        emit(
+          state.copyWith(
+            status: AiChatStatus.chatLoaded,
+            isSending: false,
+            failure: null,
+          ),
+        );
       },
     );
   }

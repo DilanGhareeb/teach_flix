@@ -78,17 +78,19 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
           ],
         ),
         body: BlocListener<AiChatBloc, AiChatState>(
+          listenWhen: (previous, current) =>
+              previous.status != current.status &&
+              current.status == AiChatStatus.failure &&
+              current.failure != null,
           listener: (context, state) {
-            if (state.status == AiChatStatus.failure && state.failure != null) {
-              final errorMessage = ErrorLocalizer.of(state.failure!, l10n);
-              _scaffoldMessengerKey.currentState?.showSnackBar(
-                SnackBar(
-                  content: Text(errorMessage),
-                  backgroundColor: Colors.red,
-                  duration: const Duration(seconds: 3),
-                ),
-              );
-            }
+            final errorMessage = ErrorLocalizer.of(state.failure!, l10n);
+            _scaffoldMessengerKey.currentState?.showSnackBar(
+              SnackBar(
+                content: Text(errorMessage),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
+              ),
+            );
           },
           child: Column(
             children: [

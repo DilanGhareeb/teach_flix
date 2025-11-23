@@ -34,7 +34,7 @@ class QuizzesList extends StatelessWidget {
                   quizId: quiz.id,
                   userId: userId!,
                   courseId: course.id,
-                  totalItems: totalItems, // ✅ Pass totalItems
+                  totalItems: totalItems,
                 ),
               ),
             child: QuizPage(
@@ -109,7 +109,7 @@ class QuizzesList extends StatelessWidget {
                 ),
                 child: Icon(
                   Icons.folder_outlined,
-                  color: colorScheme.secondary,
+                  color: colorScheme.onPrimaryContainer,
                   size: 24,
                 ),
               ),
