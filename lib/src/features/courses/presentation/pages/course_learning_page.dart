@@ -37,6 +37,12 @@ class _CourseLearningPageState extends State<CourseLearningPage>
   final bool _autoPlayNext = true;
   late TabController _tabController;
 
+  // NEW: Track which videos have been marked as completed in this session
+  final Set<String> _completedVideosInSession = {};
+
+  // NEW: Track if we're in the middle of changing videos
+  bool _isChangingVideo = false;
+
   @override
   void initState() {
     super.initState();
@@ -89,11 +95,76 @@ class _CourseLearningPageState extends State<CourseLearningPage>
   void _listener() {
     if (_isPlayerReady && mounted && !_youtubeController!.value.isFullScreen) {
       setState(() {});
+
+      // Only check for completion if we're not in the middle of changing videos
+      if (!_isChangingVideo) {
+        _checkAndMarkVideoCompleted();
+      }
+    }
+  }
+
+  // NEW: Method to check if video is completed and mark it automatically
+  void _checkAndMarkVideoCompleted() {
+    if (_youtubeController == null || _selectedVideo == null) return;
+
+    final authState = context.read<AuthBloc>().state;
+    if (authState.user == null) return; // User must be logged in
+
+    // Check if we've already marked this video as completed in this session
+    if (_completedVideosInSession.contains(_selectedVideo!.id)) return;
+
+    final playerState = _youtubeController!.value.playerState;
+    final position = _youtubeController!.value.position;
+    final duration = _youtubeController!.metadata.duration;
+
+    // Check if video has ended or is very close to the end (within last 2 seconds)
+    final isNearEnd =
+        duration.inSeconds > 0 &&
+        (duration.inSeconds - position.inSeconds) <= 2;
+
+    final hasEnded = playerState == PlayerState.ended;
+
+    // Mark as completed if video ended or is near the end
+    if (hasEnded || isNearEnd) {
+      // Add to session tracking to prevent duplicate marking
+      _completedVideosInSession.add(_selectedVideo!.id);
+
+      // Check current progress state to avoid redundant marking
+      final progressState = context.read<ProgressBloc>().state;
+      bool alreadyCompleted = false;
+
+      if (progressState is ProgressLoaded) {
+        alreadyCompleted = progressState.progress.isVideoCompleted(
+          _selectedVideo!.id,
+        );
+      } else if (progressState is ProgressUpdating) {
+        alreadyCompleted = progressState.currentProgress.isVideoCompleted(
+          _selectedVideo!.id,
+        );
+      }
+
+      // Only mark as completed if not already completed in the database
+      if (!alreadyCompleted) {
+        debugPrint('Auto-marking video as completed: ${_selectedVideo!.title}');
+
+        context.read<ProgressBloc>().add(
+          ToggleVideoCompletionEvent(
+            userId: authState.user!.id,
+            courseId: widget.course.id,
+            videoId: _selectedVideo!.id,
+            isCompleted: true,
+            totalItems: _totalItems,
+          ),
+        );
+      }
     }
   }
 
   void _changeVideo(VideoEntity video) {
     if (_selectedVideo?.id != video.id) {
+      // Mark that we're changing videos - this prevents ANY completion checks
+      _isChangingVideo = true;
+
       setState(() {
         _selectedVideo = video;
       });
@@ -104,6 +175,13 @@ class _CourseLearningPageState extends State<CourseLearningPage>
       } else {
         _initializePlayer(video.youtubeUrl);
       }
+
+      // Reset the flag after a longer delay to ensure video has fully loaded
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          _isChangingVideo = false;
+        }
+      });
     }
   }
 
@@ -376,6 +454,52 @@ class _CourseLearningPageState extends State<CourseLearningPage>
                   _isPlayerReady = true;
                 },
                 onEnded: (data) {
+                  // CRITICAL: Mark completion ONLY if not already changing videos
+                  // and BEFORE triggering the next video
+                  if (!_isChangingVideo && _selectedVideo != null) {
+                    // Store the current video ID before changing
+                    final completedVideoId = _selectedVideo!.id;
+
+                    // Check if already marked in this session
+                    if (!_completedVideosInSession.contains(completedVideoId)) {
+                      _completedVideosInSession.add(completedVideoId);
+
+                      final authState = context.read<AuthBloc>().state;
+                      if (authState.user != null) {
+                        // Check if already completed in database
+                        final progressState = context
+                            .read<ProgressBloc>()
+                            .state;
+                        bool alreadyCompleted = false;
+
+                        if (progressState is ProgressLoaded) {
+                          alreadyCompleted = progressState.progress
+                              .isVideoCompleted(completedVideoId);
+                        } else if (progressState is ProgressUpdating) {
+                          alreadyCompleted = progressState.currentProgress
+                              .isVideoCompleted(completedVideoId);
+                        }
+
+                        if (!alreadyCompleted) {
+                          debugPrint(
+                            'Video ended - marking as completed: ${_selectedVideo!.title}',
+                          );
+
+                          context.read<ProgressBloc>().add(
+                            ToggleVideoCompletionEvent(
+                              userId: authState.user!.id,
+                              courseId: widget.course.id,
+                              videoId: completedVideoId,
+                              isCompleted: true,
+                              totalItems: _totalItems,
+                            ),
+                          );
+                        }
+                      }
+                    }
+                  }
+
+                  // Now play next video
                   if (_autoPlayNext) {
                     _playNextVideo();
                   }
