@@ -86,7 +86,7 @@ class QuizStartScreen extends StatelessWidget {
                     colorScheme: colorScheme,
                   ),
                   const SizedBox(height: 12),
-                  // ✅ Show 50% passing score instead of teacher-defined
+                  //  Show 50% passing score instead of teacher-defined
                   _InfoCard(
                     icon: Icons.school_outlined,
                     title: t.quiz_passing_score,

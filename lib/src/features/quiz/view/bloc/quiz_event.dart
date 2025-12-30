@@ -11,13 +11,13 @@ class LoadQuizEvent extends QuizEvent {
   final String quizId;
   final String userId;
   final String courseId;
-  final int totalItems; // ✅ Added totalItems
+  final int totalItems; //  Added totalItems
 
   const LoadQuizEvent({
     required this.quizId,
     required this.userId,
     required this.courseId,
-    required this.totalItems, // ✅ Required parameter
+    required this.totalItems, //  Required parameter
   });
 
   @override

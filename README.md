@@ -1,4 +1,4 @@
-# 📚 TeachFlix
+# TeachFlix
 
 **TeachFlix** is a Flutter-based educational app featuring clean architecture, Firebase authentication, user profile management, multi-language support (English & Kurdish), and a responsive UI powered by Bloc and Riverpod.
 

@@ -224,7 +224,6 @@ Future<void> setupServiceLocator() async {
   sl.registerLazySingleton(() => GetTopRatedCourses(sl()));
 
   // ========== Courses feature - Bloc ==========
-  // CHANGED: Now can inject AuthBloc since it's a singleton
   sl.registerFactory(
     () => CoursesBloc(
       getAllCourses: sl(),

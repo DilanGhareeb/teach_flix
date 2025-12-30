@@ -325,7 +325,9 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
                 ? () {
                     Navigator.pop(dialogContext);
                     // Dispatch purchase event
-                    print('🛒 Purchasing conference: ${widget.conference.id}');
+                    debugPrint(
+                      '🛒 Purchasing conference: ${widget.conference.id}',
+                    );
                     context.read<LiveConferenceBloc>().add(
                       PurchaseConferenceAccessRequested(widget.conference.id),
                     );
@@ -352,12 +354,12 @@ class _ConferenceActionButtonsState extends State<ConferenceActionButtons> {
 
     // Mark as joining/starting in backend
     if (widget.isInstructor) {
-      print('🎬 Starting conference: ${widget.conference.id}');
+      debugPrint('🎬 Starting conference: ${widget.conference.id}');
       context.read<LiveConferenceBloc>().add(
         StartConferenceRequested(widget.conference.id),
       );
     } else {
-      print('👥 Joining conference: ${widget.conference.id}');
+      debugPrint('👥 Joining conference: ${widget.conference.id}');
       context.read<LiveConferenceBloc>().add(
         JoinConferenceRequested(widget.conference.id),
       );

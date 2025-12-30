@@ -72,7 +72,6 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
         ],
       ),
       body: BlocListener<AiChatBloc, AiChatState>(
-        // FIXED: Only show error snackbar when there's actually a failure
         listenWhen: (previous, current) =>
             previous.failure != current.failure && current.failure != null,
         listener: (context, state) {

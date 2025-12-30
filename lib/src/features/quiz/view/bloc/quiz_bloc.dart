@@ -178,7 +178,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
 
     final timeTaken = DateTime.now().difference(state.startTime!);
 
-    // ✅ Use 50% as passing score instead of teacher-defined
+    //  Use 50% as passing score instead of teacher-defined
     final percentage = (score / state.quiz!.questions.length) * 100;
     final passed = percentage >= 50.0;
 
@@ -204,7 +204,7 @@ class QuizBloc extends Bloc<QuizEvent, QuizState> {
         );
       },
       (savedResult) async {
-        // ✅ Mark quiz as completed in progress if passed
+        //  Mark quiz as completed in progress if passed
         if (savedResult.passed && _totalItems != null) {
           await toggleQuizCompletion(
             userId: event.userId,

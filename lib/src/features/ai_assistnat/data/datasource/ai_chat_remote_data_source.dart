@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_ai/firebase_ai.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/widgets.dart';
 import 'package:teach_flix/src/features/ai_assistnat/data/models/chat_session_model.dart';
 import 'package:teach_flix/src/features/ai_assistnat/data/models/message_model.dart';
 import 'package:teach_flix/src/features/ai_assistnat/domain/entities/message.dart';
@@ -188,10 +189,10 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
       final file = File(filePath);
       final fileName = file.path.split('/').last;
 
-      print('📤 Starting media upload...');
-      print('   Message ID: $messageId');
-      print('   File: $fileName');
-      print('   Type: ${messageType.name}');
+      debugPrint(' Starting media upload...');
+      debugPrint('   Message ID: $messageId');
+      debugPrint('   File: $fileName');
+      debugPrint('   Type: ${messageType.name}');
 
       final userMessage = MessageModel(
         id: messageId,
@@ -212,17 +213,17 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .doc(messageId)
           .set(userMessage.toFirestore());
 
-      print('✅ Message saved to Firestore');
+      debugPrint('Message saved to Firestore');
 
       // Upload to storage
       final storageRef = storage.ref().child(
         'chat_media/$sessionId/$messageId/$fileName',
       );
 
-      print('⬆️  Uploading to Firebase Storage...');
+      debugPrint('Uploading to Firebase Storage...');
       final uploadTask = await storageRef.putFile(file);
       final downloadUrl = await uploadTask.ref.getDownloadURL();
-      print('✅ Upload complete: $downloadUrl');
+      debugPrint('Upload complete: $downloadUrl');
 
       // Update message with media URL
       await firestore
@@ -240,7 +241,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
 
       // If it's an image, get AI response with image analysis (streaming)
       if (messageType == MessageType.image) {
-        print('🤖 Requesting AI analysis of image...');
+        debugPrint('🤖 Requesting AI analysis of image...');
         final conversationHistory = await _getConversationHistory(sessionId);
 
         final promptText = text.isEmpty
@@ -303,7 +304,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           DateTime.now(),
         );
 
-        print('✅ AI response complete');
+        debugPrint('AI response complete');
       }
 
       return MessageModel(
@@ -318,10 +319,10 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         mediaSize: await file.length(),
       );
     } on FirebaseException catch (e) {
-      print('❌ Firebase error: ${e.message}');
+      debugPrint('Firebase error: ${e.message}');
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
-      print('❌ Error in sendMessageWithMedia: $e');
+      debugPrint('Error in sendMessageWithMedia: $e');
       throw ServerException(message: e.toString());
     }
   }
@@ -397,7 +398,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
   @override
   Future<void> deleteChatSession(String sessionId) async {
     try {
-      print('🗑️  Deleting session: $sessionId');
+      debugPrint('  Deleting session: $sessionId');
 
       // Delete all messages
       final messagesSnapshot = await firestore
@@ -406,7 +407,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .collection('messages')
           .get();
 
-      print('📝 Found ${messagesSnapshot.docs.length} messages to delete');
+      debugPrint('📝 Found ${messagesSnapshot.docs.length} messages to delete');
 
       for (var doc in messagesSnapshot.docs) {
         await doc.reference.delete();
@@ -414,21 +415,23 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
 
       // Delete the session
       await firestore.collection('chat_sessions').doc(sessionId).delete();
-      print('✅ Session deleted from Firestore');
+      debugPrint('Session deleted from Firestore');
 
       // Try to delete storage files
       try {
         final storageRef = storage.ref().child('chat_media/$sessionId');
         final listResult = await storageRef.listAll();
 
-        print('📁 Found ${listResult.items.length} storage items to delete');
+        debugPrint(
+          '📁 Found ${listResult.items.length} storage items to delete',
+        );
 
         for (var item in listResult.items) {
           await item.delete();
         }
-        print('✅ Storage files deleted');
+        debugPrint('Storage files deleted');
       } catch (e) {
-        print('⚠️  Storage deletion warning: $e');
+        debugPrint('  Storage deletion warning: $e');
         // Ignore storage errors - files might not exist
       }
     } on FirebaseException catch (e) {
@@ -444,12 +447,12 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
     required String title,
   }) async {
     try {
-      print('✏️  Updating session title: $sessionId -> $title');
+      debugPrint('Updating session title: $sessionId -> $title');
       await firestore.collection('chat_sessions').doc(sessionId).update({
         'title': title,
         'updatedAt': Timestamp.now(),
       });
-      print('✅ Title updated successfully');
+      debugPrint('Title updated successfully');
     } on FirebaseException catch (e) {
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
@@ -460,7 +463,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
   @override
   Future<void> clearMessages(String sessionId) async {
     try {
-      print('🧹 Clearing messages for session: $sessionId');
+      debugPrint(' Clearing messages for session: $sessionId');
 
       final messagesSnapshot = await firestore
           .collection('chat_sessions')
@@ -468,7 +471,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           .collection('messages')
           .get();
 
-      print('📝 Found ${messagesSnapshot.docs.length} messages to clear');
+      debugPrint('Found ${messagesSnapshot.docs.length} messages to clear');
 
       for (var doc in messagesSnapshot.docs) {
         await doc.reference.delete();
@@ -480,7 +483,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
         'updatedAt': Timestamp.now(),
       });
 
-      print('✅ Messages cleared successfully');
+      debugPrint('Messages cleared successfully');
     } on FirebaseException catch (e) {
       throw ServerException(message: e.message ?? 'Firebase error occurred');
     } catch (e) {
@@ -497,13 +500,13 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
     List<MessageModel>? conversationHistory,
   }) async* {
     try {
-      print('🤖 AI Streaming Request - Starting...');
-      print('📝 Message: $message');
+      debugPrint(' AI Streaming Request - Starting...');
+      debugPrint(' Message: $message');
 
       final prompt = _buildPrompt(message, conversationHistory);
-      print('📋 Prompt built successfully');
+      debugPrint(' Prompt built successfully');
 
-      print('🔄 Calling Gemini API with streaming...');
+      debugPrint(' Calling Gemini API with streaming...');
 
       final response = geminiModel.generateContentStream([
         Content.text(prompt),
@@ -511,17 +514,17 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
 
       await for (final chunk in response) {
         if (chunk.text != null && chunk.text!.isNotEmpty) {
-          print(
-            '📦 Chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
+          debugPrint(
+            ' Chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
           );
           yield chunk.text!;
         }
       }
 
-      print('✅ AI Streaming complete');
+      debugPrint('AI Streaming complete');
     } catch (e, stackTrace) {
-      print('❌ AI Streaming Error: $e');
-      print('📚 Stack trace: $stackTrace');
+      debugPrint('AI Streaming Error: $e');
+      debugPrint(' Stack trace: $stackTrace');
       throw ServerException(message: 'AI streaming error: ${e.toString()}');
     }
   }
@@ -535,15 +538,15 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
     List<MessageModel>? conversationHistory,
   }) async* {
     try {
-      print('🤖 AI Streaming Request with Image - Starting...');
-      print('📝 Message: $message');
-      print('🖼️  Image: $imagePath');
+      debugPrint('🤖 AI Streaming Request with Image - Starting...');
+      debugPrint('📝 Message: $message');
+      debugPrint('🖼️  Image: $imagePath');
 
       // Read image file
       final file = File(imagePath);
       final Uint8List imageBytes = await file.readAsBytes();
 
-      print('✅ Image loaded: ${imageBytes.length} bytes');
+      debugPrint('Image loaded: ${imageBytes.length} bytes');
 
       // Build prompt with conversation history
       final contextPrompt =
@@ -551,7 +554,7 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
           ? _buildPrompt(message, conversationHistory)
           : message;
 
-      print('🔄 Calling Gemini API with image streaming...');
+      debugPrint(' Calling Gemini API with image streaming...');
 
       // Create content with both text and image
       final response = geminiModel.generateContentStream([
@@ -563,17 +566,17 @@ class AiChatRemoteDataSourceImpl implements AiChatRemoteDataSource {
 
       await for (final chunk in response) {
         if (chunk.text != null && chunk.text!.isNotEmpty) {
-          print(
-            '📦 Image chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
+          debugPrint(
+            ' Image chunk received: ${chunk.text!.substring(0, chunk.text!.length.clamp(0, 20))}...',
           );
           yield chunk.text!;
         }
       }
 
-      print('✅ AI Image Streaming complete');
+      debugPrint('AI Image Streaming complete');
     } catch (e, stackTrace) {
-      print('❌ AI Streaming Error with Image: $e');
-      print('📚 Stack trace: $stackTrace');
+      debugPrint('AI Streaming Error with Image: $e');
+      debugPrint(' Stack trace: $stackTrace');
       throw ServerException(
         message: 'AI streaming error with image: ${e.toString()}',
       );

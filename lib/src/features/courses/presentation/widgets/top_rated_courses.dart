@@ -48,7 +48,7 @@ class TopRatedCourses extends StatelessWidget {
               ),
               const SizedBox(height: 16),
               SizedBox(
-                height: 230, // ✅ Bounded height
+                height: 230, //  Bounded height
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: state.topRatedCourses!.length,

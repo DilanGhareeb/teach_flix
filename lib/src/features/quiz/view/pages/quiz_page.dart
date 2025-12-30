@@ -14,14 +14,14 @@ class QuizPage extends StatelessWidget {
   final QuizEntity quiz;
   final String userId;
   final String courseId;
-  final int totalItems; // ✅ Added totalItems
+  final int totalItems; //  Added totalItems
 
   const QuizPage({
     super.key,
     required this.quiz,
     required this.userId,
     required this.courseId,
-    required this.totalItems, // ✅ Required parameter
+    required this.totalItems, //  Required parameter
   });
 
   @override

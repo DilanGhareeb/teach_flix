@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:teach_flix/src/features/auth/presentation/bloc/bloc/auth_bloc.dart';
@@ -625,9 +626,9 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
     SubmitNewCourseEvent event,
     Emitter<CoursesState> emit,
   ) async {
-    print('DEBUG: Starting course submission');
+    debugPrint('DEBUG: Starting course submission');
     if (state.selectedImage == null) {
-      print('DEBUG: No image selected');
+      debugPrint('DEBUG: No image selected');
       emit(
         state.copyWith(
           status: CoursesStatus.failure,
@@ -637,14 +638,14 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
       return;
     }
 
-    print('DEBUG: Image selected, starting upload');
+    debugPrint('DEBUG: Image selected, starting upload');
     emit(state.copyWith(status: CoursesStatus.creating, failure: null));
 
     final uploadResult = await _uploadCourseImage.call(
       params: UploadCourseImageParams(
         imageFile: state.selectedImage!,
         onProgress: (progress) {
-          print(
+          debugPrint(
             'DEBUG: Upload progress: ${(progress * 100).toStringAsFixed(1)}%',
           );
         },
@@ -653,22 +654,22 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
 
     final String? imageUrl = uploadResult.fold(
       (failure) {
-        print('DEBUG: Upload failed - ${failure.runtimeType}');
+        debugPrint('DEBUG: Upload failed - ${failure.runtimeType}');
         emit(state.copyWith(status: CoursesStatus.failure, failure: failure));
         return null;
       },
       (url) {
-        print('DEBUG: Upload successful - $url');
+        debugPrint('DEBUG: Upload successful - $url');
         return url;
       },
     );
 
     if (imageUrl == null) {
-      print('DEBUG: Image URL is null, stopping');
+      debugPrint('DEBUG: Image URL is null, stopping');
       return;
     }
 
-    print('DEBUG: Creating course with imageUrl: $imageUrl');
+    debugPrint('DEBUG: Creating course with imageUrl: $imageUrl');
     final course = CourseEntity(
       id: '',
       title: event.title,
@@ -689,11 +690,11 @@ class CoursesBloc extends Bloc<CoursesEvent, CoursesState> {
 
     result.fold(
       (failure) {
-        print('DEBUG: Course creation failed - ${failure.runtimeType}');
+        debugPrint('DEBUG: Course creation failed - ${failure.runtimeType}');
         emit(state.copyWith(status: CoursesStatus.failure, failure: failure));
       },
       (createdCourse) {
-        print('DEBUG: Course created successfully - ${createdCourse.id}');
+        debugPrint('DEBUG: Course created successfully - ${createdCourse.id}');
         emit(
           state.copyWith(
             status: CoursesStatus.courseCreated,
