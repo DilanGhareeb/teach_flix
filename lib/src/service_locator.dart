@@ -138,7 +138,7 @@ Future<void> setupServiceLocator() async {
   sl.registerFactory(() => Withdraw(repository: sl()));
   sl.registerFactory(() => GetUserById(sl()));
 
-  // CHANGED: Register AuthBloc as singleton so it can be injected into CoursesBloc
+  // : Register AuthBloc as singleton so it can be injected into CoursesBloc
   sl.registerLazySingleton(
     () => AuthBloc(
       loginUsecase: sl(),
